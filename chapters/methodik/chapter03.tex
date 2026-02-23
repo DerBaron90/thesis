@@ -1,13 +1,54 @@
-\chapter{Ein weiteres Kapitel}
+\chapter{Methodik}
 \label{ch:chapter03}
-liquam facilisis convallis nibh. Ut accumsan malesuada nisi, eget luctus ante dignissim at. Integer dignissim rutrum feugiat. Mauris sit amet leo id ligula fringilla pharetra. In id neque metus, eu congue libero. Suspendisse egestas imperdiet nulla, in blandit dolor venenatis vel. Quisque quis justo quis quam lobortis blandit. Quisque urna mauris, placerat a pretium eu, placerat vel risus. Donec sollicitudin malesuada cursus. Sed auctor aliquet urna sit amet porta. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. 
 
-%
-% Section: Listen
-%
-\section{Listen}
-\label{sec:chapter03:listen}
-Fusce ac velit arcu, in iaculis urna. Vivamus id nunc nulla, et ornare eros. Mauris convallis tortor eget quam interdum nec adipiscing dui pulvinar. Cras a dolor nunc. Sed tincidunt pharetra consectetur. Sed tortor tortor, pellentesque vitae mattis eu, condimentum vel justo.
+In diesem Kaptitel wird auf folgende Schritte eingegangen:
+\begin{enumerate}
+ \item Die vorgenommenen Anpassungen um den Scanner die Arbeit mit einem taskbasierten Multithreading-Scheduler zu ermöglichen.
+ \item Die Vorbereitung und Optimierung des Testsystems für die Benchmarks.
+ \item Die Auswahl der Metriken.
+ \item Die Auswahl und Implementierung der Scheduling Algorithmen.
+\end{enumerate}
+Es ist zu beachten, dass die Umsetzung dieser Schritte spezifisch auf das zu optimierende System anzupassen sind.
+
+\section{Vorbereitung des Scanners}
+\label{sec:chapter03:Vorbereitung des Scanners}
+Der Scanner arbeitete bisher mit objektbasierten synchronen Multithreading Scheduling.
+Das aktive Modul durchsucht das zu scannende System nach Dateien, für welche das Modul verantwortlich ist und lädt diese in eine Warteschlange.
+Das Modul besitzt einen eigenen Threadpool und startet aus diesem Worker. 
+Ein Worker nimmt sich ein Objekt aus der Warteschlange und führt auf diesem verschiedene Hooks aus.
+Beim Ausführen der Hooks entstehen weitere Objekte, im folgenden Kinder-Objekte genannt.
+Je nach Objekttyp können hundertausende Kinder-Objekte entstehen, auf denen wiederum Hooks ausgeführt werden bei welchen weitere Kinder-Objekte entstehen können.
+Das Objekt, seine Kinder-Objekte und alle Kindes-Kinder-Objekte werden synchron von diesem Worker bearbeitet.
+
+Wenn auf den abgeschlossenen Scan eines Objekts gewartet werden soll, bietet dieses Vorgehen klare Vorteile.
+Sobald der Worker das Objekt und dessen Nachkommen verarbeitet hat gibt er einen Rückgabewert zurück und das System weiß, dass die Ergebnisse fertig und vorhanden sind.
+Bei der Nutzung eines taskbasierten Multithreading-Schedulers muss hier einiges beachtet werden.
+
+Die Verantwortung für das Multithreading, den Threadpool und die Worker wird nun dem Scheduler übergeben.
+Wenn ein Modul oder ein Hook ein Objekt, egal ob Nachkomme eines anderen Objekts oder ein Objekt direkt von einem Modul, generiert, wird dieses dem Scheduler als Task übergeben.
+Dieser Task wird in eine Warteschlange eingereiht. Worker, welche Kapazität frei haben, nehmen sich Tasks aus der Warteschlange und verarbeiten diese.
+Jeder Worker arbeitet seinen Task ab, befüllt dabei die Warteschlange mit Kinder-Objekten des Objekts, welches durch den Task repräsentiert wird und nimmt sich nach dem Abschluss den nächsten Task aus der Warteschlange.
+Dadurch ist die Logik klar getrennt. Der Scheduler hat keine weiteren Informationen über den Inhalt der Tasks, er weiß nur, dass er ihre Funktion ausführen muss. 
+Ein warten auf die abgeschlossene Verarbeitung eines Objekts und all seiner Kinder ist so allerdings nicht möglich. 
+Es wird daher eine weitere Datenstruktur benötigt, welche aufzeichnet, ob die Kinder-Objekte eines Objekts bereits verarbeitet wurden, ein Progress-Tracker.
+Dieser ist dafür verantworlich den Verarbeitungszustand aller Objekte und deren Kinder zu speichern. 
+Wenn auf ein Objekt gewartet werden soll, kann dies über Barrier Synchronization unter Verwendung einer Condition Variable umgesetzt werden.
+
+Einleitung
+Alles was bisher war, also die Erkärung 
+Welches Problem wurde gelöst, warum ist das relevant? Wie ist die Vorgehensweise? Was wurde thematisch eingegrenzt, was wurde ausgegrenzt?
+Grundlagen erklären und Stand der Wissenschaft zu den Themen die ich verwende.
+
+Ergebnisse und Diskussion strikt trennen
+Man kann beide Teile mischen, solange sie klar getrennt werden.
+Also Ergebnisse von Scheduler 1 und Diskussion von Scheduler 1
+Ergebnisse von Scheduler 2 und Diskussion von Scheduler 2
+Gesamtergebnisse und Diskussion
+
+
+Hierbei ist es wichtig zu beachten, dass die Wartefunktion des Schedulers an allen Stellen im Code verwendet werden muss, an welchen zuvor automatisch auf den Rückgabewert gewartet wurde.
+
+
 
 \begin{itemize}
  \item Enumeration with bullets
