@@ -109,44 +109,30 @@ Wichtige Metriken für die Bewertung von CPU-Scheduling-Algorithmen sind \cite[S
 
 \noindent Wenn man den gesamten Prozess betrachtet, treten andere Metriken in den Vordergrund:
 \begin{itemize}
-  \item \textbf{RAM Utilization:} Für Ressourcen, die Anfragen bedienen, ist die Auslastung ein Maß dafür,
+  \item \textbf{RAM Utilization:} Die Auslastung des Hauptspeichers. Für Ressourcen, die Anfragen bedienen, ist die Auslastung ein Maß dafür,
    wie beschäftigt eine Ressource ist, basierend darauf, wie viel Zeit sie in einem gegebenen Intervall aktiv Arbeit verrichtet hat.
    Für Ressourcen, die Speicher bereitstellen, kann sich die Auslastung auf die verbrauchte Kapazität, in diesem Fall den Hauptspeicher, 
    beziehen \cite[S.~22]{Gregg:2020}.
-  \item \textbf{Runtime:} Hennessy und Patterson \cite[S.~39--40]{Hennessy:2019} schreiben, dass die Ausführungszeit als das einzig konsistente und zuverlässige Maß für die Leistung gilt. 
+  \item \textbf{Runtime:} Die gesamte Ausführungszeit des Prozesses. Hennessy und Patterson \cite[S.~39--40]{Hennessy:2019} schreiben, dass die Ausführungszeit als das einzig konsistente und zuverlässige Maß für die Leistung gilt. 
 \end{itemize}
 
 \noindent Die Definition der Performance ist stark von dem zu bewertenden System abhängig.
 In dieser Arbeit wird die Performance des Scanners nach dessen Leistung in den aufgezählten Metriken bewertet. 
-\end{sloppypar}
 
-\subsection{Bisherige Arbeitsweise des Scanners}
-\begin{sloppypar}
-Es gibt in dem Scanner zwei Arten von Komponenten, die für das Verständnis des Arbeitsablauf relevant sind. \marginpar{Die Beschreibung der Arbeitsabläufe des Scanners in diesem Abschnitt sind stark vereinfacht und auf den für das Verständnis dieser Arbeit relevanten Teil heruntergebrochen.}
+\subsection{Arbeitsweise des Scanners}
+Der Scanner basiert auf zwei zentralen Komponententypen, deren Zusammenwirken den Arbeitsablauf definiert. 
+\marginpar{Diese Darstellung ist eine Abstraktion der relevanten Arbeitsweise, die sich auf die für das Verständnis wesentlichen Kernaspekte fokussiert.}
+
 \begin{itemize}
-  \item \textbf{Modul:} Module sind alleinstehende Aufgaben, welche eine nach der anderen ausgeführt werden.
-  Zum Beispiel durchsucht ein Modul namens "User Account Check" das System nach allen Benutzerkonten und erstellt aus diesen jeweils ein Objekt.
-  Das Modul lässt die Objekte daraufhin untersuchen \cite{thor:modules}.
-  \item \textbf{Feature:} Features werden aktiviert, wenn bestimmte Objekte untersucht werden und arbeiten mit diesen Objekten.
-  Welche Features auf einem Objekt aktiviert werden ist vom Typ des Objekts abhängig.
-  Features können dabei weitere Objekte generieren.
-  Zum Beispiel findet das "File System Scan" Modul während des Scans eine .zip Datei und generiert ein Objekt daraus. 
-  Bei der Untersuchung dieses Objekts wird das "Archive Scan" Feature aktiviert, entpackt die .zip Datei und generiert pro darin enthaltener Datei ein weiteres Objekt.
-  Diese Objekte werden wiederum untersucht und je nach Objektyp werden Features auf ihnen aktiviert \cite{thor:features}. 
+  \item \textbf{Modul:} Module sind autonome Funktionseinheiten, die sequenziell abgearbeitet werden. Ein Modul (z.\,B. \enquote{User Account Check}) identifiziert spezifische Systemressourcen, instanziiert diese als Objekte und initiiert deren Untersuchung \cite{thor:modules}.
+  \item \textbf{Feature:} Features werden kontextabhängig aktiviert, sobald ein Objekt eines bestimmten Typs untersucht wird. Sie können ihrerseits neue Objekte generieren. Ein \enquote{File System Scan}-Modul kann beispielsweise ein Objekt für eine Archivdatei (.zip) erzeugen. Bei dessen Analyse wird das \enquote{Archive Scan}-Feature aktiv, welches den Inhalt entpackt und für jede enthaltene Datei ein neues Objekt instanziiert. Dieser Prozess setzt sich rekursiv fort \cite{thor:features}.
 \end{itemize}
 
-
-\noindent Der Scanner arbeitet mit objektbasierten synchronen Multithreading Scheduling.
-Jedes Modul startet während der Ausführung seinen eigenen primitiven Scheduler, inklusive eigener Warteschlange und eigenen Threadpool.
-Das Modul untersucht das System und generiert dabei Objekte, welche es in die Warteschlange einreiht.
-Die Worker aus dem Threadpool nehmen sich die Objekte und führen darauf die Features, welche für den Objekttyp registriert sind, aus.
+\noindent Der Scanner nutzt ein objektbasiertes, synchrones Multithreading-Scheduling. Jedes Modul kapselt hierfür einen eigenen primitiven Scheduler, bestehend aus einer Warteschlange und einem Threadpool. Während der Systemuntersuchung generiert das Modul initiale Objekte und reiht diese in die Warteschlange ein. Die Worker des Threadpools entnehmen die Objekte und führen die für den jeweiligen Objekttyp registrierten Features aus.
 
 \vspace{7.56mm}
 
-\noindent Bei der Ausführung jedes Features können viele weitere Objekte, im folgenden Kinder-Objekte genannt, entstehen.
-Auch auf diesen Kinder-Objekten werden je nach Objekt-Typ wieder eine Anzahl an Features ausgeführt, bei welchen wiederum weitere Objekte entstehen können.
-Das Objekt, sowie alle Kinder-Objekte und auch deren Nachkommen werden von dem Worker synchron untersucht.
-So kann es zu Szenarien kommen, in denen ein Worker lange synchron arbeitet und dabei potenziell eine große Menge Hauptspeicher benötigt.
+\noindent Die Ausführung eines Features kann weitere Objekte (nachfolgend Kindobjekte genannt) hervorbringen. Auch auf diesen Kindobjekten werden typspezifisch Features ausgeführt, was zu einer tief verschachtelten Objekthierarchie führen kann. Da ein Worker sowohl das Ursprungsobjekt als auch alle daraus resultierenden Nachkommen vollständig synchron abarbeitet, entstehen Szenarien, in denen einzelne Threads über lange Zeiträume blockiert sind und eine erhebliche Menge an Hauptspeicher beanspruchen.
 
 
 \noindent Abbildung \ref{fig:scanner-workflow} zeigt den beschriebenen Arbeitsablauf des Scanners.
@@ -168,7 +154,7 @@ So kann es zu Szenarien kommen, in denen ein Worker lange synchron arbeitet und 
 ]
 
 % --- Global Start ---
-\node[startstop] (start) {Start Scanner};
+\node[startstop] (start) {Starte Scanner};
 \node[datastore, below=of start] (modlist) {Modul-\\liste};
 \node[decision, below=of modlist] (hasnext) {Weiteres\\Modul?};
 \node[process, below=of hasnext] (load) {Modul laden};
@@ -196,8 +182,8 @@ So kann es zu Szenarien kommen, in denen ein Worker lange synchron arbeitet und 
 % --- Worker Loop ---
 \node[process, below=20mm of queue] (process) {Verarbeite Objekt};
 \node[decision, below=of process] (select) {Features für\\Objekttyp?};
-\node[process, below=of select] (run) {Feature ausführen};
-\node[decision, below=of run] (newobj) {Neues Kind-\\Objekt?};
+\node[process, below=of select] (run) {Features ausführen};
+\node[decision, below=of run] (newobj) {Neue Kind-\\Objekte?};
 \node[process, below=of newobj] (finish) {Objekt abgeschlossen};
 
 % Connections
