@@ -4,58 +4,68 @@
 %
 % Was ist ein APT-Scanner?
 %
-Ein APT-Scanner (oder präziser ein APT-Angriffserkennungssystem)
+Ein Advanced-Persistent-Threat-Scanner (APT-Scanner), oder präziser ein APT-Angriffserkennungssystem,
 ist eine spezialisierte Sicherheitssoftware,
 die darauf ausgelegt ist,
-die Aktivitäten von fortgeschrittenen andauernden Bedrohungen zu identifizieren.
-Während herkömmliche Virenscanner oft auf bekannten Signaturen basieren,
+die Aktivitäten von fortgeschrittenen andauernden Bedrohungen zu identifizieren \cite[S.~1--2]{Buchta:2024}.
+
+\noindent Während herkömmliche Virenscanner oft auf bekannten Signaturen basieren,
 müssen APT-Scanner deutlich komplexere Methoden anwenden,
-um die typischerweise „subtilen"
+um die typischerweise subtilen
 und über lange Zeiträume gestreckten Angriffe zu finden.
-Der Begriff APT steht für Advanced Persistent Threat
+
+\vspace{7.56mm}
+\noindent Der Begriff APT steht für Advanced Persistent Threat
 und bezeichnet eine Form des Cyberangriffs,
 bei der sich ein Angreifer unbefugten Zugang zu einem Computersystem verschafft
 und potenziell über einen langen Zeitraum unentdeckt darin verbleibt.
 Im Gegensatz zu herkömmlichen Angriffen
 handelt es sich bei APTs um menschliche Akteure
 mit hoher Motivation und hohen Ressourcen,
-nicht um einfachen, automatisierten Schadcode.
+nicht um einfachen, automatisierten Schadcode \cite[S.~1--2, 7]{Buchta:2024}.
+
+\vspace{7.56mm}
 
 %
 % Anomalieerkennung
 %
-Da APT-Akteure häufig neue Schwachstellen (Zero-Day-Exploits) nutzen
+\begin{sloppypar}
+\noindent Da APT-Akteure häufig neue Schwachstellen (Zero-Day-Exploits) nutzen
 oder legitime Systemwerkzeuge missbrauchen (Living-off-the-Land),
-helfen einfache Blacklists oft nicht weiter.
-Moderne APT-Angriffserkennungssysteme nutzen daher Anomalieerkennung.
+helfen einfache Blacklists oft nicht weiter \cite[S.~6--7]{Buchta:2024}.
+Moderne APT-Angriffs\-erkennungs\-systeme nutzen daher Anomalieerkennung \cite[S.~8--9]{Buchta:2024}.
 Die Anomalieerkennung identifiziert ungewöhnliche Muster
 oder Instanzen in Daten,
-die nicht dem erwarteten Verhalten entsprechen.
+die nicht dem erwarteten Verhalten entsprechen \cite[S.~8--9, 24]{Buchta:2024}.
 Sie unterscheidet im Gegensatz zu herkömmlichen Virenscannern
 nicht zwischen bekannten und unbekannten Angriffen.
 Da die Anomalieerkennung auf dem Systemverhalten basiert,
 um Abweichungen zu erkennen,
-sind APT-Angriffserkennungssysteme
-mit einem deutlich höheren Wartungsaufwand verbunden.
-Das APT-Angriffserkennungssystem lernt zunächst
+sind APT-Angriffs\-erkennungs\-systeme
+mit einem hohen Wartungsaufwand verbunden.
+Das APT-Angriffs\-erkennungs\-system lernt zunächst
 das „normale" Verhalten des Rechners.
 Jede signifikante Abweichung wird als potenzieller Angriff gemeldet.
 Analysten bewerten die potenziellen Angriffe
 und erkennen False Positives,
 welche ab diesem Zeitpunkt automatisch
-von dem APT-Angriffserkennungssystem als solche eingeordnet werden.
+von dem APT-Angriffs\-erkennungs\-system als solche eingeordnet werden.
+\end{sloppypar}
+
+\vspace{7.56mm}
 
 %
 % Performance-Relevanz und Ziel der Arbeit
 %
-APT-Angriffserkennungssysteme werden auf einer hohen Anzahl
+\begin{sloppypar}
+\noindent APT-Angriffs\-erkennungs\-systeme werden auf einer hohen Anzahl
 von produktiven Systemen,
 häufig auf kritischen Servern
-oder in ressourcenbeschränkten Umgebungen, eingesetzt.
+oder in ressourcen\-beschränkten Umgebungen, eingesetzt.
 Hierbei werden regelmäßig Scans ausgeführt.
 Auch bei Incident-Response-Szenarien
-kommen APT-Angriffserkennungssysteme zum Einsatz.
-Die Performance des APT-Angriffserkennungssystems
+kommen APT-Angriffs\-erkennungs\-systeme zum Einsatz.
+Die Performance des APT-Angriffs\-erkennungs\-systems
 ist von entscheidender Bedeutung.
 Lange Scan-Zeiten und hohe Ressourcenauslastung
 stellen ein relevantes Problem dar.
@@ -68,84 +78,80 @@ möglichst weitreichend nutzen.
 Um diese Voraussetzungen an die Performance zu erfüllen,
 ist eine effiziente Parallelisierung durch einen Scheduler
 von hoher Relevanz.
-In dieser Arbeit wird der Versuch vorgenommen,
+
+\vspace{7.56mm}
+
+\noindent In dieser Arbeit wird der Versuch vorgenommen,
 die Performance des APT-Scanners Thor
 der Firma Nextron Systems GmbH,
 im Folgenden als Scanner bezeichnet, zu optimieren,
 indem ein task-basierter Scheduler implementiert wird.
+\end{sloppypar}
 
 \section{Grundlagen}
-In diesem Kapitel wird auf die Arbeitsweise des Scanners eingegangen, insofern es für das Verständnis dieser Arbeit notwendig ist.
-Es wird kurz auf den aktuellen Stand der Forschung im Bezug auf Scheduling Algorithmen eingegangen.
+\begin{sloppypar}
+In diesem Kapitel wird beschrieben, was Performance für Anwendungszweck des Scanners bedeutet.
+Danach wird auf die Arbeitsweise des Scanners eingegangen, insofern es für das Verständnis notwendig ist.
 
-Was ist Performance?
+\noindent Es wird auf den aktuellen Stand der Forschung im Bezug auf Scheduling Algorithmen eingegangen.
+Zuletzt wird ein kurzer Überblick über den Aufbau der Arbeit gegeben.
 
+\subsection{Performance}
+Wichtige Metriken für die Bewertung von CPU-Scheduling-Algorithmen sind \cite[S.~204--205]{Silberschatz:2018}, \cite[S.~154]{Tanenbaum:2015}:
+\begin{itemize}
+  \item \textbf{CPU Utilization:} Das Ziel ist es, den Prozessor so beschäftigt wie möglich zu halten. In realen Systemen sollte die Auslastung zwischen 40 \% (leicht belastet) und 90 \% (stark belastet) liegen.
+  \item \textbf{Throughput:} Dies ist die Anzahl der Prozesse, die pro Zeiteinheit abgeschlossen werden.
+  \item \textbf{Turnaround Time:} Dies beschreibt die Zeitspanne von der Einreichung eines Prozesses bis zu seinem Abschluss.
+  \item \textbf{Waiting Time:} Die Zeitspanne, die ein Prozess in der Warteschlange verbringt.
+\end{itemize}
 
+\vspace{7.56mm}
 
+\noindent Wenn man den gesamten Prozess betrachtet, treten andere Metriken in den Vordergrund:
+\begin{itemize}
+  \item \textbf{RAM Utilization:} Für Ressourcen, die Anfragen bedienen, ist die Auslastung ein Maß dafür,
+   wie beschäftigt eine Ressource ist, basierend darauf, wie viel Zeit sie in einem gegebenen Intervall aktiv Arbeit verrichtet hat.
+   Für Ressourcen, die Speicher bereitstellen, kann sich die Auslastung auf die verbrauchte Kapazität, in diesem Fall den Hauptspeicher, 
+   beziehen \cite[S.~22]{Gregg:2020}.
+  \item \textbf{Runtime:} Hennessy und Patterson \cite[S.~39--40]{Hennessy:2019} schreiben, dass die Ausführungszeit als das einzig konsistente und zuverlässige Maß für die Leistung gilt. 
+\end{itemize}
 
-Die drei Bestandteile des Namens beschreiben die Art der Bedrohung genau:
-
-Bei Advanced-Persistent-Thread-Scannern (APT-Scanner), die unter anderen in Incidence-Response-Szenarien eingesetzt werden, ist die Performance sehr relevant.
-Aufgrund des Einsatzes auf einer hohen Anzahl produktiver Systeme, häufig auf kritischen Servern oder ressourcenbeschränkten Umgebungen stellen
-lange Scan-Zeiten und hohe Ressourcenauslastung ein relevantes Problem dar.
-Sowohl die Laufzeit von Scans bei Incident-Response-Maßnahmen
-als auch das Risiko von Performance Einbußen während Scans auf produktiven Systemen sollten möglichst gering gehalten werden.
-Vor diesem Hintergrund ist eine Optimimierung der Scanner-Architektur hinsichtlich Parallelisierung, Ressourcennutzung und Durchsatz sowohl aus ökonomischer
-als auch aus sicherheitstechnischer Sicht von hoher Relevanz.
-
-In dieser Arbeit wird anhand des APT-Scanners Thor der Firma Nextron Systems, im folgenden als Scanner bezeichnet, der Frage nachgegangen
-ob die Performance durch die Implementierung von task-basierten Scheduling verbessert werden kann.
-Die Hypothese lautet, dass die Implementierung des task-basierten Schedulers die Performance des Scanners im Bezug auf die Hauptspeicherauslastung oder
-die Scan-Zeit bei der Verwendung von mehreren Threads verbessern kann.
-
-\section{Grundlagen}
-In dieser Sektion wird für das Verständnis der Arbeit nötiges Wissen zu diesen Themen vermittelt:
-\begin{enumerate}
-  \item Bisherige Arbeitsweise des Scanners
-  \item Lösungsansatz
-  \item Stand der Forschung
-  \item Überblick über die Arbeit
-\end{enumerate}
+\noindent Die Definition der Performance ist stark von dem zu bewertenden System abhängig.
+In dieser Arbeit wird die Performance des Scanners nach dessen Leistung in den aufgezählten Metriken bewertet. 
+\end{sloppypar}
 
 \subsection{Bisherige Arbeitsweise des Scanners}
+\begin{sloppypar}
+Es gibt in dem Scanner zwei Arten von Komponenten, die für das Verständnis des Arbeitsablauf relevant sind. \marginpar{Die Beschreibung der Arbeitsabläufe des Scanners in diesem Abschnitt sind stark vereinfacht und auf den für das Verständnis dieser Arbeit relevanten Teil heruntergebrochen.}
+\begin{itemize}
+  \item \textbf{Modul:} Module sind alleinstehende Aufgaben, welche eine nach der anderen ausgeführt werden.
+  Zum Beispiel durchsucht ein Modul namens "User Account Check" das System nach allen Benutzerkonten und erstellt aus diesen jeweils ein Objekt.
+  Das Modul lässt die Objekte daraufhin untersuchen \cite{thor:modules}.
+  \item \textbf{Feature:} Features werden aktiviert, wenn bestimmte Objekte untersucht werden und arbeiten mit diesen Objekten.
+  Welche Features auf einem Objekt aktiviert werden ist vom Typ des Objekts abhängig.
+  Features können dabei weitere Objekte generieren.
+  Zum Beispiel findet das "File System Scan" Modul während des Scans eine .zip Datei und generiert ein Objekt daraus. 
+  Bei der Untersuchung dieses Objekts wird das "Archive Scan" Feature aktiviert, entpackt die .zip Datei und generiert pro darin enthaltener Datei ein weiteres Objekt.
+  Diese Objekte werden wiederum untersucht und je nach Objektyp werden Features auf ihnen aktiviert \cite{thor:features}. 
+\end{itemize}
+
+
+\noindent Der Scanner arbeitet mit objektbasierten synchronen Multithreading Scheduling.
+Jedes Modul startet während der Ausführung seinen eigenen primitiven Scheduler, inklusive eigener Warteschlange und eigenen Threadpool.
+Das Modul untersucht das System und generiert dabei Objekte, welche es in die Warteschlange einreiht.
+Die Worker aus dem Threadpool nehmen sich die Objekte und führen darauf die Features, welche für den Objekttyp registriert sind, aus.
+
+\vspace{7.56mm}
+
+\noindent Bei der Ausführung jedes Features können viele weitere Objekte, im folgenden Kinder-Objekte genannt, entstehen.
+Auch auf diesen Kinder-Objekten werden je nach Objekt-Typ wieder eine Anzahl an Features ausgeführt, bei welchen wiederum weitere Objekte entstehen können.
+Das Objekt, sowie alle Kinder-Objekte und auch deren Nachkommen werden von dem Worker synchron untersucht.
+So kann es zu Szenarien kommen, in denen ein Worker lange synchron arbeitet und dabei potenziell eine große Menge Hauptspeicher benötigt.
 
 
 
-\section{}
-%
-% Section: Der erste Abschnitt
-%
-\section{Der erste Abschnitt des Kapitels}
-\label{sec:background:first_section}
-Sia ma sine svedese americas. Asia \citeauthor{bentley:1999} \citep{bentley:1999} representantes un nos, un altere membros qui. De web nostre historia angloromanic. Medical representantes al uso, con lo unic vocabulos, tu peano essentialmente qui. Lo malo laborava anteriormente uso.
+\end{sloppypar}
 
-\begin{description}
-  \item[Description-Label Test:] Illo secundo continentes sia il, sia russo distinguer se. Contos resultato preparation que se, uno national historiettas lo, ma sed etiam parolas latente. Ma unic quales sia. Pan in patre altere summario, le pro latino resultato.
-  \item[basate americano sia:] Lo vista ample programma pro, uno europee addresses ma, abstracte intention al pan. Nos duce infra publicava le. Es que historia encyclopedia, sed terra celos avantiate in. Su pro effortio appellate, o.
-  \item[Cras venenatis:] Purus et posuere lacinia, nisl sapien dapibus metus, a ornare enim odio in ipsum. Quisque imperdiet nibh metus, in fringilla tellus. Duis varius dui eget orci commodo ac sollicitudin est placerat. Cras varius tincidunt arcu, quis imperdiet nibh rhoncus vel. Sed non justo orci, non accumsan felis. Maecenas condimentum convallis.
-\end{description}
-Tu uno veni americano sanctificate. Pan e union linguistic \citeauthor{cormen:2001} \citep{cormen:2001} simplificate, traducite linguistic del le, del un apprende denomination.
+\subsection{Stand der Wissenschaft: Scheduler}
 
-\subsection{Ein Unterabschnitt}
-\label{subsec:background:first_section:first_subsection}
-Uno pote summario methodicamente al, uso debe nomina hereditage ma. Iala rapide ha del, ma nos esser parlar. Maximo dictionario sed al. Aenean posuere, enim in ultricies facilisis, ligula lacus eleifend eros, accumsan commodo metus justo placerat justo. Donec sit amet mauris dolor, at imperdiet lacus. In laoreet pretium condimentum. Proin ut varius diam. Fusce ipsum ipsum, elementum id porttitor at, pharetra congue nisi.
-
-\subsection{Ein weiterer Unterabschnitt}
-\label{subsec:background:first_section:second_subsection}
-Deler utilitate methodicamente con se. Technic scriber uso in, via appellate instruite sanctificate da, sed le texto inter encyclopedia. Ha iste americas que, qui ma tempore capital. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Proin vitae urna id metus vestibulum lobortis. Duis rhoncus pulvinar massa, eget venenatis justo dapibus sed.
-
-%
-% Section: Der Zweite Abschnitt
-%
-\section{Ein zweiter Abschnitt}
-\label{sec:background:second_section}
-Phasellus ut ipsum nulla, vitae venenatis augue. Suspendisse potenti. Mauris suscipit justo a dolor laoreet lacinia. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aliquam commodo commodo dui, nec auctor mi malesuada et. Aenean tortor erat, semper eu ullamcorper non, dignissim sed lectus. Praesent et pretium leo.
-
-\subsection{Ein Unterabschnitt}
-\label{subsec:background:second_section:first_subsection}
-Vivamus at massa ut turpis dignissim mattis. Vivamus odio metus, venenatis vitae malesuada et, dignissim sed nunc. Mauris a nisl id massa viverra mattis in ultrices odio. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Curabitur quis metus ac sem venenatis dignissim nec.
-
-\subsubsection{Ein Unter-Unterabschnitt}
-\label{ssubsec:background:second_section:first_subsection:first_subsubsection}
-Sed vel ante vel quam commodo cursus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Duis non turpis eget quam rutrum scelerisque. Duis nec quam metus. Curabitur purus dui, sagittis vel mattis a, elementum vitae risus. Pellentesque a tellus lacus, id gravida lectus.
-
+\subsection{Aufbau der Arbeit}
