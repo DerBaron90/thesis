@@ -126,6 +126,9 @@
 %\usepackage{pgfplots} % External TikZ/PGF support (thanks to Andreas Nautsch)
 %\usetikzlibrary{external}
 %\tikzexternalize[mode=list and make, prefix=ext-tikz/]
+\PassOptionsToPackage{dvipsnames}{xcolor} % needed before tikz to ensure Maroon etc. are available
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, shapes.geometric, shapes.symbols, fit, backgrounds}
 % ****************************************************************************************************
 
 

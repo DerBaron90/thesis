@@ -149,9 +149,94 @@ Das Objekt, sowie alle Kinder-Objekte und auch deren Nachkommen werden von dem W
 So kann es zu Szenarien kommen, in denen ein Worker lange synchron arbeitet und dabei potenziell eine große Menge Hauptspeicher benötigt.
 
 
+\noindent Abbildung \ref{fig:scanner-workflow} zeigt den beschriebenen Arbeitsablauf des Scanners.
 
-\end{sloppypar}
+\begin{figure}[htbp]
+\centering
+\resizebox{\textwidth}{!}{\begin{tikzpicture}[
+    >=Latex,
+    node distance=10mm and 18mm,
+    every node/.style={font=\sffamily\small},
+    startstop/.style={ellipse, draw, thick, minimum width=28mm, minimum height=10mm, align=center},
+    process/.style={rectangle, draw, thick, rounded corners=2pt, minimum width=38mm, minimum height=10mm, align=center},
+    decision/.style={diamond, draw, thick, aspect=2, align=center, inner sep=1pt},
+    datastore/.style={cylinder, shape border rotate=90, draw, thick, aspect=0.25, minimum height=14mm, minimum width=12mm, align=center},
+    flow/.style={->, thick},
+    groupbox/.style={draw, thick, rounded corners=4pt, inner sep=10pt},
+    workerbox/.style={draw, thick, rounded corners=4pt, inner sep=10pt, fill=gray!5},
+    recursivebox/.style={draw=red!70!black, thick, dashed, rounded corners=4pt, inner sep=10pt, fill=red!5}
+]
+
+% --- Global Start ---
+\node[startstop] (start) {Start Scanner};
+\node[datastore, below=of start] (modlist) {Modul-\\liste};
+\node[decision, below=of modlist] (hasnext) {Weiteres\\Modul?};
+\node[process, below=of hasnext] (load) {Modul laden};
+\node[startstop, right=25mm of hasnext] (end) {Ende};
+
+\draw[flow] (start) -- (modlist);
+\draw[flow] (modlist) -- (hasnext);
+\draw[flow] (hasnext) -- node[right]{JA} (load);
+\draw[flow] (hasnext) -- node[above]{NEIN} (end);
+
+% --- Module Context ---
+\node[process, below=of load] (init) {Initialisiere Scheduler, Warteschlange \& Threadpool};
+\node[process, below=of init] (scan) {Systemscan: Initial-Objekte finden};
+\node[datastore, below=of scan] (queue) {Modul-\\Warteschlange};
+
+\draw[flow] (load) -- (init);
+\draw[flow] (init) -- (scan);
+\draw[flow] (scan) -- node[right]{Einreihen} (queue);
+
+% Module group box
+\begin{pgfonlayer}{background}
+\node[workerbox, fit=(init)(scan)(queue), label={[yshift=-6pt]right:\textbf{Modul-Ebene}}] (modulebox) {};
+\end{pgfonlayer}
+
+% --- Worker Loop ---
+\node[process, below=20mm of queue] (process) {Verarbeite Objekt};
+\node[decision, below=of process] (select) {Features für\\Objekttyp?};
+\node[process, below=of select] (run) {Feature ausführen};
+\node[decision, below=of run] (newobj) {Neues Kind-\\Objekt?};
+\node[process, below=of newobj] (finish) {Objekt abgeschlossen};
+
+% Connections
+\draw[flow] (queue) -- node[right]{Worker entnimmt Objekt} (process);
+\draw[flow] (process) -- (select);
+\draw[flow] (select) -- (run);
+\draw[flow] (run) -- (newobj);
+
+% Recursive YES path
+\draw[flow] (newobj.east) -- ++(25mm,0) |- node[right, pos=0.25, align=left] {JA: Unmittelbare \\ Weiterverarbeitung} (process.east);
+
+
+% NO path
+\draw[flow] (newobj) -- node[right]{NEIN} (finish);
+
+% Back to Queue
+\draw[flow] (finish.west) -- ++(-25mm,0) |- node[left,pos=0.25, align=left]{Nächstes Objekt \\ aus Queue} (queue.west);
+
+% Back to module list after module is done
+\draw[flow] (modulebox.west) -- ++(-10mm,0) |- node[left,pos=0.15, align=left]{Modul \\ abgeschlossen} (hasnext.west);
+
+% Worker group box
+\begin{pgfonlayer}{background}
+\node[workerbox, fit=(process)(select)(run)(newobj)(finish), label={below:\textbf{Synchroner Worker-Durchlauf}}] {};
+\end{pgfonlayer}
+
+% Recursive sub-box
+\begin{pgfonlayer}{background}
+\node[recursivebox, fit=(run)(newobj), label={[anchor=south,yshift=4pt]}] {};
+\end{pgfonlayer}
+
+\end{tikzpicture}}
+\caption{Arbeitsablauf des Scanners}
+\label{fig:scanner-workflow}
+\end{figure}
+
+
 
 \subsection{Stand der Wissenschaft: Scheduler}
 
 \subsection{Aufbau der Arbeit}
+\end{sloppypar}
