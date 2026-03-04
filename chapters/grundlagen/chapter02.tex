@@ -4,17 +4,6 @@
 %
 % Was ist ein APT-Scanner?
 %
-Ein Advanced-Persistent-Threat-Scanner (APT-Scanner), oder präziser ein APT-Angriffserkennungssystem,
-ist eine spezialisierte Sicherheitssoftware,
-die darauf ausgelegt ist,
-die Aktivitäten von fortgeschrittenen andauernden Bedrohungen zu identifizieren \cite[S.~1--2]{Buchta:2024}.
-
-\noindent Während herkömmliche Virenscanner oft auf bekannten Signaturen basieren,
-müssen APT-Scanner deutlich komplexere Methoden anwenden,
-um die typischerweise subtilen
-und über lange Zeiträume gestreckten Angriffe zu finden.
-
-\vspace{7.56mm}
 \noindent Der Begriff APT steht für Advanced Persistent Threat
 und bezeichnet eine Form des Cyberangriffs,
 bei der sich ein Angreifer unbefugten Zugang zu einem Computersystem verschafft
@@ -23,6 +12,19 @@ Im Gegensatz zu herkömmlichen Angriffen
 handelt es sich bei APTs um menschliche Akteure
 mit hoher Motivation und hohen Ressourcen,
 nicht um einfachen, automatisierten Schadcode \cite[S.~1--2, 7]{Buchta:2024}.
+
+
+\vspace{7.56mm}
+
+\noindent Ein Advanced-Persistent-Threat-Scanner (APT-Scanner), oder präziser ein APT-Angriffserkennungssystem,
+ist eine spezialisierte Sicherheitssoftware,
+die darauf ausgelegt ist,
+die Aktivitäten von fortgeschrittenen andauernden Bedrohungen zu identifizieren \cite[S.~1--2]{Buchta:2024}.
+
+\noindent Während herkömmliche Virenscanner oft auf bekannten Signaturen basieren,
+müssen APT-Scanner deutlich komplexere Methoden anwenden,
+um die typischerweise subtilen
+und über lange Zeiträume gestreckten Angriffe zu finden.
 
 \vspace{7.56mm}
 
@@ -90,31 +92,44 @@ indem ein task-basierter Scheduler implementiert wird.
 
 \section{Grundlagen}
 \begin{sloppypar}
-In diesem Kapitel wird beschrieben, was Performance für Anwendungszweck des Scanners bedeutet.
-Danach wird auf die Arbeitsweise des Scanners eingegangen, insofern es für das Verständnis notwendig ist.
+In diesem Kapitel wird beschrieben, was Performance für den Anwendungszweck des Scanners bedeutet.
+Um ein besseres Verständnis für die Arbeitsweise des Scanners zu schaffen, wird diese anschließend näher erläutert.
 
 \noindent Es wird auf den aktuellen Stand der Forschung im Bezug auf Scheduling Algorithmen eingegangen.
 Zuletzt wird ein kurzer Überblick über den Aufbau der Arbeit gegeben.
 
 \subsection{Performance}
 Wichtige Metriken für die Bewertung von CPU-Scheduling-Algorithmen sind \cite[S.~204--205]{Silberschatz:2018}, \cite[S.~154]{Tanenbaum:2015}:
-\begin{itemize}
-  \item \textbf{CPU Utilization:} Das Ziel ist es, den Prozessor so beschäftigt wie möglich zu halten. In realen Systemen sollte die Auslastung zwischen 40 \% (leicht belastet) und 90 \% (stark belastet) liegen.
-  \item \textbf{Throughput:} Dies ist die Anzahl der Prozesse, die pro Zeiteinheit abgeschlossen werden.
-  \item \textbf{Turnaround Time:} Dies beschreibt die Zeitspanne von der Einreichung eines Prozesses bis zu seinem Abschluss.
-  \item \textbf{Waiting Time:} Die Zeitspanne, die ein Prozess in der Warteschlange verbringt.
-\end{itemize}
+
+\paragraph{CPU-Utilization}
+Das Ziel ist es, den Prozessor so beschäftigt wie möglich zu halten.
+In realen Systemen sollte die Auslastung zwischen 40\,\% (leicht belastet) und 90\,\% (stark belastet) liegen.
+
+\paragraph{Throughput}
+Dies ist die Anzahl der Prozesse, die pro Zeiteinheit abgeschlossen werden.
+
+\paragraph{Turnaround Time}
+Dies beschreibt die Zeitspanne von der Einreichung eines Prozesses bis zu seinem Abschluss.
+
+\paragraph{Waiting Time}
+Die Zeitspanne, die ein Prozess in der Warteschlange verbringt.
 
 \vspace{7.56mm}
 
 \noindent Wenn man den gesamten Prozess betrachtet, treten andere Metriken in den Vordergrund:
-\begin{itemize}
-  \item \textbf{RAM Utilization:} Die Auslastung des Hauptspeichers. Für Ressourcen, die Anfragen bedienen, ist die Auslastung ein Maß dafür,
-   wie beschäftigt eine Ressource ist, basierend darauf, wie viel Zeit sie in einem gegebenen Intervall aktiv Arbeit verrichtet hat.
-   Für Ressourcen, die Speicher bereitstellen, kann sich die Auslastung auf die verbrauchte Kapazität, in diesem Fall den Hauptspeicher, 
-   beziehen \cite[S.~22]{Gregg:2020}.
-  \item \textbf{Runtime:} Die gesamte Ausführungszeit des Prozesses. Hennessy und Patterson \cite[S.~39--40]{Hennessy:2019} schreiben, dass die Ausführungszeit als das einzig konsistente und zuverlässige Maß für die Leistung gilt. 
-\end{itemize}
+
+\paragraph{RAM-Utilization}
+Die Auslastung des Hauptspeichers. Für Ressourcen, die Anfragen bedienen, ist die Auslastung ein Maß dafür,
+wie beschäftigt eine Ressource ist, basierend darauf, wie viel Zeit sie in einem gegebenen Intervall aktiv Arbeit verrichtet hat.
+Für Ressourcen, die Speicher bereitstellen, kann sich die Auslastung auf die verbrauchte Kapazität, in diesem Fall den Hauptspeicher,
+beziehen \cite[S.~22]{Gregg:2020}.
+
+\paragraph{Runtime}
+Die gesamte Ausführungszeit des Prozesses.
+Hennessy und Patterson \cite[S.~39--40]{Hennessy:2019} führen aus,
+dass die Ausführungszeit als das einzig konsistente und zuverlässige Maß für die Leistung gilt.
+
+\vspace{7.56mm}
 
 \noindent Die Definition der Performance ist stark von dem zu bewertenden System abhängig.
 In dieser Arbeit wird die Performance des Scanners nach dessen Leistung in den aufgezählten Metriken bewertet. 
@@ -123,10 +138,18 @@ In dieser Arbeit wird die Performance des Scanners nach dessen Leistung in den a
 Der Scanner basiert auf zwei zentralen Komponententypen, deren Zusammenwirken den Arbeitsablauf definiert. 
 \marginpar{Diese Darstellung ist eine Abstraktion der relevanten Arbeitsweise, die sich auf die für das Verständnis wesentlichen Kernaspekte fokussiert.}
 
-\begin{itemize}
-  \item \textbf{Modul:} Module sind autonome Funktionseinheiten, die sequenziell abgearbeitet werden. Ein Modul (z.\,B. \enquote{User Account Check}) identifiziert spezifische Systemressourcen, instanziiert diese als Objekte und initiiert deren Untersuchung \cite{thor:modules}.
-  \item \textbf{Feature:} Features werden kontextabhängig aktiviert, sobald ein Objekt eines bestimmten Typs untersucht wird. Sie können ihrerseits neue Objekte generieren. Ein \enquote{File System Scan}-Modul kann beispielsweise ein Objekt für eine Archivdatei (.zip) erzeugen. Bei dessen Analyse wird das \enquote{Archive Scan}-Feature aktiv, welches den Inhalt entpackt und für jede enthaltene Datei ein neues Objekt instanziiert. Dieser Prozess setzt sich rekursiv fort \cite{thor:features}.
-\end{itemize}
+\paragraph{Modul}
+Module sind autonome Funktionseinheiten, die sequenziell abgearbeitet werden.
+Ein Modul (z.\,B. \enquote{User Account Check}) identifiziert spezifische Systemressourcen,
+instanziiert diese als Objekte und initiiert deren Untersuchung \cite{thor:modules}.
+
+\paragraph{Feature}
+Features werden kontextabhängig aktiviert, sobald ein Objekt eines bestimmten Typs untersucht wird.
+Sie können ihrerseits neue Objekte generieren.
+Ein \enquote{File System Scan}-Modul kann beispielsweise ein Objekt für eine Archivdatei (.zip) erzeugen.
+Bei dessen Analyse wird das \enquote{Archive Scan}-Feature aktiv,
+welches den Inhalt entpackt und für jede enthaltene Datei ein neues Objekt instanziiert.
+Dieser Prozess setzt sich rekursiv fort \cite{thor:features}.
 
 \noindent Der Scanner nutzt ein objektbasiertes, synchrones Multithreading-Scheduling. Jedes Modul kapselt hierfür einen eigenen primitiven Scheduler, bestehend aus einer Warteschlange und einem Threadpool. Während der Systemuntersuchung generiert das Modul initiale Objekte und reiht diese in die Warteschlange ein. Die Worker des Threadpools entnehmen die Objekte und führen die für den jeweiligen Objekttyp registrierten Features aus.
 
@@ -183,7 +206,7 @@ Der Scanner basiert auf zwei zentralen Komponententypen, deren Zusammenwirken de
 \node[process, below=20mm of queue] (process) {Verarbeite Objekt};
 \node[decision, below=of process] (select) {Features für\\Objekttyp?};
 \node[process, below=of select] (run) {Features ausführen};
-\node[decision, below=of run] (newobj) {Neue Kind-\\Objekte?};
+\node[decision, below=of run] (newobj) {Neue Kind-\\objekte?};
 \node[process, below=of newobj] (finish) {Objekt abgeschlossen};
 
 % Connections
@@ -223,6 +246,7 @@ Der Scanner basiert auf zwei zentralen Komponententypen, deren Zusammenwirken de
 
 
 \subsection{Stand der Wissenschaft: Scheduler}
-
+TODO!
 \subsection{Aufbau der Arbeit}
+TODO!
 \end{sloppypar}
