@@ -90,7 +90,7 @@ im Folgenden als Scanner bezeichnet, zu optimieren,
 indem ein task-basierter Scheduler implementiert wird.
 \end{sloppypar}
 
-\section{Grundlagen}
+\chapter{Grundlagen}
 \begin{sloppypar}
 In diesem Kapitel wird beschrieben, was Performance für den Anwendungszweck des Scanners bedeutet.
 Um ein besseres Verständnis für die Arbeitsweise des Scanners zu schaffen, wird diese anschließend näher erläutert.
@@ -98,7 +98,7 @@ Um ein besseres Verständnis für die Arbeitsweise des Scanners zu schaffen, wir
 \noindent Es wird auf den aktuellen Stand der Forschung im Bezug auf Scheduling Algorithmen eingegangen.
 Zuletzt wird ein kurzer Überblick über den Aufbau der Arbeit gegeben.
 
-\subsection{Performance}
+\section{Performance}
 Wichtige Metriken für die Bewertung von CPU-Scheduling-Algorithmen sind \cite[S.~204--205]{Silberschatz:2018}, \cite[S.~154]{Tanenbaum:2015}:
 
 \paragraph{CPU-Utilization}
@@ -134,7 +134,7 @@ dass die Ausführungszeit als das einzig konsistente und zuverlässige Maß für
 \noindent Die Definition der Performance ist stark von dem zu bewertenden System abhängig.
 In dieser Arbeit wird die Performance des Scanners nach dessen Leistung in den aufgezählten Metriken bewertet. 
 
-\subsection{Arbeitsweise des Scanners}
+\section{Arbeitsweise des Scanners}
 Der Scanner basiert auf zwei zentralen Komponententypen, deren Zusammenwirken den Arbeitsablauf definiert. 
 \marginpar{Diese Darstellung ist eine Abstraktion der relevanten Arbeitsweise, die sich auf die für das Verständnis wesentlichen Kernaspekte fokussiert.}
 
@@ -160,7 +160,7 @@ Dieser Prozess setzt sich rekursiv fort \cite{thor:features}.
 
 \noindent Abbildung \ref{fig:scanner-workflow} zeigt den beschriebenen Arbeitsablauf des Scanners.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \resizebox{\textwidth}{!}{\begin{tikzpicture}[
     >=Latex,
@@ -245,8 +245,113 @@ Dieser Prozess setzt sich rekursiv fort \cite{thor:features}.
 
 
 
-\subsection{Stand der Wissenschaft: Scheduler}
-TODO!
+\section{Stand der Technik: Scheduling-Verfahren}
+
+Scheduling-Algorithmen für Multithreading in Prozessen sind seit mehreren Jahrzehnten Gegenstand intensiver Forschung. 
+Bereits das Standardwerk \textit{Theory of Scheduling} aus dem Jahr 1967 \cite{Conway:1967} legte zentrale mathematische Grundlagen für das Scheduling in modernen Betriebssystemen. 
+Darin analysieren Conway et al. grundlegende Konzepte wie Prioritätsregeln, Präemption (Unterbrechbarkeit) von Tasks sowie warteschlangentheoretische Modelle im Kontext von Mehrprozessor-Systemen. 
+Auf dieser Basis wurden die Eigenschaften klassischer Scheduling-Strategien wie Round Robin oder Shortest Job First formal beschrieben und hinsichtlich ihrer Leistungsmerkmale analysiert. 
+Die Funktionsweise deterministischer Verfahren sowie grundlegender Priorisierungsschemata gilt daher heute als umfassend untersucht und theoretisch fundiert.
+
+\vspace{7.56mm}
+
+\noindent Der Fokus dieses Abschnitts liegt auf den für diese Arbeit relevanten Scheduling-Verfahren sowie deren Einordnung in den spezifischen Kontext des Scanners.
+
+\subsection{Work-Sharing und Work-Stealing}
+
+Die effiziente Planung dynamisch wachsender paralleler Berechnungen auf modernen Multiprozessorsystemen erfordert ein Gleichgewicht zwischen einer hohen Prozessor-Auslastung sowie einem geringen Speicherbedarf und Kommunikations-Overhead.
+In der Literatur zum dynamischen Task-Scheduling haben sich hierfür zwei grundlegende Lastverteilungsstrategien etabliert: 
+\textit{Work Sharing}, bei dem Arbeit aktiv auf Worker verteilt wird, und \textit{Work Stealing}, bei dem inaktive Worker Aufgaben von anderen Workern übernehmen.
+
+\vspace{7.56mm}
+
+\noindent Die folgenden Erläuterungen basieren auf der Arbeit \textit{Scheduling Multithreaded Computations by Work Stealing} von Blumofe und Leiserson \cite[S.~721--746]{Blumofe.1999}. 
+Diese untersucht das Scheduling von Threads in parallelen Programmen und ist direkt auf den Kontext des in dieser Arbeit betrachteten Scanners übertragbar.
+
+\vspace{7.56mm}
+
+\noindent Beim Work Sharing versucht der Scheduler aktiv, neu erzeugte Tasks auf andere, potenziell unterausgelastete Worker zu verteilen. 
+Im Gegensatz dazu geht beim Work Stealing die Initiative von den leerlaufenden Workern aus: 
+Ein Worker, der keine Arbeit mehr besitzt, versucht Aufgaben aus der Warteschlange eines anderen Workers zu übernehmen. 
+Dieser Ansatz gilt als kommunikationseffizienter, da Migrationen von Tasks nur auftreten, wenn ein Worker tatsächlich untätig ist.
+
+\vspace{7.56mm}
+
+\noindent Der Work-Stealing-Ansatz wurde bereits in den 1980er Jahren als Heuristik vorgeschlagen. 
+Erst Blumofe und Leiserson lieferten jedoch eine formale Analyse mit nachweisbar guten Schranken für Ausführungszeit, Speicherbedarf und Kommunikationsaufwand. 
+Der von ihnen beschriebene Algorithmus basiert auf einer dezentralen Datenstruktur, der sogenannten \textit{Ready Deque}. 
+Dabei verwaltet jeder Worker seine Threads in einer doppelt zugänglichen Warteschlange (Deque), die an zwei Enden, \textit{top} und \textit{bottom}, zugänglich ist.
+
+\vspace{7.56mm}
+
+\noindent Der jeweilige Worker arbeitet sein Deque nach einem Stack-Prinzip ab: Neue Kind-Tasks werden am unteren Ende eingefügt und auch von dort wieder entnommen. 
+Dieses Vorgehen begünstigt die Datenlokalität.
+
+\noindent Ein untätiger Worker hingegen stiehlt Aufgaben vom oberen Ende der Deque eines zufällig ausgewählten Workers. 
+Dadurch werden Konflikte beim Zugriff auf die Datenstruktur reduziert und gleichzeitig die Datenlokalität begünstigt.
+
+\vspace{7.56mm}
+
+\noindent Für die Klasse der sogenannten \textit{fully strict computations}, also Berechnungsstrukturen, 
+bei denen alle Abhängigkeiten eines Threads ausschließlich zu seinem direkten Elternthread führen, 
+konnten starke Effizienzgarantien gezeigt werden. 
+Die erwartete Ausführungszeit auf $P$ Workern beträgt
+\begin{equation}
+T_1 / P + O(T_\infty),
+\end{equation}
+\noindent wobei $T_1$ die gesamte serielle Ausführungszeit (Work) und $T_\infty$ die kritische Pfadlänge der Berechnung (Critical Path Length) beschreibt.
+
+\vspace{7.56mm}
+
+\noindent Darüber hinaus weist der Algorithmus beweisbar effiziente Eigenschaften bezüglich des Speicherbedarfs auf. 
+Der benötigte Speicherbedarf ist durch $S_1 \cdot P$ nach oben beschränkt, wobei $S_1$ den minimalen seriellen Speicherbedarf bezeichnet. 
+Diese Schranke ist existentiell optimal (bis auf einen konstanten Faktor) und garantiert eine lediglich lineare Expansion des Speichers 
+im Verhältnis zur Anzahl der eingesetzten Worker $P$. Dies verhindert ein unkontrolliertes Wachstum der Speicherressourcen und stellt sicher, 
+dass der Bedarf nicht, 
+wie bei naiven Scheduling-Strategien oder Work-Sharing-Ansätzen möglich, unkontrolliert ansteigt.
+
+
+\subsection{First-In-First-Out}
+
+
+\subsection{Shortest-Job-First}
+\noindent In dieser Sektion wird sich auf die Erläuterungen von Abraham Silberschatz et al. \cite{Silberschatz:2018} bezogen.
+
+\noindent Der Shortest-Job-First (SJF) Scheduler ist ein Scheduling-Algorithmus, 
+der Tasks basierend auf der Länge ihrer Burst Time = Turnaround Time - Waiting Time priorisiert.
+Jedem Task wird die Länge seiner Burst Time zugeordnet. 
+Sobald ein Worker frei ist, weist der Scheduler ihm den Task zu, welcher die kürzeste Burst-Time benötigt.
+Falls zwei Tasks identische Burst Time haben, wird in der Regel das First-Come, First-Served (FCFS) Verfahren als Entscheidungshilfe genutzt.
+
+\vspace{7.56mm}
+
+\noindent SJF ist beweisbar optimal, da es für eine gegebene Menge von Tasks die minimale durschnittliche Wartezeit liefert \cite{Silberschatz:2018}.
+Indem kurze Prozesse vor langen ausgeführt werden, verringert sich die Wartezeit der kurzen Tasks stärker, als sich die der langen Aufgaben erhöht.
+
+\vspace{7.56mm}
+
+\noindent Der Algorithmus kann in zwei Formen implementiert werden:
+ \begin{enumerate}
+    \item Nicht-präemptiv (Nonpreemptive): Ein laufender Task bleibt auf dem Worker, bis er freiwillig beendet oder blockiert.
+    \item Präemptiv (Preemptive): Wenn ein neuer Prozess in die Warteschlange eintritt,
+    dessen nächster Burst kürzer ist als die verbleibende Restzeit des aktuell laufenden Prozesses, wird dieser unterbrochen.
+ \end{enumerate}
+ 
+\vspace{7.56mm}
+
+\noindent Hierzu können je nach verfügbaren Daten verschiedene Ansätze gewählt werden.
+Da die exakte Dauer der nächsten Burst Time im Voraus nicht bekannt ist, 
+wird SJF in der Praxis oft durch Vorhersagen approximiert. Hierzu wird exponentieller Durchschnitt der vergangenen Bursts verwendet, 
+um den nächsten Wert zu schätzen. Je nach vorhandenen Daten werden verschiedene Ansätze gewählt.
+Häufig erfolgt die Berechnung erfolgt nach der Formel:
+\begin{equation}
+    \tau_{n+1} = \alpha t_n + (1 - \alpha)\tau_n
+\end{equation}
+\noindent Dabei stellt $t_n$ die Länge des jüngsten Bursts dar, während $\tau_{n+1}$ den vorhergesagten Wert für den nächsten Burst repräsentiert. 
+Der Parameter $\alpha$ (typischerweise $1/2$) steuert das relative Gewicht der jüngsten Vergangenheit gegenüber der historischen Schätzung.
+
+
+
 \subsection{Aufbau der Arbeit}
 TODO!
 \end{sloppypar}

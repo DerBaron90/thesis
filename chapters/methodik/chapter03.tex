@@ -491,9 +491,18 @@ oder nachgelagerte Verarbeitungsschritte anstoßen.
 
 
 \section{Die Auswahl und Implementierung der Scheduling-Algorithmen}
-Die Auswahl ist auf folgende Scheduler Varianten gefallen:
+
+Hier reinschreiben, dass ich auch andere Scheduling Algorithmen probiert habe, diese aber direkt schlechtere Ergebnisse produziert haben.
+Begründen, warum diese Scheduling Algorithmen ausgewählt wurden im Sinne:
+"Es gibt extrem viele Algorithmen, kein Anspruch auf Vollständigkeit, 
+Die Auswahl ist auf folgende Scheduler Varianten gefallen weil ...
+Andere Algorithmen können potentiell bessere Ergebnisse bringen, müssten getestet werrden
  \begin{enumerate}
-    \item 
+    \item First-In-First-Out (FIFO)
+    \item Shortest-Subtree-Time-First (SSTF)
+    Schnellere Antwortzeit, geringere synchrone Verarbeitungsrate
+    \item Work-Stealing kombiniert mit Shortest-Subtree-Time-First (WS+SSTF)
+    Schnellere Antwortzeit, geringere synchrone Verarbeitungsrate, kein Overhead durch Locks auf Warteschlange
  \end{enumerate}
 
 \end{sloppypar}
