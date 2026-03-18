@@ -251,28 +251,30 @@ Scheduling-Algorithmen für Multithreading in Prozessen sind seit mehreren Jahrz
 Bereits das Standardwerk \textit{Theory of Scheduling} aus dem Jahr 1967 \cite{Conway:1967} legte zentrale mathematische Grundlagen für das Scheduling in modernen Betriebssystemen. 
 Darin analysieren Conway et al. grundlegende Konzepte wie Prioritätsregeln, Präemption (Unterbrechbarkeit) von Tasks sowie warteschlangentheoretische Modelle im Kontext von Mehrprozessor-Systemen. 
 Auf dieser Basis wurden die Eigenschaften klassischer Scheduling-Strategien wie Round Robin oder Shortest Job First formal beschrieben und hinsichtlich ihrer Leistungsmerkmale analysiert. 
-Die Funktionsweise deterministischer Verfahren sowie grundlegender Priorisierungsschemata gilt daher heute als umfassend untersucht und theoretisch fundiert.
+Die Funktionsweise deterministischer Verfahren sowie grundlegender Priorisierungsschemata gelten daher heute als umfassend untersucht und theoretisch fundiert.
 
 \vspace{7.56mm}
 
-\noindent Der Fokus dieses Abschnitts liegt auf den für diese Arbeit relevanten Scheduling-Verfahren sowie deren Einordnung in den spezifischen Kontext des Scanners.
+\noindent Der Fokus dieses Abschnitts liegt auf den für diese Arbeit relevanten Scheduling-Verfahren, 
+deren Einordnung in den spezifischen Kontext des Scanners, 
+sowie grundlegenden Informationen zu einem Paradigma der Lastverteilung.
 
 \subsection{Work-Sharing und Work-Stealing}
 
 Die effiziente Planung dynamisch wachsender paralleler Berechnungen auf modernen Multiprozessorsystemen erfordert ein Gleichgewicht zwischen einer hohen Prozessor-Auslastung sowie einem geringen Speicherbedarf und Kommunikations-Overhead.
 In der Literatur zum dynamischen Task-Scheduling haben sich hierfür zwei grundlegende Lastverteilungsstrategien etabliert: 
 \textit{Work Sharing}, bei dem Arbeit aktiv auf Worker verteilt wird, und \textit{Work Stealing}, bei dem inaktive Worker Aufgaben von anderen Workern übernehmen.
-
+\marginpar{Work Sharing lässt sich mit dem Push-Prinzip und Work Stealing mit dem Pull-Prinzip vergleichen, bekannt aus Logistik, Supply-Chain-Management und agilen Vorgehensmodellen.}
 \vspace{7.56mm}
 
 \noindent Die folgenden Erläuterungen basieren auf der Arbeit \textit{Scheduling Multithreaded Computations by Work Stealing} von Blumofe und Leiserson \cite[S.~721--746]{Blumofe.1999}. 
-Diese untersucht das Scheduling von Threads in parallelen Programmen und ist direkt auf den Kontext des in dieser Arbeit betrachteten Scanners übertragbar.
+Diese untersucht das Scheduling von Threads in parallelen Programmen und ist auf den Kontext des in dieser Arbeit betrachteten Scanners übertragbar.
 
 \vspace{7.56mm}
 
 \noindent Beim Work Sharing versucht der Scheduler aktiv, neu erzeugte Tasks auf andere, potenziell unterausgelastete Worker zu verteilen. 
 Im Gegensatz dazu geht beim Work Stealing die Initiative von den leerlaufenden Workern aus: 
-Ein Worker, der keine Arbeit mehr besitzt, versucht Aufgaben aus der Warteschlange eines anderen Workers zu übernehmen. 
+Ein Worker, der keine Arbeit mehr besitzt, versucht Aufgaben aus der Warteschlange eines anderen Workers zu übernehmen.
 Dieser Ansatz gilt als kommunikationseffizienter, da Migrationen von Tasks nur auftreten, wenn ein Worker tatsächlich untätig ist.
 
 \vspace{7.56mm}
@@ -311,39 +313,91 @@ dass der Bedarf nicht,
 wie bei naiven Scheduling-Strategien oder Work-Sharing-Ansätzen möglich, unkontrolliert ansteigt.
 
 
-\subsection{First-In-First-Out}
 
+\subsection{First-In, First-Out}
 
-\subsection{Shortest-Job-First}
-\noindent In dieser Sektion wird sich auf die Erläuterungen von Abraham Silberschatz et al. \cite{Silberschatz:2018} bezogen.
-
-\noindent Der Shortest-Job-First (SJF) Scheduler ist ein Scheduling-Algorithmus, 
-der Tasks basierend auf der Länge ihrer Burst Time = Turnaround Time - Waiting Time priorisiert.
-Jedem Task wird die Länge seiner Burst Time zugeordnet. 
-Sobald ein Worker frei ist, weist der Scheduler ihm den Task zu, welcher die kürzeste Burst-Time benötigt.
-Falls zwei Tasks identische Burst Time haben, wird in der Regel das First-Come, First-Served (FCFS) Verfahren als Entscheidungshilfe genutzt.
+\noindent In diesem Abschnitt wird auf die Erläuterungen von Hansen in \textit{Operating System Principles} von 1973 \cite{Hansen} Bezug genommen.
 
 \vspace{7.56mm}
 
-\noindent SJF ist beweisbar optimal, da es für eine gegebene Menge von Tasks die minimale durschnittliche Wartezeit liefert \cite{Silberschatz:2018}.
-Indem kurze Prozesse vor langen ausgeführt werden, verringert sich die Wartezeit der kurzen Tasks stärker, als sich die der langen Aufgaben erhöht.
+\noindent Der \textit{First-In, First-Out} (FIFO)-Scheduling-Algorithmus, auch als \textit{First-Come, First-Served} (FCFS) bezeichnet, stellt einen elementaren nicht-präemptiven Scheduling-Ansatz dar.
+Sein grundlegendes Prinzip besteht in der strikt sequenziellen Abarbeitung von Tasks entsprechend ihrer Ankunftsreihenfolge.
+Ein Task wird genau dann zur Ausführung ausgewählt, wenn alle zuvor eingetroffenen Tasks vollständig abgearbeitet wurden.
+
+\vspace{7.56mm}
+
+\noindent Die Implementierung erfolgt typischerweise über eine FIFO-Warteschlange, in welche neu eintreffende Tasks am Ende eingefügt werden.
+Der Scheduler selektiert deterministisch stets das am Kopf der Warteschlange befindliche Element.
+Aufgrund des nicht-präemptiven Charakters wird ein Task nach seiner Disposition ohne Unterbrechung ausgeführt, bis entweder seine Ausführung abgeschlossen ist oder eine externe Terminierung erfolgt.
+
+\vspace{7.56mm}
+
+\noindent Das Verhalten des FIFO-Schedulers lässt sich im Rahmen der Warteschlangentheorie analysieren.
+Für die mittlere Wartezeit $W$ ergibt sich dabei folgender Zusammenhang:
+\begin{equation}
+W = \frac{W_0}{1 - \rho}
+\end{equation}
+wobei $W_0$ eine systemspezifische Konstante darstellt und $\rho$ die Systemauslastung beschreibt.
+Diese Beziehung verdeutlicht, dass die mittlere Wartezeit für $\rho \rightarrow 1$ nichtlinear gegen unendlich wächst.
+
+\vspace{7.56mm}
+
+\noindent Ein grundlegender Zusammenhang zwischen der mittleren Anzahl von Prozessen im System $n$, der Ankunftsrate $\lambda$ und der mittleren Verweildauer $W$ wird zudem durch das Gesetz von Little beschrieben:
+\begin{equation}
+n = \lambda \cdot W
+\end{equation}
+
+\vspace{7.56mm}
+
+\noindent Darüber hinaus lässt sich die erwartete Anzahl von Prozessen in der Warteschlange $L$ wie folgt ausdrücken:
+\begin{equation}
+L = \frac{\rho^2}{1 - \rho}
+\end{equation}
+Auch hier zeigt sich, dass für hohe Auslastungen ein starkes Anwachsen der Warteschlangenlänge zu erwarten ist.
+
+\vspace{7.56mm}
+
+\noindent Trotz seiner konzeptionellen Einfachheit und deterministischen Ausführungsreihenfolge weist FIFO signifikante Nachteile hinsichtlich der Performanz der Wartezeiten auf.
+Insbesondere kann es zum sogenannten \textit{Convoy-Effekt} kommen, bei dem lange laufende Tasks nachfolgende kurze Tasks blockieren, was zu erhöhten mittleren Wartezeiten und hoher Varianz führt.
+Im Vergleich zu optimalen Scheduling-Strategien wie \textit{Shortest Job First} ist FIFO daher hinsichtlich der Minimierung der durchschnittlichen Wartezeit suboptimal.
+
+\vspace{7.56mm}
+
+\noindent Ein Vorteil des Verfahrens liegt in seiner einfachen Implementierbarkeit sowie in der strikten Einhaltung der Ankunftsreihenfolge, was eine formale Form der Fairness gewährleistet.
+Diese Fairness geht jedoch nicht mit einer optimalen Ressourcenausnutzung einher.
+
+
+
+\subsection{Shortest-Job-First}
+\noindent In diesem Abschnitt wird auf die Erläuterungen von Abraham Silberschatz et al. in \textit{Operating System Concepts} \cite{Silberschatz:2018} Bezug genommen.
+
+\noindent Der Shortest-Job-First (SJF) Scheduler ist ein Scheduling-Algorithmus, 
+der Tasks basierend auf der Länge ihrer Burst Time priorisiert.
+Jedem Task wird die Länge seiner Burst Time zugeordnet. 
+Sobald ein Worker frei ist, weist der Scheduler ihm den Task zu, welcher die kürzeste Burst-Time benötigt.
+Falls zwei Tasks identische Burst Time haben, wird in der Regel das First-Come, First-Served Verfahren als Entscheidungshilfe genutzt.
+
+\vspace{7.56mm}
+
+\noindent SJF ist unter der Annahme bekannter Burst-Zeiten beweisbar optimal, da es für eine gegebene Menge von Tasks die minimale durchschnittliche Wartezeit liefert \cite{Silberschatz:2018}.
+Indem kurze Tasks vor langen ausgeführt werden, verringert sich die Wartezeit der kurzen Tasks stärker, als sich die der langen Aufgaben erhöht.
 
 \vspace{7.56mm}
 
 \noindent Der Algorithmus kann in zwei Formen implementiert werden:
  \begin{enumerate}
     \item Nicht-präemptiv (Nonpreemptive): Ein laufender Task bleibt auf dem Worker, bis er freiwillig beendet oder blockiert.
-    \item Präemptiv (Preemptive): Wenn ein neuer Prozess in die Warteschlange eintritt,
-    dessen nächster Burst kürzer ist als die verbleibende Restzeit des aktuell laufenden Prozesses, wird dieser unterbrochen.
+    \item Präemptiv (Preemptive): Wenn ein neuer Task in die Warteschlange eintritt,
+    dessen nächster Burst kürzer ist als die verbleibende Restzeit des aktuell laufenden Tasks, wird dieser unterbrochen.
  \end{enumerate}
  
 \vspace{7.56mm}
 
 \noindent Hierzu können je nach verfügbaren Daten verschiedene Ansätze gewählt werden.
 Da die exakte Dauer der nächsten Burst Time im Voraus nicht bekannt ist, 
-wird SJF in der Praxis oft durch Vorhersagen approximiert. Hierzu wird exponentieller Durchschnitt der vergangenen Bursts verwendet, 
-um den nächsten Wert zu schätzen. Je nach vorhandenen Daten werden verschiedene Ansätze gewählt.
-Häufig erfolgt die Berechnung erfolgt nach der Formel:
+wird SJF in der Praxis oft durch Vorhersagen approximiert. Hierzu wird ein exponentieller Durchschnitt der vergangenen Bursts verwendet,
+um den nächsten Wert zu schätzen.
+Häufig erfolgt die Berechnung nach der Formel:
 \begin{equation}
     \tau_{n+1} = \alpha t_n + (1 - \alpha)\tau_n
 \end{equation}
@@ -352,6 +406,29 @@ Der Parameter $\alpha$ (typischerweise $1/2$) steuert das relative Gewicht der j
 
 
 
-\subsection{Aufbau der Arbeit}
-TODO!
+\section{Motivation und Forschungsziel}
+
+\noindent Die in diesem Kapitel dargestellten Scheduling-Verfahren verdeutlichen, dass zwischen Fairness, geringer Wartezeit, hoher Auslastung und moderatem Speicherbedarf Zielkonflikte bestehen.
+Für den in dieser Arbeit betrachteten Scanner ist dieser Zielkonflikt besonders relevant, da bei der rekursiven Verarbeitung von Kindobjekten stark unterschiedliche Task-Laufzeiten auftreten.
+Dadurch können Lastungleichgewichte entstehen, die sowohl die Gesamtlaufzeit als auch die Ressourceneffizienz negativ beeinflussen.
+
+\vspace{7.56mm}
+
+\noindent Vor diesem Hintergrund besteht die Motivation dieser Arbeit darin, das bestehende Scheduling-Konzept des Scanners systematisch zu überarbeiten und dessen Performance messbar zu verbessern.
+Im Zentrum steht die Entwicklung und Evaluation eines task-basierten Schedulers, der eine effizientere Verteilung der anfallenden Arbeit ermöglicht.
+Die wissenschaftliche Zielsetzung ist es, belastbar zu bestimmen, welche Scheduling-Strategie unter den gegebenen Randbedingungen die beste Gesamtwirkung auf Laufzeit- und Ressourceneigenschaften erzielt.
+
+\vspace{7.56mm}
+
+\noindent Daraus leiten sich folgende Forschungsfragen ab:
+\begin{enumerate}
+    \item In welchem Ausmaß lassen sich Laufzeit und Durchsatz des Scanners durch alternative Scheduling-Strategien verbessern?
+    \item Wie wirken sich die verschiedenen Strategien auf CPU- und RAM-Utilization sowie auf die Waiting Time aus?
+    \item Welche Trade-offs ergeben sich zwischen schneller Abarbeitung kurzer Tasks, Fairness der Verarbeitung und Speicherverbrauch?
+\end{enumerate}
+
+\vspace{7.56mm}
+
+\noindent Die Beantwortung dieser Fragen bildet die Grundlage für die methodische Umsetzung in Kapitel~\ref{ch:chapter03}, in dem die Implementierung der Scheduler-Varianten und deren experimentelle Evaluation beschrieben werden.
+
 \end{sloppypar}
