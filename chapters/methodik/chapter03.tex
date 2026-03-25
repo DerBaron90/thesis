@@ -491,18 +491,244 @@ oder nachgelagerte Verarbeitungsschritte anstoßen.
 
 
 \section{Die Auswahl und Implementierung der Scheduling-Algorithmen}
+Die Auswahl der Scheduling-Algorithmen basiert 
+auf einer zielgerichteten Optimierung bestimmter Metriken in einem gegebenen System.
+Es liegt mit dem Scanner ein System vor, in welchem die Tasks asynchron und kontinuierlich dem Scheduler übergeben werden.
+Die Ausführung dieser Tasks soll wenn möglich schnell geschehen, es werden allerdings keine Deadline-Garantien benötigt.
+Präemption wäre theoretisch möglich, benötigt aber Overhead ohne echten Nutzen.
+Die Last-Verteilungsstrategie ist frei wählbar.
 
-Hier reinschreiben, dass ich auch andere Scheduling Algorithmen probiert habe, diese aber direkt schlechtere Ergebnisse produziert haben.
-Begründen, warum diese Scheduling Algorithmen ausgewählt wurden im Sinne:
-"Es gibt extrem viele Algorithmen, kein Anspruch auf Vollständigkeit, 
-Die Auswahl ist auf folgende Scheduler Varianten gefallen weil ...
-Andere Algorithmen können potentiell bessere Ergebnisse bringen, müssten getestet werrden
+\vspace{7.56mm}
+
+\noindent Die Anzahl an Scheduling-Algorithmen, welche diese Anforderungen erfüllen, ist extrem hoch.
+Weitere Empfehlungen für vielversprechende Scheduling-Algorithmen, 
+welche aufgrund der begrenzten Ressourcen dieser Arbeit nicht getestet werden konnten, 
+sind im Kapitel 6 Ausblick zu finden.
+
+\noindent Es wird in dieser Arbeit kein Anspruch auf Vollständigkeit in Anspruch genommen.
+
+\vspace{7.56mm}
+Die Auswahl ist auf folgende Scheduling-Algorithmen gefallen:
+
  \begin{enumerate}
     \item First-In-First-Out (FIFO)
     \item Shortest-Subtree-Time-First (SSTF)
-    Schnellere Antwortzeit, geringere synchrone Verarbeitungsrate
     \item Work-Stealing kombiniert mit Shortest-Subtree-Time-First (WS+SSTF)
-    Schnellere Antwortzeit, geringere synchrone Verarbeitungsrate, kein Overhead durch Locks auf Warteschlange
  \end{enumerate}
+Es wurde des weiteren ein adaptiver Multi-Level-Feedback-Warteschlangen-Scheduler
+und ein FIFO Scheduler mit adaptiven Backpressure gestestet.
+Diese zwei Scheduling-Algorithmen wurden aufgrund von schlechten Ergebnissen bei ersten Benchmarks verworfen und es wurden keine Testreihen angelegt.
+
+
+\subsection{Formale Notation und Vergleichsrahmen}
+
+Zur Sicherstellung der Vergleichbarkeit verwenden alle Scheduler-Varianten denselben formalen Rahmen.
+
+\paragraph{Notation}
+\begin{align*}
+W &:= \max(1,\text{konfigurierter Threadcount}) \\
+N(t) &:= \text{Anzahl akzeptierter, noch nicht abgeschlossener Tasks zum Zeitpunkt } t
+\end{align*}
+
+\noindent Für jede Scheduler-Variante $x \in \{\mathrm{FIFO},\mathrm{SSTF},\mathrm{WS}\}$ wird die Queue-Kapazität separat als $C_x$ angegeben, da sie implementierungsabhängig ist.
+
+\noindent Für jeden Task $\tau$ werden folgende Zeitpunkte betrachtet:
+\[
+t_{\mathrm{enqueue}}(\tau),\quad t_{\mathrm{start}}(\tau),\quad t_{\mathrm{end}}(\tau).
+\]
+
+\noindent Die Warteschlangenzeit ist definiert als
+\[
+t_{\mathrm{queue}}(\tau)=
+\begin{cases}
+t_{\mathrm{start}}(\tau)-t_{\mathrm{enqueue}}(\tau), & \text{bei asynchroner Queue-Ausführung}\\
+0, & \text{bei synchroner Inline-Ausführung}.
+\end{cases}
+\]
+
+\noindent Die exklusive Laufzeit lautet
+\[
+t_{\mathrm{exec}}^{\mathrm{exkl}}(\tau)=
+\max\!\Bigl(0,\,(t_{\mathrm{end}}(\tau)-t_{\mathrm{start}}(\tau))-t_{\mathrm{sync\text{-}child}}(\tau)\Bigr),
+\]
+wobei $t_{\mathrm{sync\text{-}child}}(\tau)$ die kumulierte Laufzeit synchron ausgeführter Kind-Tasks derselben Ausführungskette bezeichnet.
+
+\paragraph{Worker- und Parallelitätsmodell}
+Es werden langlebige Worker-Goroutines betrieben. Die effektive Zahl gleichzeitig laufender Task-Ausführungen wird durch eine Semaphore auf höchstens $W$ begrenzt.
+Damit sind Einreihungs- und Entnahmeordnung von Abschlussordnung zu unterscheiden: Abschlussreihenfolgen bleiben bei Parallelität grundsätzlich nichtdeterministisch.
+
+\paragraph{Abschlussbedingung}
+Ein Task erhöht beim erfolgreichen Akzeptieren den Zähler $N$ um $1$ und dekrementiert $N$ genau einmal beim Abschluss (normal, abgebrochen oder Fallback beendet).
+Ein Scan ist genau dann abgeschlossen, wenn $N=0$ erreicht wird; die Wartesynchronisation erfolgt über eine Condition Variable.
+
+\paragraph{Backpressure}
+Bei Enqueue-Fehlschlag erfolgt synchroner Fallback (Inline-Ausführung im Caller-Kontext).
+Ein Enqueue-Fehlschlag kann je nach Implementierung durch volle oder geschlossene Queue entstehen.
+Dies begrenzt Queue-Wachstum, verändert aber globale Ausführungsordnung und Fairnesseigenschaften.
+
+% ============================================================
+\subsection{FIFO-Scheduler}
+
+\paragraph{Zielsetzung}
+Der FIFO-Scheduler dient als Baseline mit minimaler struktureller Komplexität.
+
+\paragraph{Charakteristische Eigenschaften}
+\begin{itemize}
+\item Einfache Baseline mit klarer Queue-Semantik
+\item FIFO-Ordnung im Queue-Pfad
+\item Potenziell erhöhte Wartezeiten bei stark heterogenen Taskkosten
+\item Keine globale strikte FIFO-Abschlussreihenfolge
+\end{itemize}
+
+\paragraph{Datenstrukturen}
+Es wird eine zentrale thread-sichere FIFO-Warteschlange verwendet.
+Für den FIFO-Scheduler wurden zwei Implementierungsvarianten getestet, 
+die in ihrer Logik identisch sind und sich ausschließlich in der Kapazität der zentralen Warteschlange unterscheiden:
+\[
+C_{\mathrm{FIFO50}}=50\cdot W
+\]
+und
+\[
+C_{\mathrm{FIFO500}}=500\cdot W
+\]
+
+\paragraph{Ordnungs- und Determinismuseigenschaft}
+FIFO gilt für den asynchronen Dequeue-Pfad der zentralen Warteschlange.
+Eine globale strikte FIFO-Ordnung über alle Tasks gilt nicht, da
+mehrere Worker parallel arbeiten und
+bei Enqueue-Fehlschlag synchroner Fallback aktiv wird.
+
+\paragraph{Einreichungspfad}
+\begin{enumerate}
+\item Falls Kontext beendet: Rückgabe mit abgeschlossenem Handle.
+\item Sonst: $N \gets N+1$.
+\item Bei Sync-Kontext: Inline-Ausführung, $N \gets N-1$.
+\item Andernfalls: nicht-blockierender Enqueue-Versuch in Warteschlange.
+\item Bei Enqueue-Fehlschlag: synchroner Fallback, $N \gets N-1$.
+\end{enumerate}
+
+\paragraph{Ausführungspfad}
+Worker warten blockierend auf Queue-Elemente. Nach Entnahme wird ein Semaphore-Token angefordert. 
+Bei Fehlschlag, also zum Beispiel bei abgebrochenenen Kontext, wird der Task abgeschlossen.
+Bei Erfolg: Queue-Zeit messen, Kontext anreichern, Task ausführen, exklusive Laufzeit berechnen, Statistik schreiben, Handle schließen, Semaphore freigeben, $N \gets N-1$.
+
+
+% ============================================================
+\subsection{Shortest-Subtree-Time-First (SSTF)}
+
+\paragraph{Zielsetzung}
+SSTF priorisiert Tasks über eine vordefinierte Laufzeitheuristik, um die mittlere Wartezeit zu reduzieren.
+Die Priorität eines Tasks entspricht der Summe aus seiner eigenen Ausführungszeit 
+und der kumulierten Ausführungszeit aller Nachkommen-Tasks.
+Eine dynamische Anpassung der Prioritätstabelle während der Laufzeit wäre prinzipiell realisierbar, 
+wurde in dieser Arbeit jedoch aufgrund begrenzter zeitlicher Ressourcen nicht berücksichtigt.
+Dieser Scheduling-Algorithmus wurde gewählt, 
+um die Turnaround Time zu verkürzen und zugleich den Anteil synchron verarbeiteter Tasks gering zu halten.
+
+\paragraph{Charakteristische Eigenschaften}
+\begin{itemize}
+\item Geringere mittlere Wartezeit bei gut passender Prioritätsheuristik
+\item Bevorzugung kurzer Subtrees gemäß Prioritätstabelle
+\item Starvation-Risiko für lange Tasks
+\item Empfindlich gegenüber Fehlklassifikation in $P$
+\end{itemize}
+
+\paragraph{Prioritätsmodell}
+Mit
+\[
+P:\mathcal{T}\rightarrow \mathbb{N}
+\]
+ergibt sich für Task $\tau$:
+\[
+prio(\tau)=
+\begin{cases}
+P(type(\tau)), & \text{falls bekannt}\\
+P_{\mathrm{default}}, & \text{sonst}.
+\end{cases}
+\]
+Die Prioritäten stammen aus einer statischen Priority-Map, die aus mehreren Scans abgeleitet und über diese gemittelt wurde.
+
+\paragraph{Datenstruktur}
+Zentrale, thread-sichere Prioritätswarteschlange auf Basis eines Min-Heaps mit Kapazität
+\[
+C_{\mathrm{SSTF}}=50\cdot W,
+\]
+die ein effizientes Einfügen und Entnehmen von Tasks in $O(\log n)$ ermöglicht.
+
+\paragraph{Einreichung und Ausführung}
+Einreichungslogik entspricht dem gemeinsamen Rahmen (Kontextprüfung, $N$-Tracking, Sync-Bypass, Fallback).
+Ausführung entnimmt stets einen Task mit höchster Priorität.
+
+% ============================================================
+\subsection{Work-Stealing mit SSTF-Priorisierung}
+
+\paragraph{Zielsetzung}
+Kombination aus lokaler Queue-Verarbeitung und Stealing 
+zur Verbesserung von Skalierbarkeit und Lastverteilung bei Beibehaltung der SSTF-Priorisierung.
+Neben den Vorteilen, welche bereits durch den SSTF-Scheduler entstehen, 
+soll hier der Overhead durch Locks auf eine zentrale Warteschlange verhindert werden.
+
+\paragraph{Charakteristische Eigenschaften}
+\begin{itemize}
+\item Reduzierte zentrale Lock-Contention
+\item Gute Lastverteilung bei ungleichmäßiger Last
+\item Höhere Systemkomplexität
+\end{itemize}
+
+\paragraph{Datenstrukturen}
+Jeder Worker $w_i$ besitzt eine eigene thread-sichere Min-Heap-Queue $Q_i$.
+Die Prioritätsordnung folgt SSTF.
+Die Kapazität pro Worker-Queue beträgt
+\[
+C_{\mathrm{WS,pro\;Worker}}=100,
+\]
+also insgesamt
+\[
+C_{\mathrm{WS,gesamt}}=100\cdot W.
+\]
+
+\paragraph{Einreichungspfad}
+\begin{enumerate}
+\item Kontextprüfung, danach $N \gets N+1$.
+\item Prioritätsbestimmung.
+\item Zielqueue-Wahl: bevorzugt lokale Queue (bei Worker-Kontext), sonst definierte Fallback-Queue.
+\item Falls der Aufrufer ein Worker ist und in die eigene Queue schreibt:
+zunächst nicht-blockierender TryPush, dann Spillover (andere Worker-Queues, danach Modul-Queue), erst danach synchroner Fallback.
+\item Falls der Aufrufer extern ist oder der Modul-Worker einreiht:
+blockierender Push auf die Zielqueue (Backpressure bei voller Queue). Synchroner Fallback nur bei geschlossenem Queue-Zustand.
+\end{enumerate}
+
+\paragraph{Ausführungspfad}
+Worker suchen in folgender Stufenreihenfolge:
+\begin{enumerate}
+\item eigene Queue,
+\item Fallback-/Modul-Queue,
+\item andere Worker-Queues (Stealing mit zufälligem Startindex und zyklischer Suche).
+\end{enumerate}
+Bei gefundenem Task erfolgt Ausführung analog zum gemeinsamen Rahmen (Semaphore, Messung, Abschluss, $N$-Dekrement).
+
+\paragraph{Ordnungs- und Fairnesseigenschaft}
+Lokale Prioritätsordnung ist stark, globale Prioritätsordnung nur approximativ.
+Fairness kann durch lokale Heuristiken und Stealing-Reihenfolgen sinken.
+
+% ============================================================
+\subsection{Validitätsaspekte und Reproduzierbarkeit}
+Es können folgende Konfigurationsparameter angepasst, je nach Scheduling-Algorithmus angepasst werden:
+
+\paragraph{Konfigurationsparameter}
+\begin{itemize}
+\item $W$ (Threadcount-basiert),
+\item Warteschlange-Kapazitäten je Scheduler-Variante,
+\item Prioritätsmap $P$ und $P_{\mathrm{default}}$
+\end{itemize}
+
+\paragraph{Interne Validität}
+Messwerte werden durch Laufzeit-Scheduling, Lastmischung und Fallback-Häufigkeit beeinflusst.
+Vergleiche zwischen Schedulern sind daher nur bei identischer Workload, identischen Stopkriterien und identischer Instrumentierung valide.
+
+\paragraph{Externe Validität}
+Ergebnisse sind auf vergleichbare Task-Granularität, Subtree-Struktur und Systemlast übertragbar. 
+Bei stark abweichenden Lastprofilen ist die eventuell die Verwendung einer adaptiven Implementierung oder eine erneute Kalibrierung von $P$ sinnvoll.
+
 
 \end{sloppypar}
