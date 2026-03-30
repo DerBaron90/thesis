@@ -126,10 +126,12 @@
   \def\bflabel#1{{\acsfont{#1}\hfill}}
   \def\aclabelfont#1{\acsfont{#1}}
 % ****************************************************************************************************
-%\usepackage{pgfplots} % External TikZ/PGF support (thanks to Andreas Nautsch)
+\PassOptionsToPackage{dvipsnames}{xcolor} % needed before tikz to ensure Maroon etc. are available
+\usepackage{pgfplots} % External TikZ/PGF support (thanks to Andreas Nautsch)
+\pgfplotsset{compat=1.18}
+\providecommand{\mathdefault}[1]{#1}
 %\usetikzlibrary{external}
 %\tikzexternalize[mode=list and make, prefix=ext-tikz/]
-\PassOptionsToPackage{dvipsnames}{xcolor} % needed before tikz to ensure Maroon etc. are available
 \usepackage{tikz}
 \usetikzlibrary{positioning, arrows.meta, shapes.geometric, shapes.symbols, fit, backgrounds}
 % ****************************************************************************************************

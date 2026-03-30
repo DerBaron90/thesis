@@ -1,3 +1,697 @@
-\chapter{Ergebnisse und Diskussion}
+\chapter{Ergebnisse}
 \label{ch:chapter04}
+Im Anhang befinden sich weitere Grafiken zu den Messungen, die in diesem Kapitel nicht gezeigt werden. 
+In diesem Kapitel werden die Ergebnisse der Messungen für die verschiedenen Scheduler vorgestellt 
+und miteinander verglichen. Es werden unter anderen die Laufzeit als auch die 
+CPU- und RAM-Auslastung für 1, 4 und 10 Threads dargestellt.
+\begin{sloppypar}
 
+\section{Alter Scheduler (Referenz)}
+
+\begin{table}[H]
+\caption{Übersicht der Ergebnisse des alten Schedulers (Mittelwerte aus $n=20$ Läufen)}
+\label{tab:old-scheduler-uebersicht}
+\centering
+\begingroup
+\setlength{\tabcolsep}{4pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}llrrrrr@{}}
+\toprule
+Threads & OS & Runtime [s] & CPU [\%] & RAM Mittel [MB] & RAM Max [MB] & Runtime CV [\%] \\
+\midrule
+1 & Linux   & 643.43  & 24.00 & 1069.19 & 1670 & 0.60 \\
+4 & Linux   & 266.09  & 55.00 & 1491.63 & 2612 & 0.98 \\
+10 & Linux  & 220.68  & 62.95 & 1866.40 & 3374 & 1.39 \\
+1 & Windows & 2514.14 & 21.00 & 1154.05 & 3798 & 0.34 \\
+4 & Windows & 1213.83 & 46.60 & 1765.75 & 4972 & 2.22 \\
+10 & Windows & 825.78 & 68.50 & 2578.23 & 7585 & 2.49 \\
+\bottomrule
+\end{tabular}%
+}
+\endgroup
+\end{table}
+
+
+
+\subsection{Ein Thread}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/OLD_1T/runtime_bars_combined.pdf}
+\caption{Referenz, 1 Thread: Runtime}
+\label{fig:ref-1t-runtime}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/OLD_1T/ram_timeseries_combined.pdf}
+\caption{Referenz, 1 Thread: RAM-Zeitreihe}
+\label{fig:ref-1t-ram-ts}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/OLD_1T/ram_bars_combined.pdf}
+\caption{Referenz, 1 Thread: RAM-Utilization}
+\label{fig:ref-1t-ram}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/OLD_1T/cpu_timeseries_combined.pdf}
+\caption{Referenz, 1 Thread: CPU-Zeitreihe}
+\label{fig:ref-1t-cpu-ts}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/OLD_1T/cpu_bars_combined.pdf}
+\caption{Referenz, 1 Thread: CPU-Utilization}
+\label{fig:ref-1t-cpu}
+\end{figure}
+
+\subsection{Vier Threads}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/OLD_4T/runtime_bars_combined.pdf}
+\caption{Referenz, 4 Threads: Runtime}
+\label{fig:ref-4t-runtime}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/OLD_4T/ram_timeseries_combined.pdf}
+\caption{Referenz, 4 Threads: RAM-Zeitreihe}
+\label{fig:ref-4t-ram-ts}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/OLD_4T/ram_bars_combined.pdf}
+\caption{Referenz, 4 Threads: RAM-Utilization}
+\label{fig:ref-4t-ram}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/OLD_4T/cpu_timeseries_combined.pdf}
+\caption{Referenz, 4 Threads: CPU-Zeitreihe}
+\label{fig:ref-4t-cpu-ts}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/OLD_4T/cpu_bars_combined.pdf}
+\caption{Referenz, 4 Threads: CPU-Utilization}
+\label{fig:ref-4t-cpu}
+\end{figure}
+
+\subsection{10 Threads}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/OLD_10T/runtime_bars_combined.pdf}
+\caption{Referenz, 10 Threads: Runtime}
+\label{fig:ref-10t-runtime}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/OLD_10T/ram_timeseries_combined.pdf}
+\caption{Referenz, 10 Threads: RAM-Zeitreihe}
+\label{fig:ref-10t-ram-ts}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/OLD_10T/ram_bars_combined.pdf}
+\caption{Referenz, 10 Threads: RAM-Utilization}
+\label{fig:ref-10t-ram}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/OLD_10T/cpu_timeseries_combined.pdf}
+\caption{Referenz, 10 Threads: CPU-Zeitreihe}
+\label{fig:ref-10t-cpu-ts}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/OLD_10T/cpu_bars_combined.pdf}
+\caption{Referenz, 10 Threads: CPU-Utilization}
+\label{fig:ref-10t-cpu}
+\end{figure}
+
+\subsection{Vergleich}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/Thread_Comparison/thread_referenz_cpu.pdf}
+\caption{Referenz: Vergleich der CPU-Utilization über 1, 4 und 10 Threads}
+\label{fig:ref-threadcmp-cpu}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/Thread_Comparison/thread_referenz_ram.pdf}
+\caption{Referenz: Vergleich der RAM-Utilization über 1, 4 und 10 Threads}
+\label{fig:ref-threadcmp-ram}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/Thread_Comparison/thread_referenz_runtime.pdf}
+\caption{Referenz: Vergleich der Runtime über 1, 4 und 10 Threads}
+\label{fig:ref-threadcmp-runtime}
+\end{figure}
+
+\section{FIFO\_50}
+
+\subsection{Ein Thread}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/FIFO_50_1T/runtime_bars_combined.pdf}
+\caption{FIFO 50, 1 Thread: Runtime}
+\label{fig:fifo50-1t-runtime}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/FIFO_50_1T/cpu_bars_combined.pdf}
+\caption{FIFO 50, 1 Thread: CPU-Utilization}
+\label{fig:fifo50-1t-cpu}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/FIFO_50_1T/ram_bars_combined.pdf}
+\caption{FIFO 50, 1 Thread: RAM-Utilization}
+\label{fig:fifo50-1t-ram}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/FIFO_50_1T/cpu_timeseries_combined.pdf}
+\caption{FIFO 50, 1 Thread: CPU-Zeitreihe}
+\label{fig:fifo50-1t-cpu-ts}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/FIFO_50_1T/ram_timeseries_combined.pdf}
+\caption{FIFO 50, 1 Thread: RAM-Zeitreihe}
+\label{fig:fifo50-1t-ram-ts}
+\end{figure}
+
+\subsection{Vier Threads}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/FIFO_50_4T/runtime_bars_combined.pdf}
+\caption{FIFO 50, 4 Threads: Runtime}
+\label{fig:fifo50-4t-runtime}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/FIFO_50_4T/cpu_bars_combined.pdf}
+\caption{FIFO 50, 4 Threads: CPU-Utilization}
+\label{fig:fifo50-4t-cpu}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/FIFO_50_4T/ram_bars_combined.pdf}
+\caption{FIFO 50, 4 Threads: RAM-Utilization}
+\label{fig:fifo50-4t-ram}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/FIFO_50_4T/cpu_timeseries_combined.pdf}
+\caption{FIFO 50, 4 Threads: CPU-Zeitreihe}
+\label{fig:fifo50-4t-cpu-ts}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/FIFO_50_4T/ram_timeseries_combined.pdf}
+\caption{FIFO 50, 4 Threads: RAM-Zeitreihe}
+\label{fig:fifo50-4t-ram-ts}
+\end{figure}
+
+\subsection{10 Threads}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/FIFO_50_10T/runtime_bars_combined.pdf}
+\caption{FIFO 50, 10 Threads: Runtime}
+\label{fig:fifo50-10t-runtime}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/FIFO_50_10T/cpu_bars_combined.pdf}
+\caption{FIFO 50, 10 Threads: CPU-Utilization}
+\label{fig:fifo50-10t-cpu}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/FIFO_50_10T/ram_bars_combined.pdf}
+\caption{FIFO 50, 10 Threads: RAM-Utilization}
+\label{fig:fifo50-10t-ram}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/FIFO_50_10T/cpu_timeseries_combined.pdf}
+\caption{FIFO 50, 10 Threads: CPU-Zeitreihe}
+\label{fig:fifo50-10t-cpu-ts}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/FIFO_50_10T/ram_timeseries_combined.pdf}
+\caption{FIFO 50, 10 Threads: RAM-Zeitreihe}
+\label{fig:fifo50-10t-ram-ts}
+\end{figure}
+
+\subsection{Vergleich}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/Thread_Comparison/thread_fifo_50_runtime.pdf}
+\caption{FIFO 50: Vergleich der Runtime über 1, 4 und 10 Threads}
+\label{fig:fifo50-threadcmp-runtime}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/Thread_Comparison/thread_fifo_50_cpu.pdf}
+\caption{FIFO 50: Vergleich der CPU-Utilization über 1, 4 und 10 Threads}
+\label{fig:fifo50-threadcmp-cpu}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/Thread_Comparison/thread_fifo_50_ram.pdf}
+\caption{FIFO 50: Vergleich der RAM-Utilization über 1, 4 und 10 Threads}
+\label{fig:fifo50-threadcmp-ram}
+\end{figure}
+
+
+\section{FIFO\_500}
+
+\subsection{Ein Thread}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/FIFO_500_1T/runtime_bars_combined.pdf}
+\caption{FIFO 500, 1 Thread: Runtime}
+\label{fig:fifo500-1t-runtime}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/FIFO_500_1T/cpu_bars_combined.pdf}
+\caption{FIFO 500, 1 Thread: CPU-Utilization}
+\label{fig:fifo500-1t-cpu}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/FIFO_500_1T/ram_bars_combined.pdf}
+\caption{FIFO 500, 1 Thread: RAM-Utilization}
+\label{fig:fifo500-1t-ram}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/FIFO_500_1T/cpu_timeseries_combined.pdf}
+\caption{FIFO 500, 1 Thread: CPU-Zeitreihe}
+\label{fig:fifo500-1t-cpu-ts}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/FIFO_500_1T/ram_timeseries_combined.pdf}
+\caption{FIFO 500, 1 Thread: RAM-Zeitreihe}
+\label{fig:fifo500-1t-ram-ts}
+\end{figure}
+
+\subsection{Vier Threads}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/FIFO_500_4T/runtime_bars_combined.pdf}
+\caption{FIFO 500, 4 Threads: Runtime}
+\label{fig:fifo500-4t-runtime}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/FIFO_500_4T/cpu_bars_combined.pdf}
+\caption{FIFO 500, 4 Threads: CPU-Utilization}
+\label{fig:fifo500-4t-cpu}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/FIFO_500_4T/ram_bars_combined.pdf}
+\caption{FIFO 500, 4 Threads: RAM-Utilization}
+\label{fig:fifo500-4t-ram}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/FIFO_500_4T/cpu_timeseries_combined.pdf}
+\caption{FIFO 500, 4 Threads: CPU-Zeitreihe}
+\label{fig:fifo500-4t-cpu-ts}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/FIFO_500_4T/ram_timeseries_combined.pdf}
+\caption{FIFO 500, 4 Threads: RAM-Zeitreihe}
+\label{fig:fifo500-4t-ram-ts}
+\end{figure}
+
+\subsection{10 Threads}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/FIFO_500_10T/runtime_bars_combined.pdf}
+\caption{FIFO 500, 10 Threads: Runtime}
+\label{fig:fifo500-10t-runtime}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/FIFO_500_10T/cpu_bars_combined.pdf}
+\caption{FIFO 500, 10 Threads: CPU-Utilization}
+\label{fig:fifo500-10t-cpu}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/FIFO_500_10T/ram_bars_combined.pdf}
+\caption{FIFO 500, 10 Threads: RAM-Utilization}
+\label{fig:fifo500-10t-ram}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/FIFO_500_10T/cpu_timeseries_combined.pdf}
+\caption{FIFO 500, 10 Threads: CPU-Zeitreihe}
+\label{fig:fifo500-10t-cpu-ts}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/FIFO_500_10T/ram_timeseries_combined.pdf}
+\caption{FIFO 500, 10 Threads: RAM-Zeitreihe}
+\label{fig:fifo500-10t-ram-ts}
+\end{figure}
+
+\subsection{Vergleich}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/Thread_Comparison/thread_fifo_500_runtime.pdf}
+\caption{FIFO 500: Vergleich der Runtime über 1, 4 und 10 Threads}
+\label{fig:fifo500-threadcmp-runtime}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/Thread_Comparison/thread_fifo_500_cpu.pdf}
+\caption{FIFO 500: Vergleich der CPU-Utilization über 1, 4 und 10 Threads}
+\label{fig:fifo500-threadcmp-cpu}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/Thread_Comparison/thread_fifo_500_ram.pdf}
+\caption{FIFO 500: Vergleich der RAM-Utilization über 1, 4 und 10 Threads}
+\label{fig:fifo500-threadcmp-ram}
+\end{figure}
+
+
+\section{Shortest-Subtree-Time-First (SSTF)}
+
+\subsection{Ein Thread}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/SSTF_1T/runtime_bars_combined.pdf}
+\caption{SSTF, 1 Thread: Runtime}
+\label{fig:sstf-1t-runtime}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/SSTF_1T/cpu_bars_combined.pdf}
+\caption{SSTF, 1 Thread: CPU-Utilization}
+\label{fig:sstf-1t-cpu}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/SSTF_1T/ram_bars_combined.pdf}
+\caption{SSTF, 1 Thread: RAM-Utilization}
+\label{fig:sstf-1t-ram}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/SSTF_1T/cpu_timeseries_combined.pdf}
+\caption{SSTF, 1 Thread: CPU-Zeitreihe}
+\label{fig:sstf-1t-cpu-ts}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/SSTF_1T/ram_timeseries_combined.pdf}
+\caption{SSTF, 1 Thread: RAM-Zeitreihe}
+\label{fig:sstf-1t-ram-ts}
+\end{figure}
+
+\subsection{Vier Threads}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/SSTF_4T/runtime_bars_combined.pdf}
+\caption{SSTF, 4 Threads: Runtime}
+\label{fig:sstf-4t-runtime}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/SSTF_4T/cpu_bars_combined.pdf}
+\caption{SSTF, 4 Threads: CPU-Utilization}
+\label{fig:sstf-4t-cpu}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/SSTF_4T/ram_bars_combined.pdf}
+\caption{SSTF, 4 Threads: RAM-Utilization}
+\label{fig:sstf-4t-ram}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/SSTF_4T/cpu_timeseries_combined.pdf}
+\caption{SSTF, 4 Threads: CPU-Zeitreihe}
+\label{fig:sstf-4t-cpu-ts}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/SSTF_4T/ram_timeseries_combined.pdf}
+\caption{SSTF, 4 Threads: RAM-Zeitreihe}
+\label{fig:sstf-4t-ram-ts}
+\end{figure}
+
+\subsection{10 Threads}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/SSTF_10T/runtime_bars_combined.pdf}
+\caption{SSTF, 10 Threads: Runtime}
+\label{fig:sstf-10t-runtime}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/SSTF_10T/cpu_bars_combined.pdf}
+\caption{SSTF, 10 Threads: CPU-Utilization}
+\label{fig:sstf-10t-cpu}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/SSTF_10T/ram_bars_combined.pdf}
+\caption{SSTF, 10 Threads: RAM-Utilization}
+\label{fig:sstf-10t-ram}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/SSTF_10T/cpu_timeseries_combined.pdf}
+\caption{SSTF, 10 Threads: CPU-Zeitreihe}
+\label{fig:sstf-10t-cpu-ts}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/SSTF_10T/ram_timeseries_combined.pdf}
+\caption{SSTF, 10 Threads: RAM-Zeitreihe}
+\label{fig:sstf-10t-ram-ts}
+\end{figure}
+
+\subsection{Vergleich}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/Thread_Comparison/thread_sstf_runtime.pdf}
+\caption{SSTF: Vergleich der Runtime über 1, 4 und 10 Threads}
+\label{fig:sstf-threadcmp-runtime}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/Thread_Comparison/thread_sstf_cpu.pdf}
+\caption{SSTF: Vergleich der CPU-Utilization über 1, 4 und 10 Threads}
+\label{fig:sstf-threadcmp-cpu}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/Thread_Comparison/thread_sstf_ram.pdf}
+\caption{SSTF: Vergleich der RAM-Utilization über 1, 4 und 10 Threads}
+\label{fig:sstf-threadcmp-ram}
+\end{figure}
+
+
+\section{Work-Stealing mit SSTF-Priorisierung}
+
+\subsection{Ein Thread}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/WS_1T/runtime_bars_combined.pdf}
+\caption{WS, 1 Thread: Runtime}
+\label{fig:ws-1t-runtime}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/WS_1T/cpu_bars_combined.pdf}
+\caption{WS, 1 Thread: CPU-Utilization}
+\label{fig:ws-1t-cpu}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/WS_1T/ram_bars_combined.pdf}
+\caption{WS, 1 Thread: RAM-Utilization}
+\label{fig:ws-1t-ram}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/WS_1T/cpu_timeseries_combined.pdf}
+\caption{WS, 1 Thread: CPU-Zeitreihe}
+\label{fig:ws-1t-cpu-ts}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/WS_1T/ram_timeseries_combined.pdf}
+\caption{WS, 1 Thread: RAM-Zeitreihe}
+\label{fig:ws-1t-ram-ts}
+\end{figure}
+
+\subsection{Vier Threads}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/WS_4T/runtime_bars_combined.pdf}
+\caption{WS, 4 Threads: Runtime}
+\label{fig:ws-4t-runtime}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/WS_4T/cpu_bars_combined.pdf}
+\caption{WS, 4 Threads: CPU-Utilization}
+\label{fig:ws-4t-cpu}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/WS_4T/ram_bars_combined.pdf}
+\caption{WS, 4 Threads: RAM-Utilization}
+\label{fig:ws-4t-ram}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/WS_4T/cpu_timeseries_combined.pdf}
+\caption{WS, 4 Threads: CPU-Zeitreihe}
+\label{fig:ws-4t-cpu-ts}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/WS_4T/ram_timeseries_combined.pdf}
+\caption{WS, 4 Threads: RAM-Zeitreihe}
+\label{fig:ws-4t-ram-ts}
+\end{figure}
+
+\subsection{10 Threads}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/WS_10T/runtime_bars_combined.pdf}
+\caption{WS, 10 Threads: Runtime}
+\label{fig:ws-10t-runtime}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/WS_10T/cpu_bars_combined.pdf}
+\caption{WS, 10 Threads: CPU-Utilization}
+\label{fig:ws-10t-cpu}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/WS_10T/ram_bars_combined.pdf}
+\caption{WS, 10 Threads: RAM-Utilization}
+\label{fig:ws-10t-ram}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/WS_10T/cpu_timeseries_combined.pdf}
+\caption{WS, 10 Threads: CPU-Zeitreihe}
+\label{fig:ws-10t-cpu-ts}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/WS_10T/ram_timeseries_combined.pdf}
+\caption{WS, 10 Threads: RAM-Zeitreihe}
+\label{fig:ws-10t-ram-ts}
+\end{figure}
+
+\subsection{Vergleich}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/Thread_Comparison/thread_ws_runtime.pdf}
+\caption{WS: Vergleich der Runtime über 1, 4 und 10 Threads}
+\label{fig:ws-threadcmp-runtime}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/Thread_Comparison/thread_ws_cpu.pdf}
+\caption{WS: Vergleich der CPU-Utilization über 1, 4 und 10 Threads}
+\label{fig:ws-threadcmp-cpu}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/Thread_Comparison/thread_ws_ram.pdf}
+\caption{WS: Vergleich der RAM-Utilization über 1, 4 und 10 Threads}
+\label{fig:ws-threadcmp-ram}
+\end{figure}
+
+\end{sloppypar}

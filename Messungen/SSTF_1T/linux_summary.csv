@@ -1,0 +1,2 @@
+benchmark,os,runs_count,runtime_mean_s,runtime_max_s,runtime_min_s,runtime_std_s,runtime_variance_s2,runtime_coefficient_of_variation,ram_thor_working_set_mean_mb,ram_thor_working_set_max_mb,cpu_overall_avg_percent,tasks_count_avg,tasks_channel_full_count_avg,tasks_exec_time_avg_ms,tasks_queue_time_avg_ms
+SSTF_1T,Linux,20.0,657.85745,663.493,651.795,3.2681590303258043,10.680863447500101,0.004967883285848331,1067.7311983790976,1688.0,23.85,1273851.8,1273459.7,0.49148925,23.518794999999997

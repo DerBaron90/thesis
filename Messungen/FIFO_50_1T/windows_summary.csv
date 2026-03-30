@@ -1,0 +1,2 @@
+benchmark,os,runs_count,runtime_mean_s,runtime_max_s,runtime_min_s,runtime_std_s,runtime_variance_s2,runtime_coefficient_of_variation,ram_thor_working_set_mean_mb,ram_thor_working_set_max_mb,cpu_overall_avg_percent,tasks_count_avg,tasks_channel_full_count_avg,tasks_exec_time_avg_ms,tasks_queue_time_avg_ms
+FIFO_50_1T,Windows,20.0,2506.36445,2516.954,2491.247,8.216220447839763,67.50627844750025,0.0032781427488886394,1183.3933064188473,3589.0,21.0,3427483.0,3426827.0,1.0865383999999998,34.68141285
