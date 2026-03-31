@@ -179,7 +179,7 @@ Threads & OS & Runtime CV [\%] & Queue [ms] & Exec [ms] & Sync Tasks [\%] \\
 wie in Tabelle \ref{tab:fifo50-uebersicht-task} und \ref{tab:fifo500-uebersicht-task} zu sehen ist.
 Hier sieht man auch, dass die Queue Time ist bei der FIFO\_500 Konfiguration deutlich höher als bei der FIFO\_50 Konfiguration ist.
 
-\subsection{Vergleich}
+
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{Messungen/Thread_Comparison/thread_fifo_50_runtime.pdf}
@@ -339,9 +339,9 @@ Beides sind deutliche Verbesserungen im Vergleich zu beiden FIFO-Konfigurationen
     \end{itemize}
     \item Nachteile:
     \begin{itemize}
-        \item Kein durchgängiger Laufzeitvorteil gegenüber FIFO; Unterschiede sind je nach Betriebssystem und Threadzahl gering.
+        \item Kein durchgängiger Laufzeitvorteil gegenüber FIFO, Unterschiede sind je nach Betriebssystem und Threadzahl gering.
         \item Bei hoher Last steigt die Runtime CV ebenfalls an und bleibt damit sensitiv gegenüber Lastspitzen.
-        \item Der Nutzen hängt von der Qualität der Priorisierung ab; bei abweichender Laststruktur kann der Vorteil geringer ausfallen.
+        \item Der Nutzen hängt von der Qualität der Priorisierung ab, bei abweichender Laststruktur kann der Vorteil geringer ausfallen.
     \end{itemize}
 \end{itemize}
 
