@@ -1,12 +1,19 @@
 \chapter{Ergebnisse}
 \label{ch:chapter04}
-Im Anhang befinden sich weitere Grafiken zu den Messungen, die in diesem Kapitel nicht gezeigt werden. 
 In diesem Kapitel werden die Ergebnisse der Messungen für die verschiedenen Scheduler vorgestellt 
-und miteinander verglichen. Es werden unter anderen die Laufzeit als auch die 
-CPU- und RAM-Auslastung für 1, 4 und 10 Threads dargestellt.
+und miteinander verglichen und im Anschluss diskutiert.
+Im Anhang befinden sich alle Grafiken zu den Messungen in nach Scheduling-Algorithmus geordneter Reihenfolge.
+Es wird teilweise auf diese Grafiken Bezug genommen, um die Ergebnisse zu erläutern und zu vergleichen, 
+ohne sie hier direkt einzufügen, um eine bessere Übersicht zu gewährleisten.
 \begin{sloppypar}
 
 \section{Alter Scheduler (Referenz)}
+
+Der nicht optimierte Scanner wurde als Referenz für die Messungen mit dem neuen Scheduler verwendet.
+In der Tabelle \ref{tab:old-scheduler-uebersicht} sind die Mittelwerte der Laufzeit, CPU-Auslastung, 
+RAM-Auslastung (Mittel und Max) sowie der Variationskoeffizient der Laufzeit für die Messungen 
+mit dem alten Scheduler aufgelistet.
+Die internenen Metriken wurden bei diesem nicht erhoben, um die Performance des alten Schedulers nicht zu beeinträchtigen.
 
 \begin{table}[H]
 \caption{Übersicht der Ergebnisse des alten Schedulers (Mittelwerte aus $n=20$ Läufen)}
@@ -22,9 +29,121 @@ Threads & OS & Runtime [s] & CPU [\%] & RAM Mittel [MB] & RAM Max [MB] & Runtime
 1 & Linux   & 643.43  & 24.00 & 1069.19 & 1670 & 0.60 \\
 4 & Linux   & 266.09  & 55.00 & 1491.63 & 2612 & 0.98 \\
 10 & Linux  & 220.68  & 62.95 & 1866.40 & 3374 & 1.39 \\
-1 & Windows & 2514.14 & 21.00 & 1154.05 & 3798 & 0.34 \\
-4 & Windows & 1213.83 & 46.60 & 1765.75 & 4972 & 2.22 \\
-10 & Windows & 825.78 & 68.50 & 2578.23 & 7585 & 2.49 \\
+1 & Windows & 2514.14 & 21.00 & 1349.83 & 5937 & 0.34 \\
+4 & Windows & 1213.83 & 46.60 & 2018.62 & 7306 & 2.22 \\
+10 & Windows & 825.78 & 68.50 & 2879.03 & 12190 & 2.49 \\
+\bottomrule
+\end{tabular}%
+}
+\endgroup
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/OLD_1T/cpu_bars_combined.pdf}
+\caption{Referenz, 1 Thread: CPU-Utilization}
+\label{fig:4ref-1t-cpu}
+\end{figure}
+
+\noindent Für die Bewertung der Stabilität des Testsystems bemerkenswert ist die CPU-Auslastung von 24\% bei Linux, und 21\% bei Windows, 
+bei einem Thread über 20 Testläufe hinweg wie in
+Abbildung \ref{fig:4ref-1t-cpu} zu sehen ist. 
+Dies deutet auf ein stabiles Testsystem hin, da die CPU-Auslastung über die Testläufe hinweg konstant bleibt.
+Auch in \ref{fig:ref-4t-cpu} ist die CPU Auslastung bei 4 Threads mit 54\% - 56\% bei 
+Linux und 45\% - 47\% bei Windows relativ stabil, erst bei 10 Threads, ist eine größere Varianz in der CPU-Auslastung zu beobachten,
+siehe Abbildung \ref{fig:4ref-10t-cpu}.
+Dies spiegelt sich auch in den Laufzeiten wider, die mit zunehmender Thread-Anzahl variabler werden, 
+wie der Anstieg des Variationskoeffizienten in Tabelle \ref{tab:old-scheduler-uebersicht} zeigt und in den Abbildungen
+\ref{fig:ref-1t-runtime}, \ref{fig:ref-4t-runtime} und \ref{fig:ref-10t-runtime} zu sehen ist.
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/OLD_10T/cpu_bars_combined.pdf}
+\caption{Referenz, 10 Threads: CPU-Utilization}
+\label{fig:4ref-10t-cpu}
+\end{figure}
+
+\section{First-In-First-Out}
+
+In diesem Abschnitt werden die Ergebnisse der Messungen mit dem FIFO-Scheduler vorgestellt und mit der Referenz verglichen.
+Für den FIFO-Scheduler wurden 2 verschiedene Warteschlangenlängen (50 und 500) getestet, 
+um die Auswirkungen der Warteschlangenlänge auf die Performance zu untersuchen.
+Im Unterschied zur Referenz wurden hier auch die internen Metriken wie Queue Time, 
+Execution Time und der Anteil der synchronen Tasks erhoben.
+
+\begin{table}[H]
+\caption{FIFO\_50: Laufzeit-, CPU- und RAM-Metriken (Mittelwerte aus $n=20$ Läufen)}
+\label{tab:fifo50-uebersicht-system}
+\centering
+\begingroup
+\setlength{\tabcolsep}{4pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}llrrrr@{}}
+\toprule
+Threads & OS & Runtime [s] & CPU [\%] & RAM Mittel [MB] & RAM Max [MB] \\
+\midrule
+1 & Linux   & 656.03  & 23.55 & 1064.99 & 1705 \\
+4 & Linux   & 271.36  & 54.00 & 1603.02 & 2891 \\
+10 & Linux  & 220.23  & 62.25 & 1953.75 & 3968 \\
+1 & Windows & 2506.36 & 21.00 & 1393.13 & 6015 \\
+4 & Windows & 1126.42 & 48.60 & 2187.63 & 7766 \\
+10 & Windows & 750.65 & 71.10 & 3213.42 & 11672 \\
+\bottomrule
+\end{tabular}%
+}
+\endgroup
+\end{table}
+
+\begin{table}[H]
+\caption{FIFO\_500: Laufzeit-, CPU- und RAM-Metriken (Mittelwerte aus $n=20$ Läufen)}
+\label{tab:fifo500-uebersicht-system}
+\centering
+\begingroup
+\setlength{\tabcolsep}{4pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}llrrrr@{}}
+\toprule
+Threads & OS & Runtime [s] & CPU [\%] & RAM Mittel [MB] & RAM Max [MB] \\
+\midrule
+1 & Linux   & 655.00  & 23.70 & 1056.69 & 1630 \\
+4 & Linux   & 273.60  & 54.30 & 1606.86 & 3013 \\
+10 & Linux  & 216.06  & 63.75 & 1921.77 & 3649 \\
+1 & Windows & 2502.09 & 21.00 & 1396.22 & 6041 \\
+4 & Windows & 1112.04 & 49.90 & 2293.81 & 10782 \\
+10 & Windows & 740.05 & 72.25 & 3107.15 & 10672 \\
+\bottomrule
+\end{tabular}%
+}
+\endgroup
+\end{table}
+
+\noindent Wie wir in Tabelle \ref{tab:fifo50-uebersicht-system} und \ref{tab:fifo500-uebersicht-system} sehen können,
+sind die Laufzeiten, CPU-Auslastung und RAM-Auslastung für beide FIFO-Konfigurationen sehr ähnlich.
+Bei der FIFO\_500 Konfiguration ist bei Windows bei 4 Threads die maximale RAM-Auslastung mit 10782 MB deutlich höher 
+als bei der FIFO\_50 Konfiguration mit 7766 MB,
+was auf eine höhere Speichernutzung durch die längere Warteschlange hindeuten könnte.
+
+\vspace{7.56mm}
+
+\noindent Die Laufzeiten sind im Vergleich zur Referenz (Tabelle \ref{tab:old-scheduler-uebersicht}) 
+auf Windows bei 4 Threads um 7,20\% und bei 10 Threads um 9,10\% kürzer, während sie bei Linux nahezu identisch sind.
+
+\begin{table}[H]
+\caption{FIFO\_50: Runtime CV und Task-Metriken (Mittelwerte aus $n=20$ Läufen)}
+\label{tab:fifo50-uebersicht-task}
+\centering
+\begingroup
+\setlength{\tabcolsep}{4pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}llrrrr@{}}
+\toprule
+Threads & OS & Runtime CV [\%] & Queue [ms] & Exec [ms] & Sync Tasks [\%] \\
+\midrule
+1 & Linux   & 0.48 & 23.52 & 0.98 & 99.97 \\
+4 & Linux   & 1.14 & 27.98 & 0.66 & 54.06 \\
+10 & Linux  & 1.52 & 44.08 & 1.08 & 41.47 \\
+1 & Windows & 0.33 & 34.68 & 1.09 & 99.98 \\
+4 & Windows & 2.07 & 46.89 & 1.09 & 63.84 \\
+10 & Windows & 3.38 & 51.67 & 1.43 & 58.78 \\
 \bottomrule
 \end{tabular}%
 }
@@ -33,665 +152,215 @@ Threads & OS & Runtime [s] & CPU [\%] & RAM Mittel [MB] & RAM Max [MB] & Runtime
 
 
 
-\subsection{Ein Thread}
-\begin{figure}[H]
+\begin{table}[H]
+\caption{FIFO\_500: Runtime CV und Task-Metriken (Mittelwerte aus $n=20$ Läufen)}
+\label{tab:fifo500-uebersicht-task}
 \centering
-\includegraphics[width=\textwidth]{Messungen/OLD_1T/runtime_bars_combined.pdf}
-\caption{Referenz, 1 Thread: Runtime}
-\label{fig:ref-1t-runtime}
-\end{figure}
+\begingroup
+\setlength{\tabcolsep}{4pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}llrrrr@{}}
+\toprule
+Threads & OS & Runtime CV [\%] & Queue [ms] & Exec [ms] & Sync Tasks [\%] \\
+\midrule
+1 & Linux   & 0.58 & 228.61 & 0.97 & 99.85 \\
+4 & Linux   & 1.48 & 278.90 & 0.69 & 65.44 \\
+10 & Linux  & 1.55 & 426.67 & 1.10 & 53.57 \\
+1 & Windows & 0.46 & 337.52 & 1.09 & 99.88 \\
+4 & Windows & 2.62 & 481.52 & 1.10 & 79.56 \\
+10 & Windows & 4.26 & 510.97 & 1.43 & 71.92 \\
+\bottomrule
+\end{tabular}%
+}
+\endgroup
+\end{table}
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/OLD_1T/ram_timeseries_combined.pdf}
-\caption{Referenz, 1 Thread: RAM-Zeitreihe}
-\label{fig:ref-1t-ram-ts}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/OLD_1T/ram_bars_combined.pdf}
-\caption{Referenz, 1 Thread: RAM-Utilization}
-\label{fig:ref-1t-ram}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/OLD_1T/cpu_timeseries_combined.pdf}
-\caption{Referenz, 1 Thread: CPU-Zeitreihe}
-\label{fig:ref-1t-cpu-ts}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/OLD_1T/cpu_bars_combined.pdf}
-\caption{Referenz, 1 Thread: CPU-Utilization}
-\label{fig:ref-1t-cpu}
-\end{figure}
-
-\subsection{Vier Threads}
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/OLD_4T/runtime_bars_combined.pdf}
-\caption{Referenz, 4 Threads: Runtime}
-\label{fig:ref-4t-runtime}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/OLD_4T/ram_timeseries_combined.pdf}
-\caption{Referenz, 4 Threads: RAM-Zeitreihe}
-\label{fig:ref-4t-ram-ts}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/OLD_4T/ram_bars_combined.pdf}
-\caption{Referenz, 4 Threads: RAM-Utilization}
-\label{fig:ref-4t-ram}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/OLD_4T/cpu_timeseries_combined.pdf}
-\caption{Referenz, 4 Threads: CPU-Zeitreihe}
-\label{fig:ref-4t-cpu-ts}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/OLD_4T/cpu_bars_combined.pdf}
-\caption{Referenz, 4 Threads: CPU-Utilization}
-\label{fig:ref-4t-cpu}
-\end{figure}
-
-\subsection{10 Threads}
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/OLD_10T/runtime_bars_combined.pdf}
-\caption{Referenz, 10 Threads: Runtime}
-\label{fig:ref-10t-runtime}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/OLD_10T/ram_timeseries_combined.pdf}
-\caption{Referenz, 10 Threads: RAM-Zeitreihe}
-\label{fig:ref-10t-ram-ts}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/OLD_10T/ram_bars_combined.pdf}
-\caption{Referenz, 10 Threads: RAM-Utilization}
-\label{fig:ref-10t-ram}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/OLD_10T/cpu_timeseries_combined.pdf}
-\caption{Referenz, 10 Threads: CPU-Zeitreihe}
-\label{fig:ref-10t-cpu-ts}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/OLD_10T/cpu_bars_combined.pdf}
-\caption{Referenz, 10 Threads: CPU-Utilization}
-\label{fig:ref-10t-cpu}
-\end{figure}
-
-\subsection{Vergleich}
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/Thread_Comparison/thread_referenz_cpu.pdf}
-\caption{Referenz: Vergleich der CPU-Utilization über 1, 4 und 10 Threads}
-\label{fig:ref-threadcmp-cpu}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/Thread_Comparison/thread_referenz_ram.pdf}
-\caption{Referenz: Vergleich der RAM-Utilization über 1, 4 und 10 Threads}
-\label{fig:ref-threadcmp-ram}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/Thread_Comparison/thread_referenz_runtime.pdf}
-\caption{Referenz: Vergleich der Runtime über 1, 4 und 10 Threads}
-\label{fig:ref-threadcmp-runtime}
-\end{figure}
-
-\section{FIFO\_50}
-
-\subsection{Ein Thread}
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/FIFO_50_1T/runtime_bars_combined.pdf}
-\caption{FIFO 50, 1 Thread: Runtime}
-\label{fig:fifo50-1t-runtime}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/FIFO_50_1T/cpu_bars_combined.pdf}
-\caption{FIFO 50, 1 Thread: CPU-Utilization}
-\label{fig:fifo50-1t-cpu}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/FIFO_50_1T/ram_bars_combined.pdf}
-\caption{FIFO 50, 1 Thread: RAM-Utilization}
-\label{fig:fifo50-1t-ram}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/FIFO_50_1T/cpu_timeseries_combined.pdf}
-\caption{FIFO 50, 1 Thread: CPU-Zeitreihe}
-\label{fig:fifo50-1t-cpu-ts}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/FIFO_50_1T/ram_timeseries_combined.pdf}
-\caption{FIFO 50, 1 Thread: RAM-Zeitreihe}
-\label{fig:fifo50-1t-ram-ts}
-\end{figure}
-
-\subsection{Vier Threads}
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/FIFO_50_4T/runtime_bars_combined.pdf}
-\caption{FIFO 50, 4 Threads: Runtime}
-\label{fig:fifo50-4t-runtime}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/FIFO_50_4T/cpu_bars_combined.pdf}
-\caption{FIFO 50, 4 Threads: CPU-Utilization}
-\label{fig:fifo50-4t-cpu}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/FIFO_50_4T/ram_bars_combined.pdf}
-\caption{FIFO 50, 4 Threads: RAM-Utilization}
-\label{fig:fifo50-4t-ram}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/FIFO_50_4T/cpu_timeseries_combined.pdf}
-\caption{FIFO 50, 4 Threads: CPU-Zeitreihe}
-\label{fig:fifo50-4t-cpu-ts}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/FIFO_50_4T/ram_timeseries_combined.pdf}
-\caption{FIFO 50, 4 Threads: RAM-Zeitreihe}
-\label{fig:fifo50-4t-ram-ts}
-\end{figure}
-
-\subsection{10 Threads}
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/FIFO_50_10T/runtime_bars_combined.pdf}
-\caption{FIFO 50, 10 Threads: Runtime}
-\label{fig:fifo50-10t-runtime}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/FIFO_50_10T/cpu_bars_combined.pdf}
-\caption{FIFO 50, 10 Threads: CPU-Utilization}
-\label{fig:fifo50-10t-cpu}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/FIFO_50_10T/ram_bars_combined.pdf}
-\caption{FIFO 50, 10 Threads: RAM-Utilization}
-\label{fig:fifo50-10t-ram}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/FIFO_50_10T/cpu_timeseries_combined.pdf}
-\caption{FIFO 50, 10 Threads: CPU-Zeitreihe}
-\label{fig:fifo50-10t-cpu-ts}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/FIFO_50_10T/ram_timeseries_combined.pdf}
-\caption{FIFO 50, 10 Threads: RAM-Zeitreihe}
-\label{fig:fifo50-10t-ram-ts}
-\end{figure}
+\noindent Die Anzahl an synchron ausgeführten Tasks ist bei beiden FIFO\_50 Konfigurationen geringer als bei der FIFO\_500 Konfiguration, 
+wie in Tabelle \ref{tab:fifo50-uebersicht-task} und \ref{tab:fifo500-uebersicht-task} zu sehen ist.
+Hier sieht man auch, dass die Queue Time ist bei der FIFO\_500 Konfiguration deutlich höher als bei der FIFO\_50 Konfiguration ist.
 
 \subsection{Vergleich}
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{Messungen/Thread_Comparison/thread_fifo_50_runtime.pdf}
 \caption{FIFO 50: Vergleich der Runtime über 1, 4 und 10 Threads}
-\label{fig:fifo50-threadcmp-runtime}
+\label{4fig:fifo50-threadcmp-runtime}
 \end{figure}
 
-\begin{figure}[H]
+In Abbildung \ref{4fig:fifo50-threadcmp-runtime} ist die Laufzeit der FIFO\_50 Konfiguration über die verschiedenen Thread-Anzahlen hinweg zu sehen.
+
+\subsection{Diskussion der FIFO-Ergebnisse}
+\paragraph{Stabilität}
+Wie beim Referenz-Scheduler zu beobachten ist, ist die CPU-Auslastung bei einem Thread über die Testläufe hinweg konstant,
+was auf ein stabiles Testsystem hindeutet, siehe Abbildung \ref{fig:fifo50-1t-runtime}.
+Auch bei 4 Threads ist die CPU-Auslastung relativ stabil (Abbildung \ref{fig:fifo50-4t-runtime}), 
+während bei 10 Threads (Abbildung \ref{fig:fifo50-10t-runtime}) eine größere Varianz in der CPU-Auslastung zu beobachten ist, 
+was sich auch in den Laufzeiten widerspiegelt, die mit zunehmender Thread-Anzahl variabler werden, wie der 
+Anstieg des Variationskoeffizienten in Tabelle \ref{tab:fifo50-uebersicht-system} und \ref{tab:fifo500-uebersicht-system} zeigt.
+Die ist vermutlich darauf zurückzuführen, dass die Anzahl der Threads die Anzahl an für das Testsystem bereit gestellten Kernen übersteigt, 
+was zu einer höheren Konkurrenz um Ressourcen führt und damit zu einer höheren Varianz in der Performance. 
+
+\paragraph{Laufzeit}
+Die bessere Performance im Bezug auf die Laufzeit des FIFO-Schedulers auf Windows bei mehreren Threads 
+im Vergleich zur Referenz könnte zum Teil auf die asynchrone Task-Ausführung 
+zum Ende einer Moduliteration zurückzuführen sein, bei welcher die Referenz noch auf synchron ausgeführte Objekte warten muss.
+Diese Verbesserung ist auf Linux nicht zu beobachten.
+Ein möglicher Grund könnte sein, dass die Module auf Linux weniger große Objekte erstellen, 
+so dass der Vorteil der Task-basierten Ausführung nicht so stark zum Tragen kommt, 
+wie auf Windows, wo möglicherweise größere Objekte erstellt werden, die von der asynchronen Ausführung profitieren.
+Hier sind weitere Untersuchungen notwendig,
+um die genauen Gründe für die Unterschiede zwischen den Betriebssystemen zu verstehen.
+
+\paragraph{Waiting Time}
+Die Auswirkung der Warteschlangenlänge auf die Queue Time ist deutlich bei der FIFO\_500 Konfiguration im Vergleich zur FIFO\_50 Konfiguration zu sehen.
+Mehr Tasks müssen in der Warteschlange warten, bevor sie ausgeführt werden können, was zu einer höheren Wartezeit führt.
+Die übrigen Metriken deuten darauf hin, dass man die Warteschlangenlänge noch weiter reduzieren könnte, ohne die übrigen Metriken zu beeinträchtigen.
+Mit weiteren Tests zur Warteschlangenlänge könnte die optimale Länge ermittelt werden, 
+um die Performance der Wartezeit von Tasks zu verbessern, möglichst ohne die Performance der anderen Metriken zu beeinträchtigen.
+
+\paragraph{Synchron ausgeführte Tasks und RAM-Auslastung}
+Die Anzahl der synchron ausgeführten Tasks ist bei der FIFO\_500 Konfiguration deutlich höher 
+als bei der FIFO\_50 Konfiguration,
+was darauf hindeutet, dass die längere Warteschlange zu einer höheren Anzahl von Tasks führt, 
+die synchron ausgeführt werden müssen.
+\textcolor{red}{Hier Erklärung für, warum das so ist.}
+Die höhere maximale Ram-Auslastung bei der FIFO\_500 Konfiguration bei 4 Threads im Verhältnis zur FIFO\_50 Konfiguration 
+mit 4 Threads könnte ebenfalls auf die höhere Warteschlangengröße zurückzuführen sein, 
+da mehr Tasks in der Warteschlange gehalten werden müssen, was zu einem höheren Speicherbedarf führt.
+
+\section{Shortest-Subtree-Time-First}
+
+In diesem Abschnitt werden die Ergebnisse der Messungen mit dem SSTF-Scheduler vorgestellt.
+Das Ziel dieser Implementierung war es, die Anzahl der synchron ausgeführten Tasks zu reduzieren
+und die Wartezeit von Tasks zu verbessern, indem die Tasks mit der kürzesten erwarteten Ausführungszeit zuerst ausgeführt werden.
+
+\begin{table}[H]
+\caption{SSTF: Laufzeit-, CPU- und RAM-Metriken (Mittelwerte aus $n=20$ Läufen)}
+\label{tab:sstf-uebersicht-system}
 \centering
-\includegraphics[width=\textwidth]{Messungen/Thread_Comparison/thread_fifo_50_cpu.pdf}
-\caption{FIFO 50: Vergleich der CPU-Utilization über 1, 4 und 10 Threads}
-\label{fig:fifo50-threadcmp-cpu}
-\end{figure}
+\begingroup
+\setlength{\tabcolsep}{4pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}llrrrr@{}}
+\toprule
+Threads & OS & Runtime [s] & CPU [\%] & RAM Mittel [MB] & RAM Max [MB] \\
+\midrule
+1 & Linux   & 657.86  & 23.85 & 1067.73 & 1688 \\
+4 & Linux   & 272.63  & 53.90 & 1595.39 & 3136 \\
+10 & Linux  & 223.40  & 62.30 & 1922.47 & 3631 \\
+1 & Windows & 2525.80 & 21.00 & 1392.53 & 5999 \\
+4 & Windows & 1123.66 & 48.85 & 2208.95 & 7844 \\
+10 & Windows & 752.41 & 71.75 & 3209.96 & 9592 \\
+\bottomrule
+\end{tabular}%
+}
+\endgroup
+\end{table}
 
-\begin{figure}[H]
+In \ref{tab:sstf-uebersicht-system} sind die Laufzeit, CPU-Auslastung und RAM-Auslastung für den SSTF-Scheduler aufgelistet.
+Die Werte sind ähnlich zu denen der FIFO-Scheduler, mit einigen geringfügigen Unterschieden.
+Die maximale RAM-Auslastung bei ähnelt der von FIFO_50, ist allerdings bei 10 Threads auf Windows deutlich geringer als bei beiden FIFO-Konfigurationen.
+
+
+\begin{table}[H]
+\caption{SSTF: Runtime CV und Task-Metriken (Mittelwerte aus $n=20$ Läufen)}
+\label{tab:sstf-uebersicht-task}
 \centering
-\includegraphics[width=\textwidth]{Messungen/Thread_Comparison/thread_fifo_50_ram.pdf}
-\caption{FIFO 50: Vergleich der RAM-Utilization über 1, 4 und 10 Threads}
-\label{fig:fifo50-threadcmp-ram}
-\end{figure}
+\begingroup
+\setlength{\tabcolsep}{4pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}llrrrr@{}}
+\toprule
+Threads & OS & Runtime CV [\%] & Queue [ms] & Exec [ms] & Sync Tasks [\%] \\
+\midrule
+1 & Linux   & 0.50 & 23.52 & 0.49 & 99.97 \\
+4 & Linux   & 1.28 & 25.71 & 0.64 & 44.09 \\
+10 & Linux  & 1.84 & 42.87 & 1.08 & 31.23 \\
+1 & Windows & 0.48 & 34.64 & 0.70 & 99.95 \\
+4 & Windows & 2.17 & 45.06 & 1.07 & 53.51 \\
+10 & Windows & 3.40 & 49.73 & 1.44 & 40.08 \\
+\bottomrule
+\end{tabular}%
+}
+\endgroup
+\end{table}
 
+In \ref{tab:sstf-uebersicht-task} sind die Runtime CV, Queue Time, Execution Time und der Anteil der synchronen Tasks für den SSTF-Scheduler aufgelistet.
+Die Runtime CV ist ähnlich zu der der FIFO-Scheduler, mit einigen geringfügigen Unterschieden.
+Die Queue Time ist bei SSTF im Vergleich zu FIFO\_50 und FIFO\_500 etwas geringer.
+Vor allem ist die Execution Time bei SSTF im Vergleich zu beiden FIFO-Konfigurationen deutlich geringer.
+Die Anzahl der synchron ausgeführten Tasks ist bei SSTF im Vergleich zu beiden FIFO-Konfigurationen deutlich geringer.
 
-\section{FIFO\_500}
+\subsection{Diskussion der SSTF-Ergebnisse}
 
-\subsection{Ein Thread}
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/FIFO_500_1T/runtime_bars_combined.pdf}
-\caption{FIFO 500, 1 Thread: Runtime}
-\label{fig:fifo500-1t-runtime}
-\end{figure}
+\paragraph{Stabilität}
+Die Stabilität verhält sich ähnlich zu der der FIFO-Scheduler, mit einer konstanten CPU-Auslastung bei einem Thread über die Testläufe hinweg,
+und einer höheren Varianz bei höherer Anzahl an Threads, siehe Abbildung \ref{fig:sstf-1t-runtime}, \ref{fig:sstf-4t-runtime} und \ref{fig:sstf-10t-runtime}.
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/FIFO_500_1T/cpu_bars_combined.pdf}
-\caption{FIFO 500, 1 Thread: CPU-Utilization}
-\label{fig:fifo500-1t-cpu}
-\end{figure}
+\paragraph{Laufzeit}
+Die Laufzeiten des SSTF-Schedulers sind ähnlich zu denen der FIFO-Scheduler, mit einigen nur geringfügigen Unterschieden.
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/FIFO_500_1T/ram_bars_combined.pdf}
-\caption{FIFO 500, 1 Thread: RAM-Utilization}
-\label{fig:fifo500-1t-ram}
-\end{figure}
+\paragraph{Waiting Time}
+Die Queue Time ist bei SSTF im Vergleich zu beiden FIFO-Konfigurationen etwas geringer, was darauf hindeutet, 
+dass die Priorisierung von Tasks mit kürzerer erwarteter Ausführungszeit zu einer Verbesserung der Wartezeit führt.
+Die Execution Time ist bei SSTF bei einem Thread im Vergleich zu beiden FIFO-Konfigurationen mit einem Thread deutlich geringer.
+\textcolor{red}{Hier Erklärung für, warum das so ist.}
+Der Grund hierfür muss noch weiter untersucht werden.
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/FIFO_500_1T/cpu_timeseries_combined.pdf}
-\caption{FIFO 500, 1 Thread: CPU-Zeitreihe}
-\label{fig:fifo500-1t-cpu-ts}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/FIFO_500_1T/ram_timeseries_combined.pdf}
-\caption{FIFO 500, 1 Thread: RAM-Zeitreihe}
-\label{fig:fifo500-1t-ram-ts}
-\end{figure}
-
-\subsection{Vier Threads}
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/FIFO_500_4T/runtime_bars_combined.pdf}
-\caption{FIFO 500, 4 Threads: Runtime}
-\label{fig:fifo500-4t-runtime}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/FIFO_500_4T/cpu_bars_combined.pdf}
-\caption{FIFO 500, 4 Threads: CPU-Utilization}
-\label{fig:fifo500-4t-cpu}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/FIFO_500_4T/ram_bars_combined.pdf}
-\caption{FIFO 500, 4 Threads: RAM-Utilization}
-\label{fig:fifo500-4t-ram}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/FIFO_500_4T/cpu_timeseries_combined.pdf}
-\caption{FIFO 500, 4 Threads: CPU-Zeitreihe}
-\label{fig:fifo500-4t-cpu-ts}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/FIFO_500_4T/ram_timeseries_combined.pdf}
-\caption{FIFO 500, 4 Threads: RAM-Zeitreihe}
-\label{fig:fifo500-4t-ram-ts}
-\end{figure}
-
-\subsection{10 Threads}
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/FIFO_500_10T/runtime_bars_combined.pdf}
-\caption{FIFO 500, 10 Threads: Runtime}
-\label{fig:fifo500-10t-runtime}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/FIFO_500_10T/cpu_bars_combined.pdf}
-\caption{FIFO 500, 10 Threads: CPU-Utilization}
-\label{fig:fifo500-10t-cpu}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/FIFO_500_10T/ram_bars_combined.pdf}
-\caption{FIFO 500, 10 Threads: RAM-Utilization}
-\label{fig:fifo500-10t-ram}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/FIFO_500_10T/cpu_timeseries_combined.pdf}
-\caption{FIFO 500, 10 Threads: CPU-Zeitreihe}
-\label{fig:fifo500-10t-cpu-ts}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/FIFO_500_10T/ram_timeseries_combined.pdf}
-\caption{FIFO 500, 10 Threads: RAM-Zeitreihe}
-\label{fig:fifo500-10t-ram-ts}
-\end{figure}
-
-\subsection{Vergleich}
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/Thread_Comparison/thread_fifo_500_runtime.pdf}
-\caption{FIFO 500: Vergleich der Runtime über 1, 4 und 10 Threads}
-\label{fig:fifo500-threadcmp-runtime}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/Thread_Comparison/thread_fifo_500_cpu.pdf}
-\caption{FIFO 500: Vergleich der CPU-Utilization über 1, 4 und 10 Threads}
-\label{fig:fifo500-threadcmp-cpu}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/Thread_Comparison/thread_fifo_500_ram.pdf}
-\caption{FIFO 500: Vergleich der RAM-Utilization über 1, 4 und 10 Threads}
-\label{fig:fifo500-threadcmp-ram}
-\end{figure}
-
-
-\section{Shortest-Subtree-Time-First (SSTF)}
-
-\subsection{Ein Thread}
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/SSTF_1T/runtime_bars_combined.pdf}
-\caption{SSTF, 1 Thread: Runtime}
-\label{fig:sstf-1t-runtime}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/SSTF_1T/cpu_bars_combined.pdf}
-\caption{SSTF, 1 Thread: CPU-Utilization}
-\label{fig:sstf-1t-cpu}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/SSTF_1T/ram_bars_combined.pdf}
-\caption{SSTF, 1 Thread: RAM-Utilization}
-\label{fig:sstf-1t-ram}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/SSTF_1T/cpu_timeseries_combined.pdf}
-\caption{SSTF, 1 Thread: CPU-Zeitreihe}
-\label{fig:sstf-1t-cpu-ts}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/SSTF_1T/ram_timeseries_combined.pdf}
-\caption{SSTF, 1 Thread: RAM-Zeitreihe}
-\label{fig:sstf-1t-ram-ts}
-\end{figure}
-
-\subsection{Vier Threads}
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/SSTF_4T/runtime_bars_combined.pdf}
-\caption{SSTF, 4 Threads: Runtime}
-\label{fig:sstf-4t-runtime}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/SSTF_4T/cpu_bars_combined.pdf}
-\caption{SSTF, 4 Threads: CPU-Utilization}
-\label{fig:sstf-4t-cpu}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/SSTF_4T/ram_bars_combined.pdf}
-\caption{SSTF, 4 Threads: RAM-Utilization}
-\label{fig:sstf-4t-ram}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/SSTF_4T/cpu_timeseries_combined.pdf}
-\caption{SSTF, 4 Threads: CPU-Zeitreihe}
-\label{fig:sstf-4t-cpu-ts}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/SSTF_4T/ram_timeseries_combined.pdf}
-\caption{SSTF, 4 Threads: RAM-Zeitreihe}
-\label{fig:sstf-4t-ram-ts}
-\end{figure}
-
-\subsection{10 Threads}
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/SSTF_10T/runtime_bars_combined.pdf}
-\caption{SSTF, 10 Threads: Runtime}
-\label{fig:sstf-10t-runtime}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/SSTF_10T/cpu_bars_combined.pdf}
-\caption{SSTF, 10 Threads: CPU-Utilization}
-\label{fig:sstf-10t-cpu}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/SSTF_10T/ram_bars_combined.pdf}
-\caption{SSTF, 10 Threads: RAM-Utilization}
-\label{fig:sstf-10t-ram}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/SSTF_10T/cpu_timeseries_combined.pdf}
-\caption{SSTF, 10 Threads: CPU-Zeitreihe}
-\label{fig:sstf-10t-cpu-ts}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/SSTF_10T/ram_timeseries_combined.pdf}
-\caption{SSTF, 10 Threads: RAM-Zeitreihe}
-\label{fig:sstf-10t-ram-ts}
-\end{figure}
-
-\subsection{Vergleich}
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/Thread_Comparison/thread_sstf_runtime.pdf}
-\caption{SSTF: Vergleich der Runtime über 1, 4 und 10 Threads}
-\label{fig:sstf-threadcmp-runtime}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/Thread_Comparison/thread_sstf_cpu.pdf}
-\caption{SSTF: Vergleich der CPU-Utilization über 1, 4 und 10 Threads}
-\label{fig:sstf-threadcmp-cpu}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/Thread_Comparison/thread_sstf_ram.pdf}
-\caption{SSTF: Vergleich der RAM-Utilization über 1, 4 und 10 Threads}
-\label{fig:sstf-threadcmp-ram}
-\end{figure}
-
+\paragraph{Synchron ausgeführte Tasks und RAM-Auslastung}
+Die Anzahl der synchron ausgeführten Tasks ist bei SSTF im Vergleich zu beiden FIFO-Konfigurationen deutlich geringer, 
+was darauf hindeutet, dass die Priorisierung von Tasks mit kürzerer erwarteter Ausführungszeit zu einer Reduzierung der Anzahl von Tasks führt, die synchron ausgeführt werden müssen.
+Die maximale RAM-Auslastung bei SSTF ist bei 10 Threads auf Windows deutlich geringer als bei beiden FIFO-Konfigurationen.
+Beides sind deutliche Verbesserungen im Vergleich zu beiden FIFO-Konfigurationen.
 
 \section{Work-Stealing mit SSTF-Priorisierung}
 
-\subsection{Ein Thread}
-\begin{figure}[H]
+\begin{table}[H]
+\caption{WS: Laufzeit-, CPU- und RAM-Metriken (Mittelwerte aus $n=20$ Läufen)}
+\label{tab:ws-uebersicht-system}
 \centering
-\includegraphics[width=\textwidth]{Messungen/WS_1T/runtime_bars_combined.pdf}
-\caption{WS, 1 Thread: Runtime}
-\label{fig:ws-1t-runtime}
-\end{figure}
+\begingroup
+\setlength{\tabcolsep}{4pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}llrrrr@{}}
+\toprule
+Threads & OS & Runtime [s] & CPU [\%] & RAM Mittel [MB] & RAM Max [MB] \\
+\midrule
+1 & Linux   & 659.62  & 23.50 & 1064.91 & 1653 \\
+4 & Linux   & 294.06  & 51.20 & 1527.53 & 2573 \\
+10 & Linux  & 219.98  & 63.25 & 1867.54 & 3751 \\
+1 & Windows & 2525.77 & 21.00 & 1389.02 & 5991 \\
+4 & Windows & 1144.78 & 47.75 & 2086.73 & 7648 \\
+10 & Windows & 747.43 & 71.90 & 2904.21 & 11457 \\
+\bottomrule
+\end{tabular}%
+}
+\endgroup
+\end{table}
 
-\begin{figure}[H]
+\begin{table}[H]
+\caption{WS: Runtime CV und Task-Metriken (Mittelwerte aus $n=20$ Läufen)}
+\label{tab:ws-uebersicht-task}
 \centering
-\includegraphics[width=\textwidth]{Messungen/WS_1T/cpu_bars_combined.pdf}
-\caption{WS, 1 Thread: CPU-Utilization}
-\label{fig:ws-1t-cpu}
-\end{figure}
+\begingroup
+\setlength{\tabcolsep}{4pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}llrrrr@{}}
+\toprule
+Threads & OS & Runtime CV [\%] & Queue [ms] & Exec [ms] & Sync Tasks [\%] \\
+\midrule
+1 & Linux   & 0.53 & 46.26 & 0.98 & 99.95 \\
+4 & Linux   & 1.33 & 58.52 & 0.91 & 80.61 \\
+10 & Linux  & 1.44 & 84.72 & 1.10 & 27.09 \\
+1 & Windows & 0.40 & 65.91 & 1.09 & 99.83 \\
+4 & Windows & 3.03 & 90.46 & 1.11 & 53.36 \\
+10 & Windows & 4.58 & 97.23 & 1.44 & 35.31 \\
+\bottomrule
+\end{tabular}%
+}
+\endgroup
+\end{table}
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/WS_1T/ram_bars_combined.pdf}
-\caption{WS, 1 Thread: RAM-Utilization}
-\label{fig:ws-1t-ram}
-\end{figure}
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/WS_1T/cpu_timeseries_combined.pdf}
-\caption{WS, 1 Thread: CPU-Zeitreihe}
-\label{fig:ws-1t-cpu-ts}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/WS_1T/ram_timeseries_combined.pdf}
-\caption{WS, 1 Thread: RAM-Zeitreihe}
-\label{fig:ws-1t-ram-ts}
-\end{figure}
-
-\subsection{Vier Threads}
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/WS_4T/runtime_bars_combined.pdf}
-\caption{WS, 4 Threads: Runtime}
-\label{fig:ws-4t-runtime}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/WS_4T/cpu_bars_combined.pdf}
-\caption{WS, 4 Threads: CPU-Utilization}
-\label{fig:ws-4t-cpu}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/WS_4T/ram_bars_combined.pdf}
-\caption{WS, 4 Threads: RAM-Utilization}
-\label{fig:ws-4t-ram}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/WS_4T/cpu_timeseries_combined.pdf}
-\caption{WS, 4 Threads: CPU-Zeitreihe}
-\label{fig:ws-4t-cpu-ts}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/WS_4T/ram_timeseries_combined.pdf}
-\caption{WS, 4 Threads: RAM-Zeitreihe}
-\label{fig:ws-4t-ram-ts}
-\end{figure}
-
-\subsection{10 Threads}
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/WS_10T/runtime_bars_combined.pdf}
-\caption{WS, 10 Threads: Runtime}
-\label{fig:ws-10t-runtime}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/WS_10T/cpu_bars_combined.pdf}
-\caption{WS, 10 Threads: CPU-Utilization}
-\label{fig:ws-10t-cpu}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/WS_10T/ram_bars_combined.pdf}
-\caption{WS, 10 Threads: RAM-Utilization}
-\label{fig:ws-10t-ram}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/WS_10T/cpu_timeseries_combined.pdf}
-\caption{WS, 10 Threads: CPU-Zeitreihe}
-\label{fig:ws-10t-cpu-ts}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/WS_10T/ram_timeseries_combined.pdf}
-\caption{WS, 10 Threads: RAM-Zeitreihe}
-\label{fig:ws-10t-ram-ts}
-\end{figure}
-
-\subsection{Vergleich}
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/Thread_Comparison/thread_ws_runtime.pdf}
-\caption{WS: Vergleich der Runtime über 1, 4 und 10 Threads}
-\label{fig:ws-threadcmp-runtime}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/Thread_Comparison/thread_ws_cpu.pdf}
-\caption{WS: Vergleich der CPU-Utilization über 1, 4 und 10 Threads}
-\label{fig:ws-threadcmp-cpu}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{Messungen/Thread_Comparison/thread_ws_ram.pdf}
-\caption{WS: Vergleich der RAM-Utilization über 1, 4 und 10 Threads}
-\label{fig:ws-threadcmp-ram}
-\end{figure}
 
 \end{sloppypar}
