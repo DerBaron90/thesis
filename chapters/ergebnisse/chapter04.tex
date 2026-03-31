@@ -228,6 +228,22 @@ Die höhere maximale Ram-Auslastung bei der FIFO\_500 Konfiguration bei 4 Thread
 mit 4 Threads könnte ebenfalls auf die höhere Warteschlangengröße zurückzuführen sein, 
 da mehr Tasks in der Warteschlange gehalten werden müssen, was zu einem höheren Speicherbedarf führt.
 
+\paragraph{Vorteile und Nachteile im Vergleich zur Referenz}
+\begin{itemize}
+    \item Vorteile:
+    \begin{itemize}
+        \item Auf Windows sind die Laufzeiten bei 4 und 10 Threads gegenüber der Referenz deutlich kürzer.
+        \item Die FIFO\_50-Konfiguration zeigt geringere Queue Time und geringere RAM-Spitzen als FIFO\_500.
+        \item Die Implementierung ist konzeptionell einfach und liefert gut nachvollziehbares Scheduling-Verhalten.
+    \end{itemize}
+    \item Nachteile:
+    \begin{itemize}
+        \item Bei Linux ist kein klarer Laufzeitvorteil gegenüber der Referenz erkennbar.
+        \item FIFO\_500 verursacht deutlich höhere Queue Time und höhere RAM-Maximalwerte, insbesondere auf Windows.
+        \item Bei höherer Threadanzahl steigt die Varianz, was auf stärkere Ressourcenkonkurrenz hinweist.
+    \end{itemize}
+\end{itemize}
+
 \section{Shortest-Subtree-Time-First}
 
 In diesem Abschnitt werden die Ergebnisse der Messungen mit dem SSTF-Scheduler vorgestellt.
@@ -259,7 +275,7 @@ Threads & OS & Runtime [s] & CPU [\%] & RAM Mittel [MB] & RAM Max [MB] \\
 
 In \ref{tab:sstf-uebersicht-system} sind die Laufzeit, CPU-Auslastung und RAM-Auslastung für den SSTF-Scheduler aufgelistet.
 Die Werte sind ähnlich zu denen der FIFO-Scheduler, mit einigen geringfügigen Unterschieden.
-Die maximale RAM-Auslastung bei ähnelt der von FIFO_50, ist allerdings bei 10 Threads auf Windows deutlich geringer als bei beiden FIFO-Konfigurationen.
+Die maximale RAM-Auslastung ähnelt der von FIFO\_50, ist allerdings bei 10 Threads auf Windows deutlich geringer als bei beiden FIFO-Konfigurationen.
 
 
 \begin{table}[H]
@@ -313,7 +329,25 @@ was darauf hindeutet, dass die Priorisierung von Tasks mit kürzerer erwarteter 
 Die maximale RAM-Auslastung bei SSTF ist bei 10 Threads auf Windows deutlich geringer als bei beiden FIFO-Konfigurationen.
 Beides sind deutliche Verbesserungen im Vergleich zu beiden FIFO-Konfigurationen.
 
+\paragraph{Vorteile und Nachteile im Vergleich zu FIFO}
+\begin{itemize}
+    \item Vorteile:
+    \begin{itemize}
+        \item Geringere Queue Time als bei beiden FIFO-Konfigurationen, besonders unter Last.
+        \item Deutlich geringerer Anteil synchron ausgeführter Tasks bei 4 und 10 Threads.
+        \item Niedrigere RAM-Maximalwerte auf Windows bei 10 Threads im Vergleich zu FIFO\_50 und FIFO\_500.
+    \end{itemize}
+    \item Nachteile:
+    \begin{itemize}
+        \item Kein durchgängiger Laufzeitvorteil gegenüber FIFO; Unterschiede sind je nach Betriebssystem und Threadzahl gering.
+        \item Bei hoher Last steigt die Runtime CV ebenfalls an und bleibt damit sensitiv gegenüber Lastspitzen.
+        \item Der Nutzen hängt von der Qualität der Priorisierung ab; bei abweichender Laststruktur kann der Vorteil geringer ausfallen.
+    \end{itemize}
+\end{itemize}
+
 \section{Work-Stealing mit SSTF-Priorisierung}
+Hier werden die Ergebnisse der Messungen mit dem Work-Stealing mit SSTF-Priorisierung vorgestellt.
+
 
 \begin{table}[H]
 \caption{WS: Laufzeit-, CPU- und RAM-Metriken (Mittelwerte aus $n=20$ Läufen)}
@@ -338,6 +372,10 @@ Threads & OS & Runtime [s] & CPU [\%] & RAM Mittel [MB] & RAM Max [MB] \\
 \endgroup
 \end{table}
 
+In Tabelle \ref{tab:ws-uebersicht-system} sind die Laufzeit, CPU-Auslastung und RAM-Auslastung für den Work-Stealing mit SSTF-Priorisierung aufgelistet.
+Die Werte verhalten sich ähnlich zu dem des SSTF-Scheduler, mit einigen geringfügigen Unterschieden.
+Die mittlere Ram-Utilization ist durchgehend niedriger als beim SSTF-Scheduler, während die maximale RAM-Auslastung bei 10 Threads auf Windows höher ist als beim SSTF-Scheduler.
+
 \begin{table}[H]
 \caption{WS: Runtime CV und Task-Metriken (Mittelwerte aus $n=20$ Läufen)}
 \label{tab:ws-uebersicht-task}
@@ -361,6 +399,51 @@ Threads & OS & Runtime CV [\%] & Queue [ms] & Exec [ms] & Sync Tasks [\%] \\
 \endgroup
 \end{table}
 
+In Tabelle \ref{tab:ws-uebersicht-task} sind die Runtime CV, Queue Time, Execution Time und der Anteil der synchronen Tasks für den Work-Stealing mit SSTF-Priorisierung aufgelistet.
+Die Runtime CV ist ähnlich zu der des SSTF-Schedulers, mit einigen geringfügigen Unterschieden.
+Die Queue Time ist bei Work-Stealing mit SSTF-Priorisierung im Vergleich zu beiden FIFO-Konfigurationen deutlich höher.
+Die Anzahl der synchron ausgeführten Tasks ist im Vergleich zum SSTF-Scheduler schwankt. 
 
+
+
+\subsection{Diskussion der WS-Ergebnisse}
+
+\paragraph{Stabilität}
+
+Die Stabilität verhält sich ähnlich zu der der FIFO- und SSTF-Scheduler, 
+mit einer konstanten CPU-Auslastung bei einem Thread über die Testläufe hinweg,und einer höheren Varianz bei höherer Anzahl an Threads, 
+siehe Abbildung \ref{fig:ws-1t-runtime}, \ref{fig:ws-4t-runtime} und \ref{fig:ws-10t-runtime}.
+
+\paragraph{Laufzeit}
+Die Laufzeiten des Work-Stealing mit SSTF-Priorisierung sind ähnlich zu denen des SSTF-Schedulers, mit einigen geringfügigen Unterschieden.
+
+\paragraph{Waiting Time}
+Die Wartezeit der Tasks ist bei Work-Stealing mit SSTF-Priorisierung im Vergleich zu beiden FIFO-Konfigurationen deutlich höher.
+Eine angepasste Implementierung des Work-Stealing-Algorithmus könnte hier zu einer Verbesserung der Wartezeit führen, bei welcher die
+Warteschlangengröße der einzelnen Threads begrenzt wird, um zu verhindern, dass Tasks zu lange in der Warteschlange warten müssen, 
+bevor sie ausgeführt werden können.
+
+\paragraph{Synchron ausgeführte Tasks und RAM-Auslastung}
+Die fast doppelt so hohe Anzahl an synchron ausgeführten Tasks bei 4 Threads im Vergleich zum SSTF-Scheduler könnte darauf hindeuten, 
+dass die Work-Stealing-Implementierung in dieser Konfiguration nicht optimal ist.
+Die höhere maximale RAM-Auslastung bei 10 Threads auf 
+Windows im Vergleich zum SSTF-Scheduler könnte ebenfalls auf die Work-Stealing-Implementierung zurückzuführen sein,
+da mehr Tasks in der Warteschlange gehalten werden müssen, was zu einem höheren Speicherbedarf führt.
+Die durchgehend niedrigere mittlere RAM-Auslastung im Vergleich zum SSTF-Scheduler könnte darauf hindeuten, 
+dass die Work-Stealing-Implementierung in einigen Fällen zu einer besseren Speichernutzung führt.
+
+\paragraph{Vorteile und Nachteile im Vergleich zu SSTF}
+\begin{itemize}
+    \item Vorteile:
+    \begin{itemize}
+        \item In einigen Fällen könnte die Work-Stealing-Implementierung zu einer besseren Speichernutzung führen, wie die durchgehend niedrigere mittlere RAM-Auslastung im Vergleich zum SSTF-Scheduler zeigt.
+    \end{itemize}
+    \item Nachteile:
+    \begin{itemize}
+        \item Die Wartezeit der Tasks ist bei Work-Stealing mit SSTF-Priorisierung im Vergleich zu beiden FIFO-Konfigurationen deutlich höher.
+        \item Die Anzahl der synchron ausgeführten Tasks ist im Vergleich zum SSTF-Scheduler schwankt, was auf eine nicht optimale Implementierung des Work-Stealing-Algorithmus hindeuten könnte.
+        \item Die höhere maximale RAM-Auslastung bei 10 Threads auf Windows im Vergleich zum SSTF-Scheduler könnte ebenfalls auf die Work-Stealing-Implementierung zurückzuführen sein, da mehr Tasks in der Warteschlange gehalten werden müssen, was zu einem höheren Speicherbedarf führt.
+    \end{itemize}
+\end{itemize}
 
 \end{sloppypar}
