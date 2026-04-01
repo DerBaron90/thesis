@@ -69,6 +69,7 @@ Für den FIFO-Scheduler wurden 2 verschiedene Warteschlangenlängen (50 und 500)
 um die Auswirkungen der Warteschlangenlänge auf die Performance zu untersuchen.
 Im Unterschied zur Referenz wurden hier auch die internen Metriken wie Queue Time, 
 Execution Time und der Anteil der synchronen Tasks erhoben.
+Daher wird dieser Scheduler als Baseline für die Bewertung der anderen Scheduler herangezogen.
 
 \begin{table}[H]
 \caption{FIFO\_50: Laufzeit-, CPU- und RAM-Metriken (Mittelwerte aus $n=20$ Läufen)}
@@ -198,7 +199,8 @@ während bei 10 Threads (Abbildung \ref{fig:fifo50-10t-runtime}) eine größere 
 was sich auch in den Laufzeiten widerspiegelt, die mit zunehmender Thread-Anzahl variabler werden, wie der 
 Anstieg des Variationskoeffizienten in Tabelle \ref{tab:fifo50-uebersicht-system} und \ref{tab:fifo500-uebersicht-system} zeigt.
 Die ist vermutlich darauf zurückzuführen, dass die Anzahl der Threads die Anzahl an für das Testsystem bereit gestellten Kernen übersteigt, 
-was zu einer höheren Konkurrenz um Ressourcen führt und damit zu einer höheren Varianz in der Performance. 
+was zu einer höheren Konkurrenz um Ressourcen führt und damit zu einer höheren Varianz in der Performance.
+Auch das Verhalten der RAM-Auslastung, 
 
 \paragraph{Laufzeit}
 Die bessere Performance im Bezug auf die Laufzeit des FIFO-Schedulers auf Windows bei mehreren Threads 
@@ -211,7 +213,7 @@ wie auf Windows, wo möglicherweise größere Objekte erstellt werden, die von d
 Hier sind weitere Untersuchungen notwendig,
 um die genauen Gründe für die Unterschiede zwischen den Betriebssystemen zu verstehen.
 
-\paragraph{Waiting Time}
+\paragraph{Waiting Time und Burst Time}
 Die Auswirkung der Warteschlangenlänge auf die Queue Time ist deutlich bei der FIFO\_500 Konfiguration im Vergleich zur FIFO\_50 Konfiguration zu sehen.
 Mehr Tasks müssen in der Warteschlange warten, bevor sie ausgeführt werden können, was zu einer höheren Wartezeit führt.
 Die übrigen Metriken deuten darauf hin, dass man die Warteschlangenlänge noch weiter reduzieren könnte, ohne die übrigen Metriken zu beeinträchtigen.
@@ -219,14 +221,14 @@ Mit weiteren Tests zur Warteschlangenlänge könnte die optimale Länge ermittel
 um die Performance der Wartezeit von Tasks zu verbessern, möglichst ohne die Performance der anderen Metriken zu beeinträchtigen.
 
 \paragraph{Synchron ausgeführte Tasks und RAM-Auslastung}
-Die Anzahl der synchron ausgeführten Tasks ist bei der FIFO\_500 Konfiguration deutlich höher 
-als bei der FIFO\_50 Konfiguration,
-was darauf hindeutet, dass die längere Warteschlange zu einer höheren Anzahl von Tasks führt, 
-die synchron ausgeführt werden müssen.
+Bei der FIFO\_500 Konfiguration ist der Anteil synchron ausgeführter Tasks deutlich höher 
+als bei FIFO\_50.
+Das deutet darauf hin, dass die längere Warteschlange mehr Tasks erzeugt,
+die schließlich synchron ausgeführt werden müssen.
 \textcolor{red}{Hier Erklärung für, warum das so ist.}
-Die höhere maximale Ram-Auslastung bei der FIFO\_500 Konfiguration bei 4 Threads im Verhältnis zur FIFO\_50 Konfiguration 
-mit 4 Threads könnte ebenfalls auf die höhere Warteschlangengröße zurückzuführen sein, 
-da mehr Tasks in der Warteschlange gehalten werden müssen, was zu einem höheren Speicherbedarf führt.
+Auch die höhere maximale RAM-Auslastung der FIFO\_500 Konfiguration bei 4 Threads gegenüber FIFO\_50 
+kann mit der größeren Warteschlange zusammenhängen,
+da mehr Tasks gleichzeitig vorgehalten werden und damit mehr Speicher belegen.
 
 \paragraph{Vorteile und Nachteile im Vergleich zur Referenz}
 \begin{itemize}
@@ -246,9 +248,10 @@ da mehr Tasks in der Warteschlange gehalten werden müssen, was zu einem höhere
 
 \section{Shortest-Subtree-Time-First}
 
-In diesem Abschnitt werden die Ergebnisse der Messungen mit dem SSTF-Scheduler vorgestellt.
+\noindent In diesem Abschnitt werden die Ergebnisse der Messungen mit dem SSTF-Scheduler vorgestellt.
 Das Ziel dieser Implementierung war es, die Anzahl der synchron ausgeführten Tasks zu reduzieren
 und die Wartezeit von Tasks zu verbessern, indem die Tasks mit der kürzesten erwarteten Ausführungszeit zuerst ausgeführt werden.
+Der SSTF-Scheduler wird mit dem FIFO-Scheduler verglichen, um die Auswirkungen des Priorisierungsansatzes auf die Performance zu bewerten.
 
 \begin{table}[H]
 \caption{SSTF: Laufzeit-, CPU- und RAM-Metriken (Mittelwerte aus $n=20$ Läufen)}
@@ -273,9 +276,9 @@ Threads & OS & Runtime [s] & CPU [\%] & RAM Mittel [MB] & RAM Max [MB] \\
 \endgroup
 \end{table}
 
-In \ref{tab:sstf-uebersicht-system} sind die Laufzeit, CPU-Auslastung und RAM-Auslastung für den SSTF-Scheduler aufgelistet.
-Die Werte sind ähnlich zu denen der FIFO-Scheduler, mit einigen geringfügigen Unterschieden.
-Die maximale RAM-Auslastung ähnelt der von FIFO\_50, ist allerdings bei 10 Threads auf Windows deutlich geringer als bei beiden FIFO-Konfigurationen.
+\noindent Tabelle \ref{tab:sstf-uebersicht-system} zeigt Laufzeit, CPU-Auslastung und RAM-Auslastung des SSTF-Schedulers.
+Insgesamt liegen die Werte nahe bei den FIFO-Ergebnissen, unterscheiden sich aber in einzelnen Lastfällen.
+Auffällig ist insbesondere, dass die maximale RAM-Auslastung bei 10 Threads auf Windows klar unter beiden FIFO-Konfigurationen liegt.
 
 
 \begin{table}[H]
@@ -301,33 +304,35 @@ Threads & OS & Runtime CV [\%] & Queue [ms] & Exec [ms] & Sync Tasks [\%] \\
 \endgroup
 \end{table}
 
-In \ref{tab:sstf-uebersicht-task} sind die Runtime CV, Queue Time, Execution Time und der Anteil der synchronen Tasks für den SSTF-Scheduler aufgelistet.
-Die Runtime CV ist ähnlich zu der der FIFO-Scheduler, mit einigen geringfügigen Unterschieden.
-Die Queue Time ist bei SSTF im Vergleich zu FIFO\_50 und FIFO\_500 etwas geringer.
-Vor allem ist die Execution Time bei SSTF im Vergleich zu beiden FIFO-Konfigurationen deutlich geringer.
-Die Anzahl der synchron ausgeführten Tasks ist bei SSTF im Vergleich zu beiden FIFO-Konfigurationen deutlich geringer.
+\noindent Tabelle \ref{tab:sstf-uebersicht-task} enthält Runtime CV, Queue Time, Execution Time und den Anteil synchroner Tasks.
+Die Runtime CV bleibt im Bereich der FIFO-Werte, zeigt aber leichte Abweichungen je nach Last.
+Gleichzeitig fällt die Queue Time gegenüber FIFO\_50 und FIFO\_500 etwas geringer aus.
+Besonders deutlich ist die niedrigere Execution Time im Vergleich zu beiden FIFO-Varianten.
+Zusätzlich sinkt der Anteil synchron ausgeführter Tasks gegenüber beiden FIFO-Konfigurationen klar.
 
 \subsection{Diskussion der SSTF-Ergebnisse}
 
 \paragraph{Stabilität}
-Die Stabilität verhält sich ähnlich zu der der FIFO-Scheduler, mit einer konstanten CPU-Auslastung bei einem Thread über die Testläufe hinweg,
-und einer höheren Varianz bei höherer Anzahl an Threads, siehe Abbildung \ref{fig:sstf-1t-runtime}, \ref{fig:sstf-4t-runtime} und \ref{fig:sstf-10t-runtime}.
+Die Stabilität ist insgesamt vergleichbar mit den FIFO-Schedulern:
+Bei einem Thread bleibt die CPU-Auslastung über die Testläufe hinweg konstant,
+während mit steigender Thread-Anzahl die Varianz zunimmt (siehe Abbildung \ref{fig:sstf-1t-runtime}, \ref{fig:sstf-4t-runtime} und \ref{fig:sstf-10t-runtime}).
 
 \paragraph{Laufzeit}
-Die Laufzeiten des SSTF-Schedulers sind ähnlich zu denen der FIFO-Scheduler, mit einigen nur geringfügigen Unterschieden.
+Die Laufzeiten des SSTF-Schedulers liegen nahe an den FIFO-Werten;
+die Unterschiede bleiben insgesamt gering und hängen vom jeweiligen Lastfall ab.
 
-\paragraph{Waiting Time}
-Die Queue Time ist bei SSTF im Vergleich zu beiden FIFO-Konfigurationen etwas geringer, was darauf hindeutet, 
-dass die Priorisierung von Tasks mit kürzerer erwarteter Ausführungszeit zu einer Verbesserung der Wartezeit führt.
-Die Execution Time ist bei SSTF bei einem Thread im Vergleich zu beiden FIFO-Konfigurationen mit einem Thread deutlich geringer.
+\paragraph{Waiting Time und Burst Time}
+Im Vergleich zu beiden FIFO-Konfigurationen fällt die Queue Time bei SSTF etwas geringer aus.
+Das spricht dafür, dass die Priorisierung kürzerer Tasks die Wartezeit verbessert.
+Außerdem ist die Execution Time bei SSTF im 1-Thread-Fall klar niedriger als bei beiden FIFO-Varianten.
 \textcolor{red}{Hier Erklärung für, warum das so ist.}
 Der Grund hierfür muss noch weiter untersucht werden.
 
 \paragraph{Synchron ausgeführte Tasks und RAM-Auslastung}
-Die Anzahl der synchron ausgeführten Tasks ist bei SSTF im Vergleich zu beiden FIFO-Konfigurationen deutlich geringer, 
-was darauf hindeutet, dass die Priorisierung von Tasks mit kürzerer erwarteter Ausführungszeit zu einer Reduzierung der Anzahl von Tasks führt, die synchron ausgeführt werden müssen.
-Die maximale RAM-Auslastung bei SSTF ist bei 10 Threads auf Windows deutlich geringer als bei beiden FIFO-Konfigurationen.
-Beides sind deutliche Verbesserungen im Vergleich zu beiden FIFO-Konfigurationen.
+Bei SSTF ist der Anteil synchron ausgeführter Tasks gegenüber beiden FIFO-Konfigurationen deutlich geringer.
+Damit spricht vieles dafür, dass die Priorisierung kürzerer Tasks die notwendige Synchronisation reduziert.
+Hinzu kommt die niedrigere maximale RAM-Auslastung bei 10 Threads auf Windows im Vergleich zu beiden FIFO-Varianten.
+Zusammen genommen sind das klare Verbesserungen gegenüber FIFO.
 
 \paragraph{Vorteile und Nachteile im Vergleich zu FIFO}
 \begin{itemize}
@@ -347,7 +352,10 @@ Beides sind deutliche Verbesserungen im Vergleich zu beiden FIFO-Konfigurationen
 
 \section{Work-Stealing mit SSTF-Priorisierung}
 Hier werden die Ergebnisse der Messungen mit dem Work-Stealing mit SSTF-Priorisierung vorgestellt.
-
+Das Ziel dieser Implementierung war es, die Vorteile des SSTF-Schedulers mit der Flexibilität und Lastverteilung des Work-Stealing-Ansatzes zu kombinieren und Lock-Contention zu reduzieren.
+Der Work-Stealing mit SSTF-Priorisierung Scheduler wird primär mit dem SSTF-Scheduler verglichen, 
+um die Auswirkungen des Work-Stealing-Ansatzes auf die Performance zu bewerten, 
+da beide Scheduler die gleiche Priorisierungsstrategie verwenden.
 
 \begin{table}[H]
 \caption{WS: Laufzeit-, CPU- und RAM-Metriken (Mittelwerte aus $n=20$ Läufen)}
@@ -372,9 +380,9 @@ Threads & OS & Runtime [s] & CPU [\%] & RAM Mittel [MB] & RAM Max [MB] \\
 \endgroup
 \end{table}
 
-In Tabelle \ref{tab:ws-uebersicht-system} sind die Laufzeit, CPU-Auslastung und RAM-Auslastung für den Work-Stealing mit SSTF-Priorisierung aufgelistet.
-Die Werte verhalten sich ähnlich zu dem des SSTF-Scheduler, mit einigen geringfügigen Unterschieden.
-Die mittlere Ram-Utilization ist durchgehend niedriger als beim SSTF-Scheduler, während die maximale RAM-Auslastung bei 10 Threads auf Windows höher ist als beim SSTF-Scheduler.
+\noindent In Tabelle \ref{tab:ws-uebersicht-system} sind die Laufzeit, CPU-Auslastung und RAM-Auslastung für den Work-Stealing mit SSTF-Priorisierung aufgelistet.
+Die Werte liegen insgesamt nahe am SSTF-Scheduler, unterscheiden sich jedoch in einzelnen Punkten.
+So ist die mittlere RAM-Utilization durchgehend niedriger als bei SSTF, während die maximale RAM-Auslastung bei 10 Threads auf Windows höher ausfällt.
 
 \begin{table}[H]
 \caption{WS: Runtime CV und Task-Metriken (Mittelwerte aus $n=20$ Läufen)}
@@ -399,38 +407,37 @@ Threads & OS & Runtime CV [\%] & Queue [ms] & Exec [ms] & Sync Tasks [\%] \\
 \endgroup
 \end{table}
 
-In Tabelle \ref{tab:ws-uebersicht-task} sind die Runtime CV, Queue Time, Execution Time und der Anteil der synchronen Tasks für den Work-Stealing mit SSTF-Priorisierung aufgelistet.
-Die Runtime CV ist ähnlich zu der des SSTF-Schedulers, mit einigen geringfügigen Unterschieden.
-Die Queue Time ist bei Work-Stealing mit SSTF-Priorisierung im Vergleich zu beiden FIFO-Konfigurationen deutlich höher.
-Die Anzahl der synchron ausgeführten Tasks ist im Vergleich zum SSTF-Scheduler schwankt. 
+\noindent In Tabelle \ref{tab:ws-uebersicht-task} sind die Runtime CV, Queue Time, Execution Time und der Anteil der synchronen Tasks für den Work-Stealing mit SSTF-Priorisierung aufgelistet.
+Die Runtime CV bewegt sich im Bereich der SSTF-Werte, zeigt aber in einzelnen Szenarien größere Ausschläge.
+Im Vergleich zu beiden FIFO-Konfigurationen ist die Queue Time bei Work-Stealing mit SSTF-Priorisierung deutlich höher.
+Auch der Anteil synchron ausgeführter Tasks schwankt stärker als bei SSTF.
 
 
 
 \subsection{Diskussion der WS-Ergebnisse}
 
 \paragraph{Stabilität}
-
-Die Stabilität verhält sich ähnlich zu der der FIFO- und SSTF-Scheduler, 
-mit einer konstanten CPU-Auslastung bei einem Thread über die Testläufe hinweg,und einer höheren Varianz bei höherer Anzahl an Threads, 
-siehe Abbildung \ref{fig:ws-1t-runtime}, \ref{fig:ws-4t-runtime} und \ref{fig:ws-10t-runtime}.
+Die Stabilität entspricht weitgehend dem Bild bei FIFO und SSTF.
+Bei einem Thread bleibt die CPU-Auslastung über die Testläufe hinweg konstant,
+mit steigender Thread-Anzahl nimmt die Varianz jedoch zu (siehe Abbildung \ref{fig:ws-1t-runtime}, \ref{fig:ws-4t-runtime} und \ref{fig:ws-10t-runtime}).
 
 \paragraph{Laufzeit}
-Die Laufzeiten des Work-Stealing mit SSTF-Priorisierung sind ähnlich zu denen des SSTF-Schedulers, mit einigen geringfügigen Unterschieden.
+Die Laufzeiten von Work-Stealing mit SSTF-Priorisierung sind insgesamt nah an den SSTF-Werten,
+weichen je nach Plattform und Lastfall aber leicht ab.
 
-\paragraph{Waiting Time}
-Die Wartezeit der Tasks ist bei Work-Stealing mit SSTF-Priorisierung im Vergleich zu beiden FIFO-Konfigurationen deutlich höher.
-Eine angepasste Implementierung des Work-Stealing-Algorithmus könnte hier zu einer Verbesserung der Wartezeit führen, bei welcher die
-Warteschlangengröße der einzelnen Threads begrenzt wird, um zu verhindern, dass Tasks zu lange in der Warteschlange warten müssen, 
-bevor sie ausgeführt werden können.
+\paragraph{Waiting Time und Burst Time}
+Im Vergleich zu beiden FIFO-Konfigurationen ist die Wartezeit der Tasks bei Work-Stealing mit SSTF-Priorisierung deutlich höher.
+Eine angepasste Implementierung könnte diese Wartezeit reduzieren,
+etwa durch eine Begrenzung der Warteschlangengröße pro Thread, damit Tasks nicht zu lange in den Queues verbleiben,
+bevor sie ausgeführt werden.
 
 \paragraph{Synchron ausgeführte Tasks und RAM-Auslastung}
-Die fast doppelt so hohe Anzahl an synchron ausgeführten Tasks bei 4 Threads im Vergleich zum SSTF-Scheduler könnte darauf hindeuten, 
-dass die Work-Stealing-Implementierung in dieser Konfiguration nicht optimal ist.
-Die höhere maximale RAM-Auslastung bei 10 Threads auf 
-Windows im Vergleich zum SSTF-Scheduler könnte ebenfalls auf die Work-Stealing-Implementierung zurückzuführen sein,
-da mehr Tasks in der Warteschlange gehalten werden müssen, was zu einem höheren Speicherbedarf führt.
-Die durchgehend niedrigere mittlere RAM-Auslastung im Vergleich zum SSTF-Scheduler könnte darauf hindeuten, 
-dass die Work-Stealing-Implementierung in einigen Fällen zu einer besseren Speichernutzung führt.
+Auffällig ist bei 4 Threads die nahezu doppelt so hohe Zahl synchron ausgeführter Tasks gegenüber SSTF,
+was auf Optimierungspotenzial in dieser Konfiguration hindeutet.
+Ebenso spricht die höhere maximale RAM-Auslastung bei 10 Threads auf Windows gegenüber SSTF dafür,
+dass die aktuelle Work-Stealing-Strategie mehr Tasks gleichzeitig in den Queues hält und dadurch mehr Speicher benötigt.
+Gleichzeitig fällt die mittlere RAM-Auslastung über alle Konfigurationen hinweg niedriger aus,
+was auf Vorteile bei der durchschnittlichen Speichernutzung schließen lässt.
 
 \paragraph{Vorteile und Nachteile im Vergleich zu SSTF}
 \begin{itemize}
@@ -445,5 +452,144 @@ dass die Work-Stealing-Implementierung in einigen Fällen zu einer besseren Spei
         \item Die höhere maximale RAM-Auslastung bei 10 Threads auf Windows im Vergleich zum SSTF-Scheduler könnte ebenfalls auf die Work-Stealing-Implementierung zurückzuführen sein, da mehr Tasks in der Warteschlange gehalten werden müssen, was zu einem höheren Speicherbedarf führt.
     \end{itemize}
 \end{itemize}
+
+
+\section{Diskussion der Ergebnisse}
+
+\noindent Die Ergebnisse der Messungen zeigen, dass die verschiedenen Scheduling-Algorithmen 
+unterschiedliche Auswirkungen auf die Performance
+von verschiedenen Metriken haben, wie Laufzeit, CPU-Auslastung, RAM-Auslastung, 
+Wartezeit von Tasks und Anzahl der synchron ausgeführten Tasks.
+Für die Nutzer des Scanners ist die Laufzeit von oberster Priorität, 
+wenn möglich mit möglichst geringer Ressourcen-Auslastung.
+Ein responsiver Scanner, also niedriger Wartezeit von Tasks, 
+ist ebenfalls wünschenswert, aber nicht auf Kosten einer höheren Laufzeit.
+Die Anzahl der synchron ausgeführten Tasks sollte möglichst gering sein, um die Vorteile der Task-basierten Ausführung zu nutzen,
+hat für den Nutzer allerdings keine direkte Auswirkung und somit eine niedrigere Priorität.
+
+\vspace{7.56mm}
+\noindent Die hier verwendeten Grafiken zeigen die Mittelwerte von jeweils 20 Messungen der Laufzeit, 
+CPU-Auslastung und RAM-Auslastung der verschiedenen Scheduling-Algorithmen 
+bei verschiedenen Thread-Anzahlen auf Windows und Linux.
+
+\vspace{7.56mm}
+
+\noindent Die Ergebnisse zeigen bei einem Thread keine revelanten Unterschiede zwischen den verschiedenen Scheduling-Algorithmen, siehe 
+Abbildung \ref{fig:schedulercmp-1t-runtime}, \ref{fig:schedulercmp-1t-cpu} und \ref{fig:schedulercmp-1t-ram}.
+Bei Singlethread-Ausführung zeigen alle Scheduler vergleichbare Performance. 
+Dies ist erwartet, da Scheduling-Vorteile erst mit Parallelismus zum Tragen kommen.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/Scheduler_Comparison/scheduler_1T_runtime.pdf}
+\caption{Scheduler-Vergleich bei 1 Thread: Runtime}
+\label{fig:schedulercmp-1t-runtime}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/Scheduler_Comparison/scheduler_1T_cpu.pdf}
+\caption{Scheduler-Vergleich bei 1 Thread: CPU-Utilization}
+\label{fig:schedulercmp-1t-cpu}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/Scheduler_Comparison/scheduler_1T_ram.pdf}
+\caption{Scheduler-Vergleich bei 1 Thread: RAM-Utilization}
+\label{fig:schedulercmp-1t-ram}
+\end{figure}
+
+\noindent Erst bei der Verwendung von mehreren Threads werden Unterschiede zwischen den verschiedenen Scheduling-Algorithmen sichtbar.
+Bei 4 Threads ist der Unterschied in der Laufzeit auf Windows deutlich erkennbar, siehe Abbildung \ref{fig:schedulercmp-4t-runtime}.
+Gegenüber der Referenz (1213.83\,s) sind alle neuen Scheduler schneller:
+FIFO\_50 mit 1126.42\,s (-7.20\%), FIFO\_500 mit 1112.04\,s (-8.39\%), SSTF mit 1123.66\,s (-7.43\%) und Work-Stealing mit 1144.78\,s (-5.69\%).
+Auf Linux ist dieser Vorteil nicht in gleicher Form sichtbar, dort liegen die Laufzeiten deutlich näher beieinander.
+
+\vspace{7.56mm}
+
+\noindent Zwischen FIFO\_50, FIFO\_500 und SSTF sind Laufzeit und CPU-Auslastung bei 4 Threads insgesamt ähnlich, siehe
+Abbildung \ref{fig:schedulercmp-4t-runtime} und \ref{fig:schedulercmp-4t-cpu}.
+Deutliche Unterschiede zeigen sich jedoch bei den internen Metriken:
+FIFO\_500 hat mit 481.52\,ms eine stark erhöhte Queue Time und mit 10782\,MB die höchste RAM-Spitze.
+SSTF erreicht mit 45.06\,ms die niedrigste Queue Time und reduziert den Anteil synchron ausgeführter Tasks auf 53.51\%
+(FIFO\_50: 63.84\%, FIFO\_500: 79.56\%).
+Work-Stealing liegt bei der Queue Time mit 90.46\,ms deutlich höher, zeigt aber bei den synchronen Tasks mit 53.36\% einen ähnlichen Wert wie SSTF.
+
+\vspace{7.56mm}
+
+\noindent Nach den festgelegten Prioritäten (Laufzeit vor Ressourcenauslastung und Responsivität) ist bei 4 Threads
+SSTF die ausgewogenste Konfiguration:
+vergleichbare Laufzeit zur schnelleren FIFO-Varianten, gleichzeitig geringere Queue Time und deutlich weniger synchron ausgeführte Tasks.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/Scheduler_Comparison/scheduler_4T_runtime.pdf}
+\caption{Scheduler-Vergleich bei 4 Threads: Runtime}
+\label{fig:schedulercmp-4t-runtime}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/Scheduler_Comparison/scheduler_4T_cpu.pdf}
+\caption{Scheduler-Vergleich bei 4 Threads: CPU-Utilization}
+\label{fig:schedulercmp-4t-cpu}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/Scheduler_Comparison/scheduler_4T_ram.pdf}
+\caption{Scheduler-Vergleich bei 4 Threads: RAM-Utilization}
+\label{fig:schedulercmp-4t-ram}
+\end{figure}
+
+\noindent Bei 10 Threads werden die Unterschiede zwischen den Scheduling-Algorithmen noch deutlicher, siehe
+Abbildung \ref{fig:schedulercmp-10t-runtime}, \ref{fig:schedulercmp-10t-cpu} und \ref{fig:schedulercmp-10t-ram}.
+Auf Windows sind alle neuen Scheduler weiterhin klar schneller als die Referenz (825.78\,s):
+FIFO\_50 mit 750.65\,s (-9.10\%), FIFO\_500 mit 740.05\,s (-10.38\%), SSTF mit 752.41\,s (-8.89\%) und Work-Stealing mit 747.43\,s (-9.49\%).
+Auf Linux liegen die Laufzeiten dagegen sehr nah beieinander, ein klarer Laufzeitvorteil eines einzelnen Schedulers ist dort nicht erkennbar.
+
+\vspace{7.56mm}
+
+\noindent Deutliche Unterschiede zeigen sich bei den internen Metriken und der Ressourcencharakteristik:
+SSTF reduziert den Anteil synchron ausgeführter Tasks auf 40.08\% (FIFO\_50: 58.78\%, FIFO\_500: 71.92\%)
+und erreicht damit eine klar bessere Task-Parallelisierung als beide FIFO-Varianten.
+Work-Stealing senkt den Anteil synchroner Tasks weiter auf 35.31\% und erreicht zugleich die beste Laufzeit auf Windows,
+geht jedoch mit deutlich höherer Queue Time (97.23\,ms) einher.
+Bei der RAM-Spitze zeigt SSTF auf Windows mit 9592\,MB den besten Wert unter den neuen Schedulern,
+während Work-Stealing mit 11457\,MB deutlich höher liegt.
+
+\vspace{7.56mm}
+
+\noindent Nach den festgelegten Prioritäten ist damit auch bei 10 Threads SSTF die robusteste Gesamtwahl:
+nahezu beste Laufzeit, klar reduzierte Synchronisation und günstigeres RAM-Maximum.
+Work-Stealing ist eine interessante Alternative für maximale Laufzeitoptimierung auf Windows,
+erfordert aber weitere Optimierung der Queue Time und Speichercharakteristik.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/Scheduler_Comparison/scheduler_10T_runtime.pdf}
+\caption{Scheduler-Vergleich bei 10 Threads: Runtime}
+\label{fig:schedulercmp-10t-runtime}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/Scheduler_Comparison/scheduler_10T_cpu.pdf}
+\caption{Scheduler-Vergleich bei 10 Threads: CPU-Utilization}
+\label{fig:schedulercmp-10t-cpu}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Messungen/Scheduler_Comparison/scheduler_10T_ram.pdf}
+\caption{Scheduler-Vergleich bei 10 Threads: RAM-Utilization}
+\label{fig:schedulercmp-10t-ram}
+\end{figure}
+
+\noindent Die Auswertung zeigt, dass SSTF im Bezug auf die gewählten Prioritäten die beste Gesamtbalance aus Laufzeit, 
+Stabilität und Ressourceneffizienz bietet und wird damit als bevorzugte Scheduler-Strategie empfohlen.
+
+\noindent Weitere Tests mit optimierten Implementierungen und auf verschiedenen Systemen sind jedoch empfehlenswert.
 
 \end{sloppypar}
