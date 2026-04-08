@@ -1,2 +1,63 @@
 \chapter{Zusammenfassung}
 \label{ch:chapter05}
+
+\begin{sloppypar}
+
+\noindent Diese Arbeit hatte das Ziel, die Performance eines APT-Scanners durch die Einführung eines task-basierten Schedulers zu verbessern 
+und die Wirkung verschiedener Scheduling-Strategien unter kontrollierten Bedingungen experimentell zu bewerten. 
+Dafür wurde der Scanner architektonisch von einer modulgebundenen, rekursiv-synchronen Verarbeitung 
+auf ein entkoppeltes Service-Modell mit zentralem Scheduler umgestellt. 
+Auf dieser Basis wurden drei Scheduling-Strategien systematisch untersucht: FIFO, SSTF sowie Work-Stealing mit SSTF-Priorisierung.
+
+\vspace{7.56mm}
+
+\noindent Im Vergleich zum alten Scheduler zeigt sich insgesamt ein positives Bild. 
+Die neuen Scheduler liefern auf Windows bei paralleler Ausführung deutliche Laufzeitverbesserungen. 
+Bei 4 Threads wurde die Runtime gegenüber der Referenz je nach Verfahren um etwa 5,69\,\% bis 8,39\,\% reduziert, 
+bei 10 Threads um etwa 8,89\,\% bis 10,38\,\%. 
+Die Ergebnisse zeigen, dass die Systemauslastung in den Multithread-Konfigurationen gesteigert werden konnte, 
+ohne die Stabilität der Messungen grundsätzlich zu verlieren. 
+Auf Linux fielen die Laufzeitunterschiede sehr gering aus.
+
+\vspace{7.56mm}
+
+\noindent Die in Kapitel~\ref{ch:Einleitung} formulierten Forschungsfragen können auf Basis der Messergebnisse präzise beantwortet werden. 
+Hinsichtlich der Laufzeitverbesserung zeigen die getesteten Scheduling-Algorithmen einen deutliche Vorteil unter Windows bei paralleler Ausführung in den 4- und 10-Thread-Konfigurationen. 
+Unter Linux sind die Unterschiede in der Laufzeit dagegen deutlich geringer, so dass auf diesem Betriebssystem aufgrund dieser Metrik keine Empfehlung möglich ist. 
+Bezüglich der Auswirkungen auf CPU- und RAM-Utilization sowie Waiting Time ergibt sich ein differenziertes Bild: 
+Die CPU-Utilization steigt mit der Threadzahl in allen Varianten.
+Große Warteschlangen erhöhen Queue Time, RAM-Spitzen, sowie durchschnittliche RAM-Utilization. Hier gibt es Optimierungspotential.
+SSTF reduziert die Waiting Time gegenüber FIFO konsistent und senkt, besonders unter Last, den Anteil synchron ausgeführter Tasks. 
+Work-Stealing mit SSTF zeigt in der vorliegenden Implementierung keine durchgängige Verbesserung, da erhöhte Queue-Zeiten und teils höhere RAM-Peaks auftreten.
+
+\vspace{7.56mm}
+
+\noindent Unter den gewählten Prioritäten (Laufzeit vor Ressourcenverbrauch, dahinter erst die Responsivität) 
+ergibt sich SSTF als beste Gesamtlösung. 
+Das Verfahren kombiniert kurze Laufzeiten mit niedrigerer Queue Time als die getesteten FIFO-Varianten 
+und reduziert den Anteil synchron ausgeführter Tasks deutlich. 
+
+\vspace{7.56mm}
+
+\noindent Die Ergebnisse sind allerdings nur begrenzt aussagekräftig. 
+
+\noindent Erstens sind die Laufzeitgewinne plattformabhängig und unter Linux deutlich schwächer ausgeprägt. 
+
+\noindent Zweitens hängt die Wirksamkeit von SSTF von der Qualität der Prioritätsheuristik ab. 
+Für das Testsystem, welches mithilfe von Snapshots vor jedem Scan zurückgesetzt wurde, 
+war eine statische Priorisierung ausreichend, 
+eine adaptive Lösung ist aber für den produktiven Einsatz empfehlenswert.
+
+\noindent Drittens besteht beim Work-Stealing-Ansatz mit SSTF-Priorisierung in der aktuellen Variante Optimierungsbedarf im Queue-Management und in der Speichercharakteristik. 
+Es ist möglich, dass durch gezielte Anpassungen Performancegewinne erzielt werden können. 
+
+
+\vspace{7.56mm}
+
+\noindent Diese Arbeit zeigt
+dass der Architekturwechsel zu einem zentralen task-basierten Scheduling für den Scanner möglich ist 
+und reproduzierbare Leistungsgewinne liefern kann. 
+Die entwickelten Verfahren stellen eine belastbare Grundlage für weiterführende Optimierungen dar, 
+insbesondere bei Lastprofilen mit hoher Parallelität.
+
+\end{sloppypar}

@@ -1,8 +1,43 @@
 \chapter{Ausblick}
 \label{ch:chapter06}
 
-Backpressure um Anzahl an Fallbacks zu reduzieren. Eventuell indem man den Modulthread zeitweise pausiert.
+% Backpressure um Anzahl an Fallbacks zu reduzieren. Eventuell indem man den Modulthread zeitweise pausiert.
 
-Priority Based Scheduler einbauen.
+% Priority Based Scheduler einbauen.
 
-Queueing Theorie 
+% Queueing Theorie 
+\begin{sloppypar}
+
+\noindent Da die Testumgebung für die diese Arbeit auf einem virtuellen Testsystem mit kontrollierten Bedingungen basiert, 
+sind die Ergebnisse nur begrenzt auf reale Einsatzszenarien übertragbar.
+Es sollten weiterführende Untersuchungen unter realen Bedingungen mit produktionsnahen Systemen durchgeführt werden.
+Somit lassen sich auch systematische Fehler ausschließen, die durch die Testumgebung bedingt sein könnten.
+
+\vspace{7.56mm}
+
+\noindent Es gibt viele Möglichkeiten, die in dieser Arbeit entwickelten Verfahren zu optimieren und zu erweitern, welche aber aufgrund der begrenzten Ressourcen nicht umgesetzt werden konnten.
+Hier folgen einige konkrete Ansätze, die sich aus den Ergebnissen und Beobachtungen der vorliegenden Arbeit ableiten lassen:
+
+\vspace{7.56mm}
+
+\noindent Die Implementierung des Work-Stealing-Ansatzes mit SSTF-Priorisierung zeigte in der vorliegenden Variante Optimierungsbedarf im Queue-Management und in der Speichercharakteristik.
+Es ist möglich, dass durch gezielte Anpassungen Performancegewinne erzielt werden können.
+Die Warteschlangenlängen aller Scheduler-Varianten können weiter optimiert werden, um die Queue-Zeiten zu reduzieren und die durchschnittliche und maximale RAM-Utilization zu senken.
+
+\vspace{7.56mm}
+
+\noindent Die Prioritätsheuristik von SSTF könnte weiter verbessert werden. 
+Statt einer statischen Implementierung könnte eine adaptive Lösung implementiert werden, 
+welche dynamisch die Prioritäten anpasst.
+
+\vspace{7.56mm}
+
+\noindent Backpressure-Mechanismen könnten implementiert werden, um die Anzahl der Fallbacks zu reduzieren. 
+Beispielsweise könnte der Modulthread zeitweise pausiert werden, wenn die Warteschlangen zu voll werden oder die RAM-Auslastung zu hoch ist.
+
+\vspace{7.56mm}
+
+\noindent Im Bereich der Priority Based Scheduler könnten weitere Strategien untersucht werden, um die Laufzeit weiter zu optimieren, ohne die Responsivität zu stark zu beeinträchtigen.
+Die Anwendung von Queueing-Theorie könnte helfen, die Warteschlangen besser zu verstehen und zu optimieren, um die Performance weiter zu verbessern.
+
+\end{sloppypar}

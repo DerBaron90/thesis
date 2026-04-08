@@ -4,21 +4,24 @@
 \begin{otherlanguage}{ngerman}
 	\pdfbookmark[0]{Zusammenfassung}{Zusammenfassung}
 	\chapter*{Zusammenfassung}
-	Kurze Zusammenfassung des Inhaltes in deutscher Sprache von ca. einer Seite länge. Dabei sollte vor allem auf die folgenden Punkte eingegangen werden:
-	%
-	\begin{itemize}
-	  \item Motivation: Wieso ist diese Arbeit entstanden? Warum ist das Thema der Arbeit (für die Allgemeinheit) interessant? Dabei sollte die Motivation von der konkreten Aufgabenstellung, z.B. durch eine Firma, weitestgehend abstrahiert werden. 
-          \item Inhalt: Was ist Inhalt der Arbeit? Was genau wird in der Arbeit behandelt? Hier sollte kurz auf Methodik und Arbeitsweise eingegangen werden.
-          \item Ergebnisse: Was sind die Ergebnisse der Arbeit? Ein kurzer Überblick über die wichtigsten Ergebnisse als Teaser, um die Arbeit vollständig zu lesen.
-	\end{itemize}
-	\medskip
+	\begin{sloppypar}
+	\noindent Diese Arbeit untersucht die Performance-Optimierung eines APT-Scanners durch die Umstellung von einem objektbasierten, rekursiv-synchronen Scheduling auf ein zentrales task-basiertes Scheduling. 
 
-	\noindent
-	Eine großartige Anleitung von Kent Beck, wie man gute Abstracts schreibt, finden Sie hier:
-	\begin{center}
-                \url{https://plg.uwaterloo.ca/~migod/research/beckOOPSLA.html}
-        \end{center}
-	Die strikt synchrone Verarbeitung von Objekten in einem Incident-Response-Scanner kann zu längeren Verarbeitungszeiten und RAMSpitzen führen.
-	Sowohl bei regelmäßigen Scans als auch in Incident Response Szenarien ist eine kurze Laufzeit, eine 
+
+	\noindent Implementiert und evaluiert wurden drei Scheduling-Algorithmen: First-In-First-Out (FIFO), Shortest-Subtree-Time-First (SSTF) und Work-Stealing mit SSTF-Priorisierung. 
+	Die Bewertung erfolgte experimentell in einer kontrollierten Testumgebung auf Debian~13 und Windows~11 mit 1, 4 und 10 Threads sowie 20 Wiederholungen je Konfiguration. 
+	Gemessen wurden Laufzeit, CPU- und RAM-Utilization, Waiting Time, Burst Time und der Anteil synchron ausgeführter Tasks. 
+
+	\vspace{7.56mm}
+
+	\noindent Unter Windows zeigen die neuen Scheduler bei 4 und 10 Threads klare Laufzeitgewinne gegenüber der Referenz. 
+	Unter Linux sind die Laufzeitunterschiede gering. 
+	SSTF liefert die stabilste Gesamtbalance aus Laufzeit, Waiting Time und Speichereigenschaften. 
+	Work-Stealing erreicht gegenüber SSTF keine durchgängige Verbesserung. 
+
+	\vspace{7.56mm}
+
+	\noindent Die Ergebnisse belegen, dass der Architekturwechsel möglich ist und reproduzierbare Leistungsgewinne, besonders unter hohen Lastprofilen, ermöglicht.
+	\end{sloppypar}
 
 \end{otherlanguage}

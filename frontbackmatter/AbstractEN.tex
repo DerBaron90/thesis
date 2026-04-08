@@ -6,17 +6,21 @@
 
 \begin{otherlanguage}{american}
 	\chapter*{Abstract}
-	A short summary of the contents in English of about one page. The following points should be addressed in particular:
-	\begin{itemize}
-		\item Motivation: Why did this work come about? Why is the topic of the work interesting (for the general public)? The motivation should be abstracted as far as possible from the specific tasks that may be given by a company.
-		\item Content: What is the content of this thesis? What exactly is covered in the thesis? The methodology and working method should be briefly discussed here.
-		\item Results: What are the results of this work? A brief overview of the most important results as a teaser to read the complete thesis.
-	\end{itemize}
-	\medskip
-	
-	\noindent
-	BTW: A great guide by Kent Beck how to write good abstracts can be found here:
-	\begin{center}
-		\url{https://plg.uwaterloo.ca/~migod/research/beckOOPSLA.html}
-	\end{center}
+
+	\begin{sloppypar}
+	\noindent This thesis investigates performance optimization of an APT scanner by replacing object-based, recursively synchronous scheduling with a centralized task-based scheduling model.
+
+	\vspace{7.56mm}
+
+	\noindent Three scheduling algorithms were implemented and evaluated: First-In, First-Out (FIFO), Shortest-Subtree-Time-First (SSTF), and Work Stealing with SSTF prioritization. The evaluation was conducted experimentally in a controlled test environment on Debian~13 and Windows~11 with 1, 4, and 10 threads and 20 repetitions per configuration. The measured metrics were runtime, CPU and RAM utilization, waiting time, burst time, and the share of synchronously executed tasks.
+
+	\vspace{7.56mm}
+
+	\noindent On Windows, the new schedulers show clear runtime improvements at 4 and 10 threads compared with the reference implementation. On Linux, runtime differences are small. SSTF provides the most stable overall balance of runtime, waiting time, and memory behavior. Work Stealing does not show a consistent improvement over SSTF.
+
+	\vspace{7.56mm}
+
+	\noindent The results show that the architectural change is feasible and enables reproducible performance gains, especially under high-load profiles.
+	\end{sloppypar}
+
 \end{otherlanguage}

@@ -33,7 +33,7 @@ Der methodische Prozess gliederte sich in vier zentrale Phasen:
 Es ist zu beachten, dass die Vorgehensweise spezifisch auf das zu optimierende System anzupassen ist.
 
 \section{Metriken und Messungen}
-Die primären Bewertungskriterien bilden die Real Time in Verbindung mit der CPU-Utilization,
+Die primären Bewertungskriterien sind die tatsächlich vergangene Zeit in Verbindung mit der CPU-Utilization,
 da sie die Gesamtperformance des Scanners am unmittelbarsten abbilden.
 Der Throughput dient dabei als Kontrollwert.
 
@@ -102,12 +102,12 @@ Die RAM-Utilization wird extern mit einer Abtastrate von 1\,Hz erfasst.
 Anpassungen der Größe der Queue-Datenstruktur, welche die Tasks für die Worker vorhält,
 haben direkte Auswirkungen auf die RAM-Utilization.
 Eine passende Größe für die Queue-Datenstruktur zu wählen,
-bei welcher die Real Time nicht verschlechtert wird, die RAM-Utilization aber möglichst minimal ist,
+bei welcher die Laufzeit nicht verschlechtert wird, die RAM-Utilization aber möglichst minimal ist,
 hat eine hohe Priorität, um die Speichereffizienz des Systems zu gewährleisten.
 Des Weiteren ermöglicht diese Metrik die Identifikation von RAM-Spitzenlasten (Peaks).
 Deren Vermeidung ist essentiell, da diese im günstigsten Fall die System-Performance beeinträchtigen
 und im schlechtesten Fall, bei deaktiviertem Swap, den Out-of-Memory-Killer (OOM) auslösen können,
-was zum Abbruch des Scanners oder anderer kritischer Systemprozesse führen würde.
+was zum Abbruch des Scans oder anderer kritischer Systemprozesse führt.
 
 \vspace{7.56mm}
 

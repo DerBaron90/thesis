@@ -1,11 +1,22 @@
 \chapter{Einleitung}
 \label{ch:Einleitung}
 
+
+
 %
-% Was ist ein APT-Scanner?
+% Was ist ein Incident-Response-Scanner?
 %
-\noindent Der Begriff APT steht für Advanced Persistent Threat
-und bezeichnet eine Form des Cyberangriffs,
+\noindent Ein Incident-Response-Scanner ist eine Sicherheitssoftware,
+die auf die schnelle Analyse und Bewertung kompromittierter oder verdächtiger Systeme ausgelegt ist.
+Sie wird insbesondere dann eingesetzt,
+wenn nach einem Vorfall möglichst zügig belastbare Informationen über den Zustand eines Systems benötigt werden.
+Im Unterschied zu klassischen Schutzmechanismen steht dabei nicht nur die Prävention,
+sondern auch die forensisch verwertbare Erkennung und Einordnung von Auffälligkeiten im Vordergrund.
+
+\vspace{7.56mm}
+
+\noindent Ein zentraler Anwendungsfall solcher Systeme ist die Erkennung von Advanced Persistent Threats (APTs).
+Der Begriff APT bezeichnet eine Form des Cyberangriffs,
 bei der sich ein Angreifer unbefugten Zugang zu einem Computersystem verschafft
 und potenziell über einen langen Zeitraum unentdeckt darin verbleibt.
 Im Gegensatz zu herkömmlichen Angriffen
@@ -18,8 +29,7 @@ nicht um einfachen, automatisierten Schadcode \cite[S.~1--2, 7]{Buchta:2024}.
 
 \noindent Ein Advanced-Persistent-Threat-Scanner (APT-Scanner), oder präziser ein APT-Angriffserkennungssystem,
 ist eine spezialisierte Sicherheitssoftware,
-die darauf ausgelegt ist,
-die Aktivitäten von fortgeschrittenen andauernden Bedrohungen zu identifizieren \cite[S.~1--2]{Buchta:2024}.
+die auf die Identifikation der Aktivitäten fortgeschrittener und andauernder Bedrohungen ausgelegt ist \cite[S.~1--2]{Buchta:2024}.
 
 \noindent Während herkömmliche Virenscanner oft auf bekannten Signaturen basieren,
 müssen APT-Scanner deutlich komplexere Methoden anwenden,
@@ -34,7 +44,7 @@ und über lange Zeiträume gestreckten Angriffe zu finden.
 \begin{sloppypar}
 \noindent Da APT-Akteure häufig neue Schwachstellen (Zero-Day-Exploits) nutzen
 oder legitime Systemwerkzeuge missbrauchen (Living-off-the-Land),
-helfen einfache Blacklists oft nicht weiter \cite[S.~6--7]{Buchta:2024}.
+helfen signaturbasierte Detektionsmechanismen oft nicht weiter \cite[S.~6--7]{Buchta:2024}.
 Moderne APT-Angriffs\-erkennungs\-systeme nutzen daher Anomalieerkennung \cite[S.~8--9]{Buchta:2024}.
 Die Anomalieerkennung identifiziert ungewöhnliche Muster
 oder Instanzen in Daten,
@@ -60,10 +70,10 @@ von dem APT-Angriffs\-erkennungs\-system als solche eingeordnet werden.
 % Performance-Relevanz und Ziel der Arbeit
 %
 \begin{sloppypar}
-\noindent APT-Angriffs\-erkennungs\-systeme werden auf einer hohen Anzahl
+\noindent Incident-Response-Scanner und APT-Angriffs\-erkennungs\-systeme werden auf einer hohen Anzahl
 von produktiven Systemen,
-häufig auf kritischen Servern
-oder in ressourcen\-beschränkten Umgebungen, eingesetzt.
+h\"aufig auf kritischen Servern
+oder in ressourcen\-beschr\"ankten Umgebungen, eingesetzt.
 Hierbei werden regelmäßig Scans ausgeführt.
 Auch bei Incident-Response-Szenarien
 kommen APT-Angriffs\-erkennungs\-systeme zum Einsatz.
@@ -95,6 +105,8 @@ indem ein task-basierter Scheduler implementiert wird.
 In diesem Kapitel wird beschrieben, was Performance für den Anwendungszweck des Scanners bedeutet.
 Um ein besseres Verständnis für die Arbeitsweise des Scanners zu schaffen, wird diese anschließend näher erläutert.
 
+\vspace{7.56mm}
+
 \noindent Es wird auf den aktuellen Stand der Forschung im Bezug auf Scheduling Algorithmen eingegangen.
 Zuletzt wird ein kurzer Überblick über den Aufbau der Arbeit gegeben.
 
@@ -102,27 +114,28 @@ Zuletzt wird ein kurzer Überblick über den Aufbau der Arbeit gegeben.
 Wichtige Metriken für die Bewertung von CPU-Scheduling-Algorithmen sind \cite[S.~204--205]{Silberschatz:2018}, \cite[S.~154]{Tanenbaum:2015}:
 
 \paragraph{CPU-Utilization}
+Die Auslastung der CPU, gemessen als Prozentsatz der Zeit, in der die CPU aktiv arbeitet.
+Bei mehreren Kernen wird die durchschnittliche Auslastung über alle Kerne betrachtet.
 Das Ziel ist es, den Prozessor so beschäftigt wie möglich zu halten.
 In realen Systemen sollte die Auslastung zwischen 40\,\% (leicht belastet) und 90\,\% (stark belastet) liegen.
 
 \paragraph{Throughput}
-Dies ist die Anzahl der Prozesse, die pro Zeiteinheit abgeschlossen werden.
+Dies ist die Anzahl der Tasks, die pro Zeiteinheit abgeschlossen werden.
 
 \paragraph{Turnaround Time}
-Dies beschreibt die Zeitspanne von der Einreichung eines Prozesses bis zu seinem Abschluss.
+Dies beschreibt die Zeitspanne zwischen dem Einreihen eines Tasks in die Warteschlange und seinem Abschluss.
 
 \paragraph{Waiting Time}
-Die Zeitspanne, die ein Prozess in der Warteschlange verbringt.
+Die Zeitspanne, die ein Task in der Warteschlange verbringt.
 
 \vspace{7.56mm}
 
 \noindent Wenn man den gesamten Prozess betrachtet, treten andere Metriken in den Vordergrund:
 
 \paragraph{RAM-Utilization}
-Die Auslastung des Hauptspeichers. Für Ressourcen, die Anfragen bedienen, ist die Auslastung ein Maß dafür,
-wie beschäftigt eine Ressource ist, basierend darauf, wie viel Zeit sie in einem gegebenen Intervall aktiv Arbeit verrichtet hat.
-Für Ressourcen, die Speicher bereitstellen, kann sich die Auslastung auf die verbrauchte Kapazität, in diesem Fall den Hauptspeicher,
-beziehen \cite[S.~22]{Gregg:2020}.
+Die Auslastung des Hauptspeichers in Prozent.
+Für Ressourcen, die Speicher bereitstellen, bezieht sich die Auslastung auf die verbrauchte Kapazität.
+ \cite[S.~22]{Gregg:2020}.
 
 \paragraph{Runtime}
 Die gesamte Ausführungszeit des Prozesses.
@@ -131,8 +144,18 @@ dass die Ausführungszeit als das einzig konsistente und zuverlässige Maß für
 
 \vspace{7.56mm}
 
-\noindent Die Definition der Performance ist stark von dem zu bewertenden System abhängig.
-In dieser Arbeit wird die Performance des Scanners nach dessen Leistung in den aufgezählten Metriken bewertet. 
+\noindent Um die Reproduzierbarkeit der Messergebnisse zu bewerten, wird der Variationskoeffizient (engl. \textit{Coefficient of Variation}, CV) der Laufzeit als relatives Maß für die Streuung herangezogen. Im Gegensatz zur Standardabweichung erlaubt der CV den Vergleich der Variabilität von Datensätzen mit unterschiedlichen Mittelwerten, indem er die Streuung normiert. Er ist definiert als das Verhältnis der Standardabweichung $\sigma$ zum arithmetischen Mittelwert $\mu$:
+
+\begin{equation}
+    CV = \frac{\sigma}{\mu} \cdot 100\%
+\end{equation}
+
+\noindent Ein niedriger CV-Wert signalisiert eine hohe Präzision des Testaufbaus, während ein steigender Wert auf eine zunehmende Instabilität oder eine stärkere gegenseitige Beeinflussung der Threads hindeutet. 
+
+
+\vspace{7.56mm}
+
+\noindent In dieser Arbeit wird die Performance des Scanners nach dessen Leistung in den aufgezählten Metriken bewertet. 
 
 \section{Arbeitsweise des Scanners}
 Der Scanner basiert auf zwei zentralen Komponententypen, deren Zusammenwirken den Arbeitsablauf definiert. 
@@ -279,14 +302,17 @@ Dieser Ansatz gilt als kommunikationseffizienter, da Migrationen von Tasks nur a
 
 \vspace{7.56mm}
 
-\noindent Der Work-Stealing-Ansatz wurde bereits in den 1980er Jahren als Heuristik vorgeschlagen. 
-Erst Blumofe und Leiserson lieferten jedoch eine formale Analyse mit nachweisbar guten Schranken für Ausführungszeit, Speicherbedarf und Kommunikationsaufwand. 
-Der von ihnen beschriebene Algorithmus basiert auf einer dezentralen Datenstruktur, der sogenannten \textit{Ready Deque}. 
-Dabei verwaltet jeder Worker seine Threads in einer doppelt zugänglichen Warteschlange (Deque), die an zwei Enden, \textit{top} und \textit{bottom}, zugänglich ist.
-
+Der Work-Stealing-Ansatz wurde in den 1980er Jahren als Scheduling-Modell eingeführt. 
+1999 erfolgte durch Blumofe und Leiserson eine formale Analyse mit beweisbar optimalen Schranken für Ausführungszeit,
+Speicherbedarf und Kommunikationsaufwand.
+Der beschriebene Algorithmus basiert auf einer dezentralen Datenstruktur, 
+der \textit{Ready Deque}.
+Hierbei verwaltet jeder Worker seine Tasks in einer Double-Ended Queue (Deque), 
+auf die über zwei Enden, \textit{top} und \textit{bottom}, zugegriffen wird.
 \vspace{7.56mm}
 
-\noindent Der jeweilige Worker arbeitet sein Deque nach einem Stack-Prinzip ab: Neue Kind-Tasks werden am unteren Ende eingefügt und auch von dort wieder entnommen. 
+\noindent Der jeweilige Worker arbeitet sein Deque nach einem Stack-Prinzip ab: 
+Neue Kind-Tasks werden am unteren Ende eingefügt und auch von dort wieder entnommen. 
 Dieses Vorgehen begünstigt die Datenlokalität.
 
 \noindent Ein untätiger Worker hingegen stiehlt Aufgaben vom oberen Ende der Deque eines zufällig ausgewählten Workers. 
@@ -422,7 +448,7 @@ Die wissenschaftliche Zielsetzung ist es, belastbar zu bestimmen, welche Schedul
 
 \noindent Daraus leiten sich folgende Forschungsfragen ab:
 \begin{enumerate}
-    \item In welchem Ausmaß lassen sich Laufzeit und Durchsatz des Scanners durch alternative Scheduling-Strategien verbessern?
+    \item In welchem Ausmaß lässt sich die Laufzeit des Scanners durch alternative Scheduling-Strategien verbessern?
     \item Wie wirken sich die verschiedenen Strategien auf CPU- und RAM-Utilization sowie auf die Waiting Time aus?
 \end{enumerate}
 
