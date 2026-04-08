@@ -5,10 +5,12 @@
 	\pdfbookmark[0]{Zusammenfassung}{Zusammenfassung}
 	\chapter*{Zusammenfassung}
 	\begin{sloppypar}
-	\noindent Diese Arbeit untersucht die Performance-Optimierung eines APT-Scanners durch die Umstellung von einem objektbasierten, rekursiv-synchronen Scheduling auf ein zentrales task-basiertes Scheduling. 
 
+	\noindent Diese Arbeit untersucht die Performance-Optimierung eines APT-Scanners durch die Umstellung von einem objektbasierten, rekursiv-synchronen Scheduling auf ein zentrales taskbasiertes Scheduling. 
 
-	\noindent Implementiert und evaluiert wurden drei Scheduling-Algorithmen: First-In-First-Out (FIFO), Shortest-Subtree-Time-First (SSTF) und Work-Stealing mit SSTF-Priorisierung. 
+	\vspace{7.56mm}
+
+	\noindent Implementiert und evaluiert wurden drei Scheduling-Algorithmen: First-In, First-Out (FIFO), Shortest-Subtree-Time-First (SSTF) und Work-Stealing mit SSTF-Priorisierung. 
 	Die Bewertung erfolgte experimentell in einer kontrollierten Testumgebung auf Debian~13 und Windows~11 mit 1, 4 und 10 Threads sowie 20 Wiederholungen je Konfiguration. 
 	Gemessen wurden Laufzeit, CPU- und RAM-Utilization, Waiting Time, Burst Time und der Anteil synchron ausgeführter Tasks. 
 
