@@ -5,58 +5,63 @@
 
 \noindent Diese Arbeit hatte das Ziel, die Performance eines APT-Scanners durch die Einführung eines task-basierten Schedulers zu verbessern 
 und die Wirkung verschiedener Scheduling-Strategien unter kontrollierten Bedingungen experimentell zu bewerten. 
-Dafür wurde der Scanner architektonisch von einer modulgebundenen, rekursiv-synchronen Verarbeitung 
+Dafür wurde der Scanner architektonisch von einer modulgebundenen, rekursiv-synchronen und objektbasierten Verarbeitung 
 auf ein entkoppeltes Service-Modell mit zentralem Scheduler umgestellt. 
 Auf dieser Basis wurden drei Scheduling-Strategien systematisch untersucht: FIFO, SSTF sowie Work-Stealing mit SSTF-Priorisierung.
 
 \vspace{7.56mm}
 
-\noindent Im Vergleich zum alten Scheduler zeigt sich insgesamt ein positives Bild. 
-Die neuen Scheduler liefern auf Windows bei paralleler Ausführung deutliche Laufzeitverbesserungen. 
-Bei 4 Threads wurde die Runtime gegenüber der Referenz je nach Verfahren um etwa 5,69\,\% bis 8,39\,\% reduziert, 
-bei 10 Threads um etwa 8,89\,\% bis 10,38\,\%. 
-Die Ergebnisse zeigen, dass die Systemauslastung in den Multithread-Konfigurationen gesteigert werden konnte, 
-ohne die Stabilität der Messungen grundsätzlich zu verlieren. 
-Auf Linux fielen die Laufzeitunterschiede sehr gering aus.
+\noindent Im Vergleich zum alten Scheduler zeigt sich ein differenziertes Bild. 
+Die neuen Scheduler liefern auf Windows bei paralleler Ausführung nachweisbare Laufzeitverbesserungen. 
+Bei vier Threads wurde die Runtime gegenüber der Referenz je nach Verfahren um etwa 5,69\,\% bis 8,39\,\% reduziert, 
+bei zehn Threads um etwa 8,89\,\% bis 10,38\,\%. 
+Die Ergebnisse zeigen zugleich, dass die CPU-Auslastung in den Multithread-Konfigurationen gesteigert werden konnte, 
+ohne dass die Streuung der Messungen grundsätzlich ihre Aussagekraft verliert. 
+Unter Linux zeigt sich dagegen kein konsistenter Laufzeitvorteil: Bei einem Thread sind alle neuen Scheduler langsamer als die Referenz, 
+bei vier Threads gilt dies für FIFO\_500, SSTF und Work-Stealing, 
+und bei zehn Threads lässt sich kein nachweisbarer Unterschied zeigen.
 
 \vspace{7.56mm}
 
-\noindent Die in Kapitel~\ref{ch:Einleitung} formulierten Forschungsfragen können auf Basis der Messergebnisse präzise beantwortet werden. 
-Hinsichtlich der Laufzeitverbesserung zeigen die getesteten Scheduling-Algorithmen einen deutliche Vorteil unter Windows bei paralleler Ausführung in den 4- und 10-Thread-Konfigurationen. 
-Unter Linux sind die Unterschiede in der Laufzeit dagegen deutlich geringer, so dass auf diesem Betriebssystem aufgrund dieser Metrik keine Empfehlung möglich ist. 
-Bezüglich der Auswirkungen auf CPU- und RAM-Utilization sowie Waiting Time ergibt sich ein differenziertes Bild: 
-Die CPU-Utilization steigt mit der Threadzahl in allen Varianten.
-Große Warteschlangen erhöhen Queue Time, RAM-Spitzen, sowie durchschnittliche RAM-Utilization. Hier gibt es Optimierungspotential.
-SSTF reduziert die Waiting Time gegenüber FIFO konsistent und senkt, besonders unter Last, den Anteil synchron ausgeführter Tasks. 
-Work-Stealing mit SSTF zeigt in der vorliegenden Implementierung keine durchgängige Verbesserung, da erhöhte Queue-Zeiten und teils höhere RAM-Peaks auftreten.
+\noindent Die formulierten Forschungsfragen können auf Basis der Messergebnisse präzise beantwortet werden. 
+Hinsichtlich der Laufzeitverbesserung zeigen die getesteten Scheduling-Algorithmen einen deutlichen Vorteil unter Windows bei paralleler Ausführung in den Konfigurationen mit vier und zehn Threads. 
+Unter Linux lässt sich dagegen kein belastbarer Laufzeitvorteil ableiten. 
+Bezüglich der Auswirkungen auf CPU- und RAM-Auslastung sowie Waiting Time ergibt sich ein differenziertes Bild: 
+Die CPU-Auslastung steigt mit der Threadzahl in allen Varianten. 
+Große Warteschlangen erhöhen die Queue Time konsistent und führen in einzelnen Konfigurationen auch zu höheren RAM-Spitzen, 
+zeigen aber keinen nachweisbaren Vorteil bei Laufzeit, CPU-Auslastung oder mittlerer RAM-Auslastung. 
+SSTF reduziert die Queue Time gegenüber FIFO\_500 in allen Konfigurationen und senkt bei vier und zehn Threads den Anteil synchron ausgeführter Tasks gegenüber beiden FIFO-Varianten nachweisbar. 
+Work-Stealing mit SSTF zeigt in der vorliegenden Implementierung keinen konsistenten Vorteil gegenüber SSTF, 
+da die Queue Time in allen Konfigurationen höher ist und bei zehn Threads auf Windows auch ein höherer RAM-Maximalwert auftritt.
 
 \vspace{7.56mm}
 
 \noindent Unter den gewählten Prioritäten (Laufzeit vor Ressourcenverbrauch, dahinter erst die Responsivität) 
 ergibt sich SSTF als beste Gesamtlösung. 
-Das Verfahren kombiniert kurze Laufzeiten mit niedrigerer Queue Time als die getesteten FIFO-Varianten 
-und reduziert den Anteil synchron ausgeführter Tasks deutlich. 
+Unter Last ab vier Threads zeigt SSTF keinen nachweisbaren Laufzeitnachteil gegenüber FIFO\_50, FIFO\_500 und Work-Stealing, 
+reduziert gegenüber FIFO\_500 konsistent die Queue Time 
+und senkt bei vier und zehn Threads den Anteil synchron ausgeführter Tasks gegenüber beiden FIFO-Varianten nachweisbar. 
 
 \vspace{7.56mm}
 
-\noindent Die Ergebnisse sind allerdings nur begrenzt aussagekräftig. 
+\noindent Bei der Interpretation der Ergebnisse sind folgende Punkte zu beachten:
 
-\noindent Erstens sind die Laufzeitgewinne plattformabhängig und unter Linux deutlich schwächer ausgeprägt. 
+\noindent Erstens sind die Laufzeitgewinne plattformabhängig und unter Linux nicht konsistent nachweisbar. 
 
 \noindent Zweitens hängt die Wirksamkeit von SSTF von der Qualität der Prioritätsheuristik ab. 
 Für das Testsystem, welches mithilfe von Snapshots vor jedem Scan zurückgesetzt wurde, 
 war eine statische Priorisierung ausreichend, 
 eine adaptive Lösung ist aber für den produktiven Einsatz empfehlenswert.
 
-\noindent Drittens besteht beim Work-Stealing-Ansatz mit SSTF-Priorisierung in der aktuellen Variante Optimierungsbedarf im Queue-Management und in der Speichercharakteristik. 
+\noindent Drittens besteht beim Work-Stealing-Ansatz mit SSTF-Priorisierung in der aktuellen Variante Optimierungspotenzial bei den Warteschlangengrößen. 
 Es ist möglich, dass durch gezielte Anpassungen Performancegewinne erzielt werden können. 
 
 
 \vspace{7.56mm}
 
-\noindent Diese Arbeit zeigt
+\noindent Diese Arbeit zeigt,
 dass der Architekturwechsel zu einem zentralen task-basierten Scheduling für den Scanner möglich ist 
-und reproduzierbare Leistungsgewinne liefern kann. 
+und unter Windows bei paralleler Last reproduzierbare Leistungsgewinne liefern kann. 
 Die entwickelten Verfahren stellen eine belastbare Grundlage für weiterführende Optimierungen dar, 
 insbesondere bei Lastprofilen mit hoher Parallelität.
 

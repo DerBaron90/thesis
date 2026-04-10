@@ -98,6 +98,14 @@ die Performance des APT-Scanners Thor
 der Firma Nextron Systems GmbH,
 im Folgenden als Scanner bezeichnet, zu optimieren,
 indem ein taskbasierter Scheduler implementiert wird.
+
+\vspace{7.56mm}
+
+\noindent Daraus ergibt sich die Forschungsfrage, ob ein zentraler taskbasierter Scheduler die Laufzeit des Scanners gegenüber dem bisherigen objektbasierten, rekursiv-synchronen Scheduling verbessern kann, ohne CPU- und RAM-Auslastung sowie Wartezeiten unvertretbar zu verschlechtern. Die durchgeführten Untersuchungen zeigen, dass unter Windows bei paralleler Ausführung ab vier Threads reproduzierbare Laufzeitvorteile erreichbar sind, während unter Linux kein konsistenter Laufzeitvorteil nachweisbar ist. Unter den betrachteten Verfahren zeigt SSTF insbesondere in den Mehrthread-Konfigurationen die ausgewogenste Kombination aus Laufzeit, Wartezeit und Speichereigenschaften.
+
+\vspace{7.56mm}
+
+\noindent Der weitere Aufbau der Arbeit folgt dieser Fragestellung: Zunächst werden die fachlichen und technischen Grundlagen sowie die Arbeitsweise des Scanners erläutert, anschließend die Methodik und der Versuchsaufbau dargestellt. Darauf aufbauend werden die Messergebnisse präsentiert und diskutiert, bevor die Arbeit mit einer Zusammenfassung und einem Ausblick abschließt.
 \end{sloppypar}
 
 \chapter{Grundlagen}
