@@ -9,10 +9,10 @@ Im Anhang befinden sich alle Grafiken zu den Messungen in nach Scheduling-Algori
 \noindent Die Ergebnisse werden in vier Abschnitten präsentiert:
 \begin{itemize}
     \item Die Ergebnisse des alten Schedulers werden als Referenz vorgestellt.
-    \item Die Ergebnisse des FIFO-Schedulers werden vorgestellt und mit der Referenz verglichen, 
+    \item Die Ergebnisse des \acs{FIFO}-Schedulers werden vorgestellt und mit der Referenz verglichen, 
     um die Auswirkungen der Einführung eines taskbasierten Schedulers zu bewerten.
-    \item Die Ergebnisse des SSTF-Schedulers werden vorgestellt und mit dem FIFO-Scheduler verglichen, um die Auswirkungen der Priorisierung von Tasks zu bewerten.
-    \item Die Ergebnisse des Work-Stealing-Schedulers mit SSTF-Priorisierung werden vorgestellt und mit dem SSTF-Scheduler verglichen, um die Auswirkungen der Kombination von Work-Stealing mit einer Priorisierungsstrategie zu bewerten.
+    \item Die Ergebnisse des \acs{SSTF}-Schedulers werden vorgestellt und mit dem \acs{FIFO}-Scheduler verglichen, um die Auswirkungen der Priorisierung von Tasks zu bewerten.
+    \item Die Ergebnisse des Work-Stealing-Schedulers mit \acs{SSTF}-Priorisierung werden vorgestellt und mit dem \acs{SSTF}-Scheduler verglichen, um die Auswirkungen der Kombination von Work-Stealing mit einer Priorisierungsstrategie zu bewerten.
     \end{itemize}
 \vspace{7.56mm}
 Die Algorithmen bauen aufeinander auf, sodass die Ergebnisse des vorherigen Schedulers jeweils als Baseline für die Bewertung des nachfolgenden Schedulers herangezogen werden.
@@ -21,13 +21,13 @@ Nach jeder Vorstellung der Ergebnisse eines Schedulers erfolgt eine Diskussion d
 \section{rekursiv-synchroner, objektbasierter Scheduler (Referenz)}
 
 Der nicht optimierte Scanner wurde als Referenz für die Messungen mit dem neuen Scheduler verwendet.
-In der Tabelle \ref{tab:old-scheduler-uebersicht} sind die Mittelwerte der Laufzeit, CPU-Auslastung, 
-RAM-Auslastung (Mittel und Max) sowie der Variationskoeffizient der Laufzeit für die Messungen 
+In der Tabelle \ref{tab:old-scheduler-uebersicht} sind die Mittelwerte der Laufzeit, \acs{CPU}-Auslastung, 
+\acs{RAM}-Auslastung (Mittel und Max) sowie der Variationskoeffizient der Laufzeit für die Messungen 
 mit dem alten Scheduler aufgelistet.
-Die internenen Metriken wurden bei diesem nicht erhoben, um die Performance des alten Schedulers nicht zu beeinträchtigen.
+Die internen Metriken wurden bei diesem nicht erhoben, um die Performance des alten Schedulers nicht zu beeinträchtigen.
 
 \begin{table}[H]
-\caption{Übersicht der Laufzeit-, CPU-, RAM- und Runtime-CV-Metriken des alten Schedulers für Linux und Windows bei einem, vier und zehn Threads, angegeben als Mittelwerte $\pm$ Standardabweichung aus $n=20$ Läufen}
+\caption{Übersicht der Laufzeit-, \acs{CPU}-, \acs{RAM}- und Runtime-\acs{CV}-Metriken des alten Schedulers für Linux und Windows bei einem, vier und zehn Threads, angegeben als Mittelwerte $\pm$ Standardabweichung aus $n=20$ Läufen}
 \label{tab:old-scheduler-uebersicht}
 \centering
 \begingroup
@@ -35,7 +35,7 @@ Die internenen Metriken wurden bei diesem nicht erhoben, um die Performance des 
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}lllllll@{}}
 \toprule
-Threads & OS & Runtime [s] & CPU [\%] & RAM Mittel [MB] & RAM Max [MB] & Runtime CV [\%] \\
+Threads & \acs{OS} & Runtime [s] & \acs{CPU} [\%] & \acs{RAM} Mittel [MB] & \acs{RAM} Max [MB] & Runtime \acs{CV} [\%] \\
 \midrule
 1 & Linux   & 643 $\pm$ 3.89 & 24.0 $\pm$ 0.00 & 1069 $\pm$ 17.8 & 1670 $\pm$ 38.0 & 0.60 \\
 4 & Linux   & 266 $\pm$ 2.61 & 55.0 $\pm$ 0.32 & 1492 $\pm$ 22.5 & 2612 $\pm$ 79.5 & 0.98 \\
@@ -52,29 +52,29 @@ Threads & OS & Runtime [s] & CPU [\%] & RAM Mittel [MB] & RAM Max [MB] & Runtime
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{Messungen/OLD_1T/cpu_bars_combined.pdf}
-\caption{CPU-Auslastung des Referenz-Schedulers auf Linux und Windows bei einem Thread, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
+\caption{\acs{CPU}-Auslastung des Referenz-Schedulers auf Linux und Windows bei einem Thread, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
 \label{fig:4ref-1t-cpu}
 \end{figure}
 
-\noindent Für die Bewertung der Stabilität des Testsystems ist die CPU-Auslastung maßgeblich. Bei der Ausführung mit einem Thread ist ihre Standardabweichung sowohl unter Linux als auch unter Windows extrem gering, wie in Abbildung \ref{fig:4ref-1t-cpu} dargestellt. Bei vier Threads steigt sie auf 0.32 bzw. 0.80 und bei zehn Threads auf 0.74 bzw. 1.96 (siehe Abb. \ref{fig:4ref-10t-cpu}). Zugleich steigt auch der Variationskoeffizient der Laufzeit (\textit{Runtime CV}) in Tabelle \ref{tab:old-scheduler-uebersicht} von 0.60 auf 0.98 und 1.39 unter Linux sowie von 0.34 auf 2.22 und 2.49 unter Windows. Damit zeigt die Referenz, dass die Streuung mit steigender Thread-Anzahl zunimmt.
+\noindent Für die Bewertung der Stabilität des Testsystems ist die \acs{CPU}-Auslastung maßgeblich. Bei der Ausführung mit einem Thread ist ihre Standardabweichung sowohl unter Linux als auch unter Windows extrem gering, wie in Abbildung \ref{fig:4ref-1t-cpu} dargestellt. Bei vier Threads steigt sie auf 0.32 bzw. 0.80 und bei zehn Threads auf 0.74 bzw. 1.96 (siehe Abb. \ref{fig:4ref-10t-cpu}). Zugleich steigt auch der Variationskoeffizient der Laufzeit (\textit{Runtime \acs{CV}}) in Tabelle \ref{tab:old-scheduler-uebersicht} von 0.60 auf 0.98 und 1.39 unter Linux sowie von 0.34 auf 2.22 und 2.49 unter Windows. Damit zeigt die Referenz, dass die Streuung mit steigender Thread-Anzahl zunimmt.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{Messungen/OLD_10T/cpu_bars_combined.pdf}
-\caption{CPU-Auslastung des Referenz-Schedulers auf Linux und Windows bei zehn Threads, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
+\caption{\acs{CPU}-Auslastung des Referenz-Schedulers auf Linux und Windows bei zehn Threads, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
 \label{fig:4ref-10t-cpu}
 \end{figure}
 
 \section{First-In, First-Out}
 
-In diesem Abschnitt werden die Ergebnisse der Messungen mit dem FIFO-Scheduler vorgestellt und mit der Referenz verglichen.
-Für den FIFO-Scheduler wurden zwei verschiedene Warteschlangenlängen (50 und 500) getestet, 
+In diesem Abschnitt werden die Ergebnisse der Messungen mit dem \acs{FIFO}-Scheduler vorgestellt und mit der Referenz verglichen.
+Für den \acs{FIFO}-Scheduler wurden zwei verschiedene Warteschlangenlängen (50 und 500 mal die Anzahl der Threads) getestet, 
 um die Auswirkungen der Warteschlangenlänge auf die Performance zu untersuchen.
 Im Unterschied zur Referenz wurden hier auch die internen Metriken wie Queue Time, 
 Execution Time und der Anteil der synchronen Tasks erhoben.
 
 \begin{table}[H]
-\caption{Laufzeit-, CPU- und RAM-Metriken des FIFO\_50-Schedulers für Linux und Windows bei einem, vier und zehn Threads, angegeben als Mittelwerte $\pm$ Standardabweichung aus $n=20$ Läufen}
+\caption{Laufzeit-, \acs{CPU}- und \acs{RAM}-Metriken des \acs{FIFO}\_50-Schedulers für Linux und Windows bei einem, vier und zehn Threads, angegeben als Mittelwerte $\pm$ Standardabweichung aus $n=20$ Läufen}
 \label{tab:fifo50-uebersicht-system}
 \centering
 \begingroup
@@ -82,7 +82,7 @@ Execution Time und der Anteil der synchronen Tasks erhoben.
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}llllll@{}}
 \toprule
-Threads & OS & Runtime [s] & CPU [\%] & RAM Mittel [MB] & RAM Max [MB] \\
+Threads & \acs{OS} & Runtime [s] & \acs{CPU} [\%] & \acs{RAM} Mittel [MB] & \acs{RAM} Max [MB] \\
 \midrule
 1 & Linux   & 656 $\pm$ 3.15 & 23.6 $\pm$ 0.497 & 1065 $\pm$ 33.8 & 1705 $\pm$ 57.1 \\
 4 & Linux   & 271 $\pm$ 3.09 & 54.0 $\pm$ 0.447 & 1603 $\pm$ 22.7 & 2891 $\pm$ 74.1 \\
@@ -97,7 +97,7 @@ Threads & OS & Runtime [s] & CPU [\%] & RAM Mittel [MB] & RAM Max [MB] \\
 \end{table}
 
 \begin{table}[H]
-\caption{Laufzeit-, CPU- und RAM-Metriken des FIFO\_500-Schedulers für Linux und Windows bei einem, vier und zehn Threads, angegeben als Mittelwerte $\pm$ Standardabweichung aus $n=20$ Läufen}
+\caption{Laufzeit-, \acs{CPU}- und \acs{RAM}-Metriken des \acs{FIFO}\_500-Schedulers für Linux und Windows bei einem, vier und zehn Threads, angegeben als Mittelwerte $\pm$ Standardabweichung aus $n=20$ Läufen}
 \label{tab:fifo500-uebersicht-system}
 \centering
 \begingroup
@@ -105,7 +105,7 @@ Threads & OS & Runtime [s] & CPU [\%] & RAM Mittel [MB] & RAM Max [MB] \\
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}llllll@{}}
 \toprule
-Threads & OS & Runtime [s] & CPU [\%] & RAM Mittel [MB] & RAM Max [MB] \\
+Threads & \acs{OS} & Runtime [s] & \acs{CPU} [\%] & \acs{RAM} Mittel [MB] & \acs{RAM} Max [MB] \\
 \midrule
 1 & Linux   & 655 $\pm$ 3.82 & 23.7 $\pm$ 0.458 & 1057 $\pm$ 20.3 & 1630 $\pm$ 46.7 \\
 4 & Linux   & 274 $\pm$ 4.04 & 54.3 $\pm$ 0.843 & 1607 $\pm$ 30 & 3013 $\pm$ 125.3 \\
@@ -120,19 +120,19 @@ Threads & OS & Runtime [s] & CPU [\%] & RAM Mittel [MB] & RAM Max [MB] \\
 \end{table}
 
 \noindent Die Intervalle aus Mittelwert $\pm$ Standardabweichung für Laufzeit, 
-CPU-Auslastung und mittlere RAM-Auslastung überlappen zwischen FIFO\_50 und FIFO\_500 
+\acs{CPU}-Auslastung und mittlere \acs{RAM}-Auslastung überlappen zwischen \acs{FIFO}\_50 und \acs{FIFO}\_500 
 in allen gezeigten Konfigurationen. Für diese drei Metriken lässt sich damit kein signifikanter 
 Unterschied zwischen beiden Warteschlangenlängen nachweisen. 
-Für die RAM-Maximalwerte zeigt sich nur bei Windows und vier Threads ein nachweisbarer Unterschied: 
-FIFO\_500 erreicht mit 10782 $\pm$ 932.2\,MB höhere Maximalwerte als FIFO\_50 mit 7766 $\pm$ 369.9\,MB. 
+Für die \acs{RAM}-Maximalwerte zeigt sich nur bei Windows und vier Threads ein nachweisbarer Unterschied: 
+\acs{FIFO}\_500 erreicht mit 10782 $\pm$ 932.2\,MB höhere Maximalwerte als \acs{FIFO}\_50 mit 7766 $\pm$ 369.9\,MB. 
 In den übrigen Konfigurationen überlappen die Standardabweichungsintervalle.
 
 \vspace{7.56mm}
 
-\noindent Verglichen mit der Referenz ergibt sich auf Windows bei vier und zehn Threads für beide FIFO-Konfigurationen ein signifikanter Laufzeitvorteil. Auf Linux lässt sich ein solcher Vorteil nicht zeigen, bei einem Thread sind beide FIFO-Konfigurationen und bei vier Threads FIFO\_500 sogar langsamer als die Referenz.
+\noindent Verglichen mit der Referenz ergibt sich auf Windows bei vier und zehn Threads für beide \acs{FIFO}-Konfigurationen ein signifikanter Laufzeitvorteil. Auf Linux lässt sich ein solcher Vorteil nicht zeigen, bei einem Thread sind beide \acs{FIFO}-Konfigurationen und bei vier Threads \acs{FIFO}\_500 sogar langsamer als die Referenz.
 
 \begin{table}[H]
-\caption{Runtime CV sowie Queue Time, Execution Time und Anteil synchroner Tasks des FIFO\_50-Schedulers für Linux und Windows bei einem, vier und zehn Threads, angegeben als Mittelwerte $\pm$ Standardabweichung aus $n=20$ Läufen}
+\caption{Runtime \acs{CV} sowie Queue Time, Execution Time und Anteil synchroner Tasks des \acs{FIFO}\_50-Schedulers für Linux und Windows bei einem, vier und zehn Threads, angegeben als Mittelwerte $\pm$ Standardabweichung aus $n=20$ Läufen}
 \label{tab:fifo50-uebersicht-task}
 \centering
 \begingroup
@@ -140,7 +140,7 @@ In den übrigen Konfigurationen überlappen die Standardabweichungsintervalle.
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}llllll@{}}
 \toprule
-Threads & OS & Runtime CV [\%] & Queue [ms] & Exec [ms] & Sync Tasks [\%] \\
+Threads & \acs{OS} & Runtime \acs{CV} [\%] & Queue [ms] & Exec [ms] & Sync Tasks [\%] \\
 \midrule
 1 & Linux   & 0.48 & 23.52 $\pm$ 0.12 & 0.98 $\pm$ 0.01 & 99.97 $\pm$ 0.00 \\
 4 & Linux   & 1.14 & 27.98 $\pm$ 0.44 & 0.66 $\pm$ 0.01 & 54.06 $\pm$ 1.96 \\
@@ -157,7 +157,7 @@ Threads & OS & Runtime CV [\%] & Queue [ms] & Exec [ms] & Sync Tasks [\%] \\
 
 
 \begin{table}[H]
-\caption{Runtime CV sowie Queue Time, Execution Time und Anteil synchroner Tasks des FIFO\_500-Schedulers für Linux und Windows bei einem, vier und zehn Threads, angegeben als Mittelwerte $\pm$ Standardabweichung aus $n=20$ Läufen}
+\caption{Runtime \acs{CV} sowie Queue Time, Execution Time und Anteil synchroner Tasks des \acs{FIFO}\_500-Schedulers für Linux und Windows bei einem, vier und zehn Threads, angegeben als Mittelwerte $\pm$ Standardabweichung aus $n=20$ Läufen}
 \label{tab:fifo500-uebersicht-task}
 \centering
 \begingroup
@@ -165,7 +165,7 @@ Threads & OS & Runtime CV [\%] & Queue [ms] & Exec [ms] & Sync Tasks [\%] \\
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}llllll@{}}
 \toprule
-Threads & OS & Runtime CV [\%] & Queue [ms] & Exec [ms] & Sync Tasks [\%] \\
+Threads & \acs{OS} & Runtime \acs{CV} [\%] & Queue [ms] & Exec [ms] & Sync Tasks [\%] \\
 \midrule
 1 & Linux   & 0.58 & 228.61 $\pm$ 1.51 & 0.97 $\pm$ 0.01 & 99.85 $\pm$ 0.00 \\
 4 & Linux   & 1.48 & 278.90 $\pm$ 8.87 & 0.69 $\pm$ 0.01 & 65.44 $\pm$ 0.97 \\
@@ -179,46 +179,46 @@ Threads & OS & Runtime CV [\%] & Queue [ms] & Exec [ms] & Sync Tasks [\%] \\
 \endgroup
 \end{table}
 
-\noindent Die Queue Time ist bei FIFO\_50 in allen Konfigurationen signifikant geringer als bei FIFO\_500. Beim Anteil synchron ausgeführter Tasks zeigt sich derselbe Effekt insbesondere bei vier und zehn Threads deutlich, auch hier überlappen die Standardabweichungsintervalle der beiden Konfigurationen nicht.
+\noindent Die Queue Time ist bei \acs{FIFO}\_50 in allen Konfigurationen signifikant geringer als bei \acs{FIFO}\_500. Beim Anteil synchron ausgeführter Tasks zeigt sich derselbe Effekt insbesondere bei vier und zehn Threads deutlich, auch hier überlappen die Standardabweichungsintervalle der beiden Konfigurationen nicht.
 
-\subsection{Diskussion der FIFO-Ergebnisse}
+\subsection{Diskussion der \acs{FIFO}-Ergebnisse}
 \paragraph{Stabilität}
-Wie beim Referenz-Scheduler ist die Standardabweichung der CPU-Auslastung bei einem Thread klein (Linux 0.50, Windows 0.00), steigt bei vier Threads auf 0.45 bzw. 0.92 und bei zehn Threads auf 1.09 bzw. 2.43. Es steigt auch der Runtime CV von 0.48 auf 1.14 und 1.52 unter Linux sowie von 0.33 auf 2.07 und 3.38 unter Windows. Damit nimmt die Streuung auch beim FIFO-Scheduler mit wachsender Thread-Anzahl zu. Eine Erklärung ist die mit mehr Threads steigende Ressourcenkonkurrenz.
+Wie beim Referenz-Scheduler ist die Standardabweichung der \acs{CPU}-Auslastung bei einem Thread klein (Linux 0.50, Windows 0.00), steigt bei vier Threads auf 0.45 bzw. 0.92 und bei zehn Threads auf 1.09 bzw. 2.43. Es steigt auch der Runtime \acs{CV} von 0.48 auf 1.14 und 1.52 unter Linux sowie von 0.33 auf 2.07 und 3.38 unter Windows. Damit nimmt die Streuung auch beim \acs{FIFO}-Scheduler mit wachsender Thread-Anzahl zu. Eine Erklärung ist die mit mehr Threads steigende Ressourcenkonkurrenz.
 
 \paragraph{Laufzeit}
-Ein signifikanter Laufzeitvorteil des FIFO-Schedulers gegenüber der Referenz zeigt sich nur auf Windows bei vier und zehn Threads. Für Linux lässt sich kein entsprechender Vorteil nachweisen, vielmehr sind beide FIFO-Konfigurationen bei einem Thread und FIFO\_500 zusätzlich bei vier Threads signifikant langsamer als die Referenz. Die Ursachen dieser plattformspezifischen Unterschiede müssen gesondert untersucht werden.
+Ein signifikanter Laufzeitvorteil des \acs{FIFO}-Schedulers gegenüber der Referenz zeigt sich nur auf Windows bei vier und zehn Threads. Für Linux lässt sich kein entsprechender Vorteil nachweisen, vielmehr sind beide \acs{FIFO}-Konfigurationen bei einem Thread und \acs{FIFO}\_500 zusätzlich bei vier Threads signifikant langsamer als die Referenz. Die Ursachen dieser plattformspezifischen Unterschiede müssen gesondert untersucht werden.
 
 \paragraph{Waiting Time und Burst Time}
-Die Auswirkungen der Warteschlangenlänge auf die Queue Time sind statistisch klar: FIFO\_500 weist in allen Konfigurationen eine nachweisbar höhere Queue Time auf als FIFO\_50. Für Laufzeit, CPU-Auslastung und mittlere RAM-Auslastung dagegen lässt sich kein signifikanter Unterschied zwischen den Queue-Längen nachweisen. Weitere Tests mit kleineren Warteschlangen könnten zeigen, ob sich die Queue Time weiter reduzieren lässt, ohne einen nachweisbaren Nachteil bei den übrigen Metriken zu erzeugen.
+Die Auswirkungen der Warteschlangenlänge auf die Queue Time sind statistisch klar: \acs{FIFO}\_500 weist in allen Konfigurationen eine nachweisbar höhere Queue Time auf als \acs{FIFO}\_50. Für Laufzeit, \acs{CPU}-Auslastung und mittlere \acs{RAM}-Auslastung dagegen lässt sich kein signifikanter Unterschied zwischen den Queue-Längen nachweisen. Weitere Tests mit kleineren Warteschlangen könnten zeigen, ob sich die Queue Time weiter reduzieren lässt, ohne einen nachweisbaren Nachteil bei den übrigen Metriken zu erzeugen.
 
-\paragraph{Synchron ausgeführte Tasks und RAM-Auslastung}
-Bei vier und zehn Threads ist der Anteil synchron ausgeführter Tasks bei FIFO\_500 nachweisbar höher als bei FIFO\_50. 
-Für die RAM-Maximalwerte zeigt sich ein nachweisbar höherer Wert von FIFO\_500 gegenüber FIFO\_50 nur bei Windows und vier Threads. In den übrigen Konfigurationen lässt sich kein Unterschied nachweisen.
+\paragraph{Synchron ausgeführte Tasks und \acs{RAM}-Auslastung}
+Bei vier und zehn Threads ist der Anteil synchron ausgeführter Tasks bei \acs{FIFO}\_500 nachweisbar höher als bei \acs{FIFO}\_50. 
+Für die \acs{RAM}-Maximalwerte zeigt sich ein nachweisbar höherer Wert von \acs{FIFO}\_500 gegenüber \acs{FIFO}\_50 nur bei Windows und vier Threads. In den übrigen Konfigurationen lässt sich kein Unterschied nachweisen.
 
-\paragraph{Vorteile und Nachteile der FIFO-Scheduler im Vergleich zur Referenz}
+\paragraph{Vorteile und Nachteile der \acs{FIFO}-Scheduler im Vergleich zur Referenz}
 \begin{itemize}
     \item Vorteile:
     \begin{itemize}
-        \item Auf Windows zeigen beide FIFO-Konfigurationen bei vier und zehn Threads einen nachweisbaren Laufzeitvorteil gegenüber der Referenz.
-        \item FIFO\_50 zeigt in allen Konfigurationen eine nachweisbar geringere Queue Time als FIFO\_500 und bei vier und zehn Threads zudem nachweisbar weniger synchron ausgeführte Tasks.
+        \item Auf Windows zeigen beide \acs{FIFO}-Konfigurationen bei vier und zehn Threads einen nachweisbaren Laufzeitvorteil gegenüber der Referenz.
+        \item \acs{FIFO}\_50 zeigt in allen Konfigurationen eine nachweisbar geringere Queue Time als \acs{FIFO}\_500 und bei vier und zehn Threads zudem nachweisbar weniger synchron ausgeführte Tasks.
     \end{itemize}
     \item Nachteile:
     \begin{itemize}
         \item Auf Linux lässt sich kein konsistenter Laufzeitvorteil gegenüber der Referenz nachweisen, einzelne Konfigurationen sind sogar nachweisbar langsamer.
-        \item Für CPU-Auslastung und mittlere RAM-Auslastung ergibt sich zwischen FIFO\_50 und FIFO\_500 kein nachweisbarer Unterschied, sodass die größere Queue keine belastbaren Vorteile zeigt.
-        \item Bei Windows und vier Threads ist der RAM-Maximalwert von FIFO\_500 nachweisbar höher als der von FIFO\_50. Bei zehn Threads lässt sich dieser Unterschied nicht nachweisen.
+        \item Für \acs{CPU}-Auslastung und mittlere \acs{RAM}-Auslastung ergibt sich zwischen \acs{FIFO}\_50 und \acs{FIFO}\_500 kein nachweisbarer Unterschied, sodass die größere Queue keine belastbaren Vorteile zeigt.
+        \item Bei Windows und vier Threads ist der \acs{RAM}-Maximalwert von \acs{FIFO}\_500 nachweisbar höher als der von \acs{FIFO}\_50. Bei zehn Threads lässt sich dieser Unterschied nicht nachweisen.
     \end{itemize}
 \end{itemize}
 
 \section{Shortest-Subtree-Time-First}
 
-\noindent In diesem Abschnitt werden die Ergebnisse der Messungen mit dem SSTF-Scheduler vorgestellt.
+\noindent In diesem Abschnitt werden die Ergebnisse der Messungen mit dem \acs{SSTF}-Scheduler vorgestellt.
 Das Ziel dieser Implementierung war es, die Anzahl der synchron ausgeführten Tasks zu reduzieren
 und die Wartezeit von Tasks zu verbessern, indem die Tasks mit der kürzesten erwarteten Ausführungszeit zuerst ausgeführt werden.
-Der SSTF-Scheduler wird mit den FIFO-Schedulern verglichen, um die Auswirkungen des Priorisierungsansatzes auf die Performance zu bewerten.
+Der \acs{SSTF}-Scheduler wird mit den \acs{FIFO}-Schedulern verglichen, um die Auswirkungen des Priorisierungsansatzes auf die Performance zu bewerten.
 
 \begin{table}[H]
-\caption{Laufzeit-, CPU- und RAM-Metriken des SSTF-Schedulers für Linux und Windows bei einem, vier und zehn Threads, angegeben als Mittelwerte $\pm$ Standardabweichung aus $n=20$ Läufen}
+\caption{Laufzeit-, \acs{CPU}- und \acs{RAM}-Metriken des \acs{SSTF}-Schedulers für Linux und Windows bei einem, vier und zehn Threads, angegeben als Mittelwerte $\pm$ Standardabweichung aus $n=20$ Läufen}
 \label{tab:sstf-uebersicht-system}
 \centering
 \begingroup
@@ -226,7 +226,7 @@ Der SSTF-Scheduler wird mit den FIFO-Schedulern verglichen, um die Auswirkungen 
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}llllll@{}}
 \toprule
-Threads & OS & Runtime [s] & CPU [\%] & RAM Mittel [MB] & RAM Max [MB] \\
+Threads & \acs{OS} & Runtime [s] & \acs{CPU} [\%] & \acs{RAM} Mittel [MB] & \acs{RAM} Max [MB] \\
 \midrule
 1 & Linux   & 658 $\pm$ 3.27 & 23.9 $\pm$ 0.357 & 1068 $\pm$ 25.8 & 1688 $\pm$ 47.6 \\
 4 & Linux   & 273 $\pm$ 3.5 & 53.9 $\pm$ 0.436 & 1595 $\pm$ 36.4 & 3136 $\pm$ 132.2 \\
@@ -240,12 +240,12 @@ Threads & OS & Runtime [s] & CPU [\%] & RAM Mittel [MB] & RAM Max [MB] \\
 \endgroup
 \end{table}
 
-\noindent Tabelle \ref{tab:sstf-uebersicht-system} zeigt Laufzeit, CPU-Auslastung und RAM-Auslastung des SSTF-Schedulers. 
-Für Laufzeit, CPU-Auslastung und mittlere RAM-Auslastung überlappen die Standardabweichungsintervalle in den meisten Vergleichen mit FIFO\_50 und FIFO\_500. Für diese Metriken lässt sich daher überwiegend kein nachweisbarer Unterschied zeigen. Für die maximale RAM-Auslastung ergibt sich ebenfalls kein konsistenter Vorteil: Bei vier Threads auf Linux liegt SSTF mit 3136 $\pm$ 132.2\,MB nachweisbar über FIFO\_50 mit 2891 $\pm$ 74.1\,MB, bei zehn Threads auf Windows dagegen mit 9592 $\pm$ 641.6\,MB nachweisbar unter FIFO\_50 mit 11672 $\pm$ 837.3\,MB. Gegenüber FIFO\_500 ist SSTF bei vier Threads auf Windows mit 7844 $\pm$ 380.4\,MB nachweisbar günstiger als FIFO\_500 mit 10782 $\pm$ 932.2\,MB. In den übrigen Konfigurationen lässt sich gegenüber FIFO\_500 kein nachweisbarer Unterschied zeigen.
+\noindent Tabelle \ref{tab:sstf-uebersicht-system} zeigt Laufzeit, \acs{CPU}-Auslastung und \acs{RAM}-Auslastung des \acs{SSTF}-Schedulers. 
+Für Laufzeit, \acs{CPU}-Auslastung und mittlere \acs{RAM}-Auslastung überlappen die Standardabweichungsintervalle in den meisten Vergleichen mit \acs{FIFO}\_50 und \acs{FIFO}\_500. Für diese Metriken lässt sich daher überwiegend kein nachweisbarer Unterschied zeigen. Für die maximale \acs{RAM}-Auslastung ergibt sich ebenfalls kein konsistenter Vorteil: Bei vier Threads auf Linux liegt \acs{SSTF} mit 3136 $\pm$ 132.2\,MB nachweisbar über \acs{FIFO}\_50 mit 2891 $\pm$ 74.1\,MB, bei zehn Threads auf Windows dagegen mit 9592 $\pm$ 641.6\,MB nachweisbar unter \acs{FIFO}\_50 mit 11672 $\pm$ 837.3\,MB. Gegenüber \acs{FIFO}\_500 ist \acs{SSTF} bei vier Threads auf Windows mit 7844 $\pm$ 380.4\,MB nachweisbar günstiger als \acs{FIFO}\_500 mit 10782 $\pm$ 932.2\,MB. In den übrigen Konfigurationen lässt sich gegenüber \acs{FIFO}\_500 kein nachweisbarer Unterschied zeigen.
 
 
 \begin{table}[H]
-\caption{Runtime CV sowie Queue Time, Execution Time und Anteil synchroner Tasks des SSTF-Schedulers für Linux und Windows bei einem, vier und zehn Threads, angegeben als Mittelwerte $\pm$ Standardabweichung aus $n=20$ Läufen}
+\caption{Runtime \acs{CV} sowie Queue Time, Execution Time und Anteil synchroner Tasks des \acs{SSTF}-Schedulers für Linux und Windows bei einem, vier und zehn Threads, angegeben als Mittelwerte $\pm$ Standardabweichung aus $n=20$ Läufen}
 \label{tab:sstf-uebersicht-task}
 \centering
 \begingroup
@@ -253,7 +253,7 @@ Für Laufzeit, CPU-Auslastung und mittlere RAM-Auslastung überlappen die Standa
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}llllll@{}}
 \toprule
-Threads & OS & Runtime CV [\%] & Queue [ms] & Exec [ms] & Sync Tasks [\%] \\
+Threads & \acs{OS} & Runtime \acs{CV} [\%] & Queue [ms] & Exec [ms] & Sync Tasks [\%] \\
 \midrule
 1 & Linux   & 0.50 & 23.52 $\pm$ 0.12 & 0.49 $\pm$ 0.00 & 99.97 $\pm$ 0.00 \\
 4 & Linux   & 1.28 & 25.71 $\pm$ 0.45 & 0.64 $\pm$ 0.01 & 44.09 $\pm$ 2.44 \\
@@ -267,48 +267,48 @@ Threads & OS & Runtime CV [\%] & Queue [ms] & Exec [ms] & Sync Tasks [\%] \\
 \endgroup
 \end{table}
 
-\noindent Tabelle \ref{tab:sstf-uebersicht-task} enthält Runtime CV, Queue Time, Execution Time und den Anteil synchroner Tasks. Die Queue Time ist gegenüber FIFO\_500 in allen Konfigurationen nachweisbar geringer. Gegenüber FIFO\_50 lässt sich ein nachweisbarer Unterschied nur bei Linux mit vier Threads zeigen, in den übrigen Fällen überlappen die Standardabweichungsintervalle. Für die Execution Time zeigt sich ein nachweisbarer Vorteil von SSTF bei einem Thread auf beiden Betriebssystemen sowie bei vier Threads unter Linux, nicht jedoch konsistent bei höherer Last. Der Anteil synchron ausgeführter Tasks ist bei vier und zehn Threads gegenüber beiden FIFO-Konfigurationen nachweisbar geringer.
+\noindent Tabelle \ref{tab:sstf-uebersicht-task} enthält Runtime \acs{CV}, Queue Time, Execution Time und den Anteil synchroner Tasks. Die Queue Time ist gegenüber \acs{FIFO}\_500 in allen Konfigurationen nachweisbar geringer. Gegenüber \acs{FIFO}\_50 lässt sich ein nachweisbarer Unterschied nur bei Linux mit vier Threads zeigen, in den übrigen Fällen überlappen die Standardabweichungsintervalle. Für die Execution Time zeigt sich ein nachweisbarer Vorteil von \acs{SSTF} bei einem Thread auf beiden Betriebssystemen sowie bei vier Threads unter Linux, nicht jedoch konsistent bei höherer Last. Der Anteil synchron ausgeführter Tasks ist bei vier und zehn Threads gegenüber beiden \acs{FIFO}-Konfigurationen nachweisbar geringer.
 
-\subsection{Diskussion der SSTF-Ergebnisse}
+\subsection{Diskussion der \acs{SSTF}-Ergebnisse}
 
 \paragraph{Stabilität}
-Die Stabilität ist  mit FIFO vergleichbar. Die Standardabweichung der CPU-Auslastung beträgt bei einem Thread 0.36 unter Linux und 0.00 unter Windows, steigt bei vier Threads auf 0.44 bzw. 1.11 und bei zehn Threads auf 0.78 bzw. 2.41. Zugleich nimmt auch der Runtime CV mit der Thread-Anzahl zu.
+Die Stabilität ist  mit \acs{FIFO} vergleichbar. Die Standardabweichung der \acs{CPU}-Auslastung beträgt bei einem Thread 0.36 unter Linux und 0.00 unter Windows, steigt bei vier Threads auf 0.44 bzw. 1.11 und bei zehn Threads auf 0.78 bzw. 2.41. Zugleich nimmt auch der Runtime \acs{CV} mit der Thread-Anzahl zu.
 
 \paragraph{Laufzeit}
-Gegenüber FIFO\_50 lässt sich in keiner Konfiguration ein nachweisbarer Laufzeitunterschied zeigen. Gegenüber FIFO\_500 ist SSTF nur bei einem Thread auf Windows signifikant langsamer, in allen übrigen Konfigurationen überlappen die Standardabweichungsintervalle.
+Gegenüber \acs{FIFO}\_50 lässt sich in keiner Konfiguration ein nachweisbarer Laufzeitunterschied zeigen. Gegenüber \acs{FIFO}\_500 ist \acs{SSTF} nur bei einem Thread auf Windows signifikant langsamer, in allen übrigen Konfigurationen überlappen die Standardabweichungsintervalle.
 
 \paragraph{Waiting Time und Burst Time}
-Gegenüber FIFO\_500 ist die Queue Time von SSTF in allen Konfigurationen nachweisbar geringer. Gegenüber FIFO\_50 lässt sich dieser Vorteil nur bei vier Threads auf Linux nachweisen, in den übrigen Fällen reichen die Standardabweichungen nicht für eine Trennung der Intervalle.
+Gegenüber \acs{FIFO}\_500 ist die Queue Time von \acs{SSTF} in allen Konfigurationen nachweisbar geringer. Gegenüber \acs{FIFO}\_50 lässt sich dieser Vorteil nur bei vier Threads auf Linux nachweisen, in den übrigen Fällen reichen die Standardabweichungen nicht für eine Trennung der Intervalle.
 
-\paragraph{Synchron ausgeführte Tasks und RAM-Auslastung}
-Bei vier und zehn Threads ist der Anteil synchron ausgeführter Tasks gegenüber beiden FIFO-Konfigurationen nachweisbar geringer. Für die mittlere RAM-Auslastung ergibt sich dagegen kein nachweisbarer Unterschied. Auch bei der RAM-Maximal-Auslastung zeigt sich kein einheitliches Bild: Gegenüber FIFO\_50 ist SSTF bei vier Threads unter Linux nachweisbar höher, bei zehn Threads auf Windows jedoch nachweisbar geringer. Gegenüber FIFO\_500 ist SSTF bei vier Threads auf Windows nachweisbar geringer, in den übrigen Konfigurationen jedoch nicht unterscheidbar.
+\paragraph{Synchron ausgeführte Tasks und \acs{RAM}-Auslastung}
+Bei vier und zehn Threads ist der Anteil synchron ausgeführter Tasks gegenüber beiden \acs{FIFO}-Konfigurationen nachweisbar geringer. Für die mittlere \acs{RAM}-Auslastung ergibt sich dagegen kein nachweisbarer Unterschied. Auch bei der \acs{RAM}-Maximal-Auslastung zeigt sich kein einheitliches Bild: Gegenüber \acs{FIFO}\_50 ist \acs{SSTF} bei vier Threads unter Linux nachweisbar höher, bei zehn Threads auf Windows jedoch nachweisbar geringer. Gegenüber \acs{FIFO}\_500 ist \acs{SSTF} bei vier Threads auf Windows nachweisbar geringer, in den übrigen Konfigurationen jedoch nicht unterscheidbar.
 
-\paragraph{Vorteile und Nachteile im Vergleich zu FIFO}
+\paragraph{Vorteile und Nachteile im Vergleich zu \acs{FIFO}}
 \begin{itemize}
     \item Vorteile:
     \begin{itemize}
-        \item Gegenüber FIFO\_500 zeigt SSTF in allen Konfigurationen eine nachweisbar geringere Queue Time.
-        \item Bei vier und zehn Threads ist der Anteil synchron ausgeführter Tasks nachweisbar geringer als bei FIFO\_50 und FIFO\_500.
-        \item Bei einem Thread auf beiden Betriebssystemen und bei vier Threads unter Linux ist die Execution Time nachweisbar geringer als bei FIFO.
-        \item Bei vier Threads auf Windows ist der RAM-Maximalwert nachweisbar geringer als bei FIFO\_500.
+        \item Gegenüber \acs{FIFO}\_500 zeigt \acs{SSTF} in allen Konfigurationen eine nachweisbar geringere Queue Time.
+        \item Bei vier und zehn Threads ist der Anteil synchron ausgeführter Tasks nachweisbar geringer als bei \acs{FIFO}\_50 und \acs{FIFO}\_500.
+        \item Bei einem Thread auf beiden Betriebssystemen und bei vier Threads unter Linux ist die Execution Time nachweisbar geringer als bei \acs{FIFO}.
+        \item Bei vier Threads auf Windows ist der \acs{RAM}-Maximalwert nachweisbar geringer als bei \acs{FIFO}\_500.
     \end{itemize}
     \item Nachteile:
     \begin{itemize}
-        \item Ein konsistenter nachweisbarer Laufzeitvorteil gegenüber FIFO lässt sich nicht zeigen, gegenüber FIFO\_500 ist SSTF bei einem Thread auf Windows sogar langsamer.
-        \item Für CPU-Auslastung und mittlere RAM-Auslastung ergibt sich meist kein nachweisbarer Unterschied.
-        \item Auch bei den RAM-Maxima lässt sich kein konsistenter Vorteil nachweisen. Bei vier Threads auf Windows ist SSTF zwar gegenüber FIFO\_500 nachweisbar günstiger, bei zehn Threads auf Windows aber nur gegenüber FIFO\_50, nicht jedoch gegenüber FIFO\_500.
+        \item Ein konsistenter nachweisbarer Laufzeitvorteil gegenüber \acs{FIFO} lässt sich nicht zeigen, gegenüber \acs{FIFO}\_500 ist \acs{SSTF} bei einem Thread auf Windows sogar langsamer.
+        \item Für \acs{CPU}-Auslastung und mittlere \acs{RAM}-Auslastung ergibt sich meist kein nachweisbarer Unterschied.
+        \item Auch bei den \acs{RAM}-Maxima lässt sich kein konsistenter Vorteil nachweisen. Bei vier Threads auf Windows ist \acs{SSTF} zwar gegenüber \acs{FIFO}\_500 nachweisbar günstiger, bei zehn Threads auf Windows aber nur gegenüber \acs{FIFO}\_50, nicht jedoch gegenüber \acs{FIFO}\_500.
     \end{itemize}
 \end{itemize}
 
-\section{Work-Stealing mit SSTF-Priorisierung}
-Hier werden die Ergebnisse der Messungen des Work-Stealing-Schedulers mit SSTF-Priorisierung vorgestellt.
-Das Ziel dieser Implementierung war es, die Vorteile des SSTF-Schedulers mit der Flexibilität und Lastverteilung des Work-Stealing-Ansatzes zu kombinieren und Lock-Contention zu reduzieren.
-Der Work-Stealing Scheduler mit SSTF-Priorisierung wird primär mit dem SSTF-Scheduler verglichen, 
+\section{Work-Stealing mit \acs{SSTF}-Priorisierung}
+Hier werden die Ergebnisse der Messungen des Work-Stealing-Schedulers mit \acs{SSTF}-Priorisierung vorgestellt.
+Das Ziel dieser Implementierung war es, die Vorteile des \acs{SSTF}-Schedulers mit der Flexibilität und Lastverteilung des Work-Stealing-Ansatzes zu kombinieren und Lock-Contention zu reduzieren.
+Der Work-Stealing Scheduler mit \acs{SSTF}-Priorisierung wird primär mit dem \acs{SSTF}-Scheduler verglichen, 
 um die Auswirkungen des Work-Stealing-Ansatzes auf die Performance zu bewerten, 
 da beide Scheduler die gleiche Priorisierungsstrategie verwenden.
 
 \begin{table}[H]
-\caption{Laufzeit-, CPU- und RAM-Metriken des Work-Stealing-Schedulers mit SSTF-Priorisierung für Linux und Windows bei einem, vier und zehn Threads, angegeben als Mittelwerte $\pm$ Standardabweichung aus $n=20$ Läufen}
+\caption{Laufzeit-, \acs{CPU}- und \acs{RAM}-Metriken des Work-Stealing-Schedulers mit \acs{SSTF}-Priorisierung für Linux und Windows bei einem, vier und zehn Threads, angegeben als Mittelwerte $\pm$ Standardabweichung aus $n=20$ Läufen}
 \label{tab:ws-uebersicht-system}
 \centering
 \begingroup
@@ -316,7 +316,7 @@ da beide Scheduler die gleiche Priorisierungsstrategie verwenden.
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}llllll@{}}
 \toprule
-Threads & OS & Runtime [s] & CPU [\%] & RAM Mittel [MB] & RAM Max [MB] \\
+Threads & \acs{OS} & Runtime [s] & \acs{CPU} [\%] & \acs{RAM} Mittel [MB] & \acs{RAM} Max [MB] \\
 \midrule
 1 & Linux   & 660 $\pm$ 3.47 & 23.5 $\pm$ 0.5 & 1065 $\pm$ 17.6 & 1653 $\pm$ 30.4 \\
 4 & Linux   & 294 $\pm$ 3.93 & 51.2 $\pm$ 0.927 & 1528 $\pm$ 31.7 & 2573 $\pm$ 63.1 \\
@@ -330,10 +330,10 @@ Threads & OS & Runtime [s] & CPU [\%] & RAM Mittel [MB] & RAM Max [MB] \\
 \endgroup
 \end{table}
 
-\noindent In Tabelle \ref{tab:ws-uebersicht-system} sind die Laufzeit, CPU-Auslastung und RAM-Auslastung für den Work-Stealing mit SSTF-Priorisierung aufgelistet. Insgesamt sinkt die Laufzeit mit steigender Thread-Zahl deutlich, unter Linux von rund 660\,s auf 220\,s und unter Windows von rund 2526\,s auf 747\,s. Parallel dazu steigt die CPU-Auslastung von etwa 24\,\% bzw. 21\,\% auf 63\,\% bzw. 72\,\%, die mittlere RAM-Auslastung von rund 1.1\,GB auf 1.9\,GB bzw. 2.9\,GB. Gegenüber SSTF überlappen die Standardabweichungsintervalle von Laufzeit, CPU-Auslastung und mittlerer RAM-Auslastung in den meisten Konfigurationen. Ein nachweisbarer Unterschied zeigt sich bei der Laufzeit nur auf Linux mit vier Threads, wo Work-Stealing mit 294 $\pm$ 3.93\,s langsamer ist als SSTF mit 273 $\pm$ 3.50\,s. Bei der mittleren RAM-Auslastung ergibt sich nur auf Windows mit vier Threads ein nachweisbar geringerer Wert. Bei den RAM-Maximalwerten zeigt sich gegenüber SSTF nur bei zehn Threads auf Windows ein nachweisbarer Unterschied. Dort liegt Work-Stealing mit 11457 $\pm$ 884.0\,MB über SSTF mit 9592 $\pm$ 641.6\,MB.
+\noindent In Tabelle \ref{tab:ws-uebersicht-system} sind die Laufzeit, \acs{CPU}-Auslastung und \acs{RAM}-Auslastung für den Work-Stealing mit \acs{SSTF}-Priorisierung aufgelistet. Insgesamt sinkt die Laufzeit mit steigender Thread-Zahl deutlich, unter Linux von rund 660\,s auf 220\,s und unter Windows von rund 2526\,s auf 747\,s. Parallel dazu steigt die \acs{CPU}-Auslastung von etwa 24\,\% bzw. 21\,\% auf 63\,\% bzw. 72\,\%, die mittlere \acs{RAM}-Auslastung von rund 1.1\,GB auf 1.9\,GB bzw. 2.9\,GB. Gegenüber \acs{SSTF} überlappen die Standardabweichungsintervalle von Laufzeit, \acs{CPU}-Auslastung und mittlerer \acs{RAM}-Auslastung in den meisten Konfigurationen. Ein nachweisbarer Unterschied zeigt sich bei der Laufzeit nur auf Linux mit vier Threads, wo Work-Stealing mit 294 $\pm$ 3.93\,s langsamer ist als \acs{SSTF} mit 273 $\pm$ 3.50\,s. Bei der mittleren \acs{RAM}-Auslastung ergibt sich nur auf Windows mit vier Threads ein nachweisbar geringerer Wert. Bei den \acs{RAM}-Maximalwerten zeigt sich gegenüber \acs{SSTF} nur bei zehn Threads auf Windows ein nachweisbarer Unterschied. Dort liegt Work-Stealing mit 11457 $\pm$ 884.0\,MB über \acs{SSTF} mit 9592 $\pm$ 641.6\,MB.
 
 \begin{table}[H]
-\caption{Runtime CV sowie Queue Time, Execution Time und Anteil synchroner Tasks des Work-Stealing-Schedulers mit SSTF-Priorisierung für Linux und Windows bei einem, vier und zehn Threads, angegeben als Mittelwerte $\pm$ Standardabweichung aus $n=20$ Läufen}
+\caption{Runtime \acs{CV} sowie Queue Time, Execution Time und Anteil synchroner Tasks des Work-Stealing-Schedulers mit \acs{SSTF}-Priorisierung für Linux und Windows bei einem, vier und zehn Threads, angegeben als Mittelwerte $\pm$ Standardabweichung aus $n=20$ Läufen}
 \label{tab:ws-uebersicht-task}
 \centering
 \begingroup
@@ -341,7 +341,7 @@ Threads & OS & Runtime [s] & CPU [\%] & RAM Mittel [MB] & RAM Max [MB] \\
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}llllll@{}}
 \toprule
-Threads & OS & Runtime CV [\%] & Queue [ms] & Exec [ms] & Sync Tasks [\%] \\
+Threads & \acs{OS} & Runtime \acs{CV} [\%] & Queue [ms] & Exec [ms] & Sync Tasks [\%] \\
 \midrule
 1 & Linux   & 0.53 & 46.26 $\pm$ 0.28 & 0.98 $\pm$ 0.01 & 99.95 $\pm$ 0.00 \\
 4 & Linux   & 1.33 & 58.52 $\pm$ 1.09 & 0.91 $\pm$ 0.01 & 80.61 $\pm$ 1.21 \\
@@ -355,36 +355,36 @@ Threads & OS & Runtime CV [\%] & Queue [ms] & Exec [ms] & Sync Tasks [\%] \\
 \endgroup
 \end{table}
 
-\noindent In Tabelle \ref{tab:ws-uebersicht-task} sind die Runtime CV, Queue Time, Execution Time und der Anteil der synchronen Tasks für den Work-Stealing mit SSTF-Priorisierung aufgelistet. Die Queue Time steigt mit der Thread-Zahl von 46\,ms auf 85\,ms unter Linux und von 66\,ms auf 97\,ms unter Windows. Die Execution Time bleibt mit etwa 0.9 bis 1.4\,ms vergleichsweise stabil. Beim Anteil synchron ausgeführter Tasks zeigt sich kein einheitliches Bild: Unter Linux liegt Work-Stealing bei vier Threads mit 80.61 $\pm$ 1.21\,\% nachweisbar über SSTF, bei zehn Threads mit 27.09 $\pm$ 1.63\,\% dagegen nachweisbar darunter. Auf Windows überlappen die Standardabweichungsintervalle bei vier und zehn Threads. Gegenüber SSTF ist die Queue Time in allen Konfigurationen nachweisbar höher. Im Vergleich zu FIFO\_50 ist sie ebenfalls durchgehend höher, gegenüber FIFO\_500 dagegen durchgehend geringer.
+\noindent In Tabelle \ref{tab:ws-uebersicht-task} sind die Runtime \acs{CV}, Queue Time, Execution Time und der Anteil der synchronen Tasks für den Work-Stealing mit \acs{SSTF}-Priorisierung aufgelistet. Die Queue Time steigt mit der Thread-Zahl von 46\,ms auf 85\,ms unter Linux und von 66\,ms auf 97\,ms unter Windows. Die Execution Time bleibt mit etwa 0.9 bis 1.4\,ms vergleichsweise stabil. Beim Anteil synchron ausgeführter Tasks zeigt sich kein einheitliches Bild: Unter Linux liegt Work-Stealing bei vier Threads mit 80.61 $\pm$ 1.21\,\% nachweisbar über \acs{SSTF}, bei zehn Threads mit 27.09 $\pm$ 1.63\,\% dagegen nachweisbar darunter. Auf Windows überlappen die Standardabweichungsintervalle bei vier und zehn Threads. Gegenüber \acs{SSTF} ist die Queue Time in allen Konfigurationen nachweisbar höher. Im Vergleich zu \acs{FIFO}\_50 ist sie ebenfalls durchgehend höher, gegenüber \acs{FIFO}\_500 dagegen durchgehend geringer.
 
 
 
-\subsection{Diskussion der WS-Ergebnisse}
+\subsection{Diskussion der \acs{WS}-Ergebnisse}
 
 \paragraph{Stabilität}
-Die Standardabweichung der CPU-Auslastung ist bei einem Thread sehr gering und steigt mit der Thread-Anzahl auf bis zu 0.83 unter Linux und 3.37 unter Windows. Zugleich wächst auch der Runtime CV von rund 0.5 auf bis zu 1.44 unter Linux und 4.58 unter Windows. Damit zeigt Work-Stealing ebenfalls eine höhere Streuung unter Last.
+Die Standardabweichung der \acs{CPU}-Auslastung ist bei einem Thread sehr gering und steigt mit der Thread-Anzahl auf bis zu 0.83 unter Linux und 3.37 unter Windows. Zugleich wächst auch der Runtime \acs{CV} von rund 0.5 auf bis zu 1.44 unter Linux und 4.58 unter Windows. Damit zeigt Work-Stealing ebenfalls eine höhere Streuung unter Last.
 
 \paragraph{Laufzeit}
-Gegenüber SSTF lässt sich für die Laufzeit nur auf Linux mit vier Threads ein nachweisbarer Unterschied zeigen. Dort liegt Work-Stealing bei 294 $\pm$ 3.93\,s, SSTF dagegen bei 273 $\pm$ 3.50\,s. In allen übrigen Konfigurationen überlappen die Standardabweichungsintervalle.
+Gegenüber \acs{SSTF} lässt sich für die Laufzeit nur auf Linux mit vier Threads ein nachweisbarer Unterschied zeigen. Dort liegt Work-Stealing bei 294 $\pm$ 3.93\,s, \acs{SSTF} dagegen bei 273 $\pm$ 3.50\,s. In allen übrigen Konfigurationen überlappen die Standardabweichungsintervalle.
 
 \paragraph{Waiting Time und Burst Time}
-Für die Queue Time zeigt sich dagegen ein konsistenter Nachteil gegenüber SSTF: In allen Konfigurationen ist Work-Stealing nachweisbar höher. Besonders deutlich ist dies unter Windows bei vier Threads mit 90.46 $\pm$ 2.76\,ms gegenüber 45.06 $\pm$ 1.34\,ms für SSTF sowie 46.89 $\pm$ 1.04\,ms für FIFO\_50. Gegenüber FIFO\_500 ist Work-Stealing dagegen klar günstiger, bei vier Threads auf Windows etwa mit 90.46 $\pm$ 2.76\,ms statt 481.52 $\pm$ 13.97\,ms. Eine angepasste Implementierung könnte diese Wartezeit weiter reduzieren, etwa durch eine Begrenzung der Warteschlangengröße pro Thread, damit Tasks nicht zu lange in den Queues verbleiben, bevor sie ausgeführt werden.
+Für die Queue Time zeigt sich dagegen ein konsistenter Nachteil gegenüber \acs{SSTF}: In allen Konfigurationen ist Work-Stealing nachweisbar höher. Besonders deutlich ist dies unter Windows bei vier Threads mit 90.46 $\pm$ 2.76\,ms gegenüber 45.06 $\pm$ 1.34\,ms für \acs{SSTF} sowie 46.89 $\pm$ 1.04\,ms für \acs{FIFO}\_50. Gegenüber \acs{FIFO}\_500 ist Work-Stealing dagegen klar günstiger, bei vier Threads auf Windows etwa mit 90.46 $\pm$ 2.76\,ms statt 481.52 $\pm$ 13.97\,ms. Eine angepasste Implementierung könnte diese Wartezeit weiter reduzieren, etwa durch eine Begrenzung der Warteschlangengröße pro Thread, damit Tasks nicht zu lange in den Queues verbleiben, bevor sie ausgeführt werden.
 
-\paragraph{Synchron ausgeführte Tasks und RAM-Auslastung}
-Beim Anteil synchron ausgeführter Tasks ergibt sich kein einheitlicher Vorteil: Bei vier Threads auf Linux liegt Work-Stealing mit 80.61 $\pm$ 1.21\,\% nachweisbar über SSTF mit 44.09 $\pm$ 2.44\,\%, bei zehn Threads auf Linux dagegen mit 27.09 $\pm$ 1.63\,\% nachweisbar darunter. Auf Windows lässt sich bei vier und zehn Threads kein Unterschied zu SSTF nachweisen. Für die mittlere RAM-Auslastung zeigt sich nur bei vier Threads auf Windows ein nachweisbar niedrigerer Wert als bei SSTF, n"amlich 2087 $\pm$ 54\,MB gegenüber 2209 $\pm$ 60.6\,MB. Die RAM-Maximalwerten liegt bei zehn Threads auf Windows dagegen mit 11457 $\pm$ 884.0\,MB nachweisbar über SSTF mit 9592 $\pm$ 641.6\,MB.
+\paragraph{Synchron ausgeführte Tasks und \acs{RAM}-Auslastung}
+Beim Anteil synchron ausgeführter Tasks ergibt sich kein einheitlicher Vorteil: Bei vier Threads auf Linux liegt Work-Stealing mit 80.61 $\pm$ 1.21\,\% nachweisbar über \acs{SSTF} mit 44.09 $\pm$ 2.44\,\%, bei zehn Threads auf Linux dagegen mit 27.09 $\pm$ 1.63\,\% nachweisbar darunter. Auf Windows lässt sich bei vier und zehn Threads kein Unterschied zu \acs{SSTF} nachweisen. Für die mittlere \acs{RAM}-Auslastung zeigt sich nur bei vier Threads auf Windows ein nachweisbar niedrigerer Wert als bei \acs{SSTF}, n"amlich 2087 $\pm$ 54\,MB gegenüber 2209 $\pm$ 60.6\,MB. Die \acs{RAM}-Maximalwerten liegt bei zehn Threads auf Windows dagegen mit 11457 $\pm$ 884.0\,MB nachweisbar über \acs{SSTF} mit 9592 $\pm$ 641.6\,MB.
 
-\paragraph{Vorteile und Nachteile des Work-Stealing-Schedulers mit SSTF-Priorisierung im Vergleich zum SSTF-Scheduler}
+\paragraph{Vorteile und Nachteile des Work-Stealing-Schedulers mit \acs{SSTF}-Priorisierung im Vergleich zum \acs{SSTF}-Scheduler}
 \begin{itemize}
     \item Vorteile:
     \begin{itemize}
-        \item Bei vier Threads auf Windows ist die mittlere RAM-Auslastung nachweisbar geringer als bei SSTF.
-        \item Bei zehn Threads auf Linux ist der Anteil synchron ausgeführter Tasks nachweisbar geringer als bei SSTF.
+        \item Bei vier Threads auf Windows ist die mittlere \acs{RAM}-Auslastung nachweisbar geringer als bei \acs{SSTF}.
+        \item Bei zehn Threads auf Linux ist der Anteil synchron ausgeführter Tasks nachweisbar geringer als bei \acs{SSTF}.
     \end{itemize}
     \item Nachteile:
     \begin{itemize}
-        \item Die Queue Time ist gegenüber SSTF in allen Konfigurationen nachweisbar höher.
-        \item Bei vier Threads auf Linux ist auch die Laufzeit nachweisbar schlechter als bei SSTF.
-        \item Auf Windows lässt sich für den Anteil synchroner Tasks kein nachweisbarer Vorteil gegenüber SSTF zeigen. Bei zehn Threads ist der RAM-Maximalwert sogar nachweisbar höher als bei SSTF.
+        \item Die Queue Time ist gegenüber \acs{SSTF} in allen Konfigurationen nachweisbar höher.
+        \item Bei vier Threads auf Linux ist auch die Laufzeit nachweisbar schlechter als bei \acs{SSTF}.
+        \item Auf Windows lässt sich für den Anteil synchroner Tasks kein nachweisbarer Vorteil gegenüber \acs{SSTF} zeigen. Bei zehn Threads ist der \acs{RAM}-Maximalwert sogar nachweisbar höher als bei \acs{SSTF}.
     \end{itemize}
 \end{itemize}
 
@@ -393,10 +393,10 @@ Beim Anteil synchron ausgeführter Tasks ergibt sich kein einheitlicher Vorteil:
 
 \noindent Die Ergebnisse der Messungen zeigen, dass die verschiedenen Scheduling-Algorithmen 
 unterschiedliche Auswirkungen auf die Performance
-von verschiedenen Metriken haben, wie Laufzeit, CPU-Auslastung, RAM-Auslastung, 
+von verschiedenen Metriken haben, wie Laufzeit, \acs{CPU}-Auslastung, \acs{RAM}-Auslastung, 
 Wartezeit von Tasks und Anzahl der synchron ausgeführten Tasks.
 Für die Nutzer des Scanners ist die Laufzeit von oberster Priorität, 
-möglichst in Kombination mit einer geringer Ressourcen-Auslastung.
+möglichst in Kombination mit einer geringen Ressourcen-Auslastung.
 Ein Scanner mit responsivem Verhalten und entsprechend niedriger Wartezeit von Tasks, 
 ist ebenfalls wünschenswert, sollte allerdings nicht auf Kosten einer höheren Laufzeit implementiert werden.
 Die Anzahl der synchron ausgeführten Tasks sollte möglichst gering sein, um die Vorteile der taskbasierten Ausführung zu nutzen,
@@ -404,98 +404,98 @@ hat für den Nutzer allerdings keine direkte Auswirkung und somit eine niedriger
 
 \vspace{7.56mm}
 \noindent Die hier verwendeten Balkendiagramme zeigen die Mittelwerte von jeweils 20 Messungen der Laufzeit, 
-CPU-Auslastung und RAM-Auslastung der verschiedenen Scheduling-Algorithmen 
+\acs{CPU}-Auslastung und \acs{RAM}-Auslastung der verschiedenen Scheduling-Algorithmen 
 bei verschiedenen Thread-Anzahlen auf Windows und Linux. Die Standardabweichungen sind an den Balken mit angegeben.
 
 \vspace{7.56mm}
 
-\noindent Bei einem Thread zeigen die CPU-Auslastung und, zwischen den neuen Scheduler-Varianten, auch die mittlere RAM-Auslastung keine konsistenten nachweisbaren Unterschiede, siehe Abbildung \ref{fig:schedulercmp-1t-runtime}, \ref{fig:schedulercmp-1t-cpu} und \ref{fig:schedulercmp-1t-ram}. Gegenüber der Referenz liegt die mittlere RAM-Auslastung auf Windows jedoch bei allen neuen Scheduler-Varianten nachweisbar höher. Auch f"ur die Laufzeit ergibt sich kein robuster Vorteil einer neuen Scheduler-Variante: Auf Linux sind alle neuen Scheduler gegen"uber der Referenz nachweisbar langsamer, auf Windows unterscheiden sich Referenz und neue Scheduler dagegen nicht nachweisbar. Innerhalb der neuen Scheduler treten zwar einzelne nachweisbare Unterschiede auf, sie bilden jedoch kein konsistentes Muster zugunsten einer Variante. Dies passt zur Erwartung, dass Scheduling-Vorteile erst beim Einsatz mehrerer Threads sichtbar werden.
+\noindent Bei einem Thread zeigen die \acs{CPU}-Auslastung und, zwischen den neuen Scheduler-Varianten, auch die mittlere \acs{RAM}-Auslastung keine konsistenten nachweisbaren Unterschiede, siehe Abbildung \ref{fig:schedulercmp-1t-runtime}, \ref{fig:schedulercmp-1t-cpu} und \ref{fig:schedulercmp-1t-ram}. Gegenüber der Referenz liegt die mittlere \acs{RAM}-Auslastung auf Windows jedoch bei allen neuen Scheduler-Varianten nachweisbar höher. Auch f"ur die Laufzeit ergibt sich kein robuster Vorteil einer neuen Scheduler-Variante: Auf Linux sind alle neuen Scheduler gegen"uber der Referenz nachweisbar langsamer, auf Windows unterscheiden sich Referenz und neue Scheduler dagegen nicht nachweisbar. Innerhalb der neuen Scheduler treten zwar einzelne nachweisbare Unterschiede auf, sie bilden jedoch kein konsistentes Muster zugunsten einer Variante. Dies passt zur Erwartung, dass Scheduling-Vorteile erst beim Einsatz mehrerer Threads sichtbar werden.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{Messungen/Scheduler_Comparison/scheduler_1T_runtime.pdf}
-\caption{Vergleich der Laufzeiten von Referenz, FIFO\_50, FIFO\_500, SSTF und Work-Stealing auf Linux und Windows bei einem Thread, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
+\caption{Vergleich der Laufzeiten von Referenz, \acs{FIFO}\_50, \acs{FIFO}\_500, \acs{SSTF} und Work-Stealing auf Linux und Windows bei einem Thread, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
 \label{fig:schedulercmp-1t-runtime}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{Messungen/Scheduler_Comparison/scheduler_1T_cpu.pdf}
-\caption{Vergleich der CPU-Auslastung von Referenz, FIFO\_50, FIFO\_500, SSTF und Work-Stealing auf Linux und Windows bei einem Thread, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
+\caption{Vergleich der \acs{CPU}-Auslastung von Referenz, \acs{FIFO}\_50, \acs{FIFO}\_500, \acs{SSTF} und Work-Stealing auf Linux und Windows bei einem Thread, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
 \label{fig:schedulercmp-1t-cpu}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{Messungen/Scheduler_Comparison/scheduler_1T_ram.pdf}
-\caption{Vergleich der RAM-Auslastung von Referenz, FIFO\_50, FIFO\_500, SSTF und Work-Stealing auf Linux und Windows bei einem Thread, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
+\caption{Vergleich der \acs{RAM}-Auslastung von Referenz, \acs{FIFO}\_50, \acs{FIFO}\_500, \acs{SSTF} und Work-Stealing auf Linux und Windows bei einem Thread, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
 \label{fig:schedulercmp-1t-ram}
 \end{figure}
 
-\noindent Bei vier Threads zeigen sich auf Windows für alle neuen Scheduler nachweisbar geringere Laufzeiten als bei der Referenz (1213.83 $\pm$ 26.95\,s): FIFO\_50 mit 1126.42 $\pm$ 23.26\,s, FIFO\_500 mit 1112.04 $\pm$ 29.19\,s, SSTF mit 1123.66 $\pm$ 24.39\,s und Work-Stealing mit 1144.78 $\pm$ 34.65\,s. Auf Linux gilt dies nicht, dort überlappt nur FIFO\_50 mit der Referenz, während FIFO\_500, SSTF und Work-Stealing nachweisbar langsamer als die Referenz sind.
+\noindent Bei vier Threads zeigen sich auf Windows für alle neuen Scheduler nachweisbar geringere Laufzeiten als bei der Referenz (1213.83 $\pm$ 26.95\,s): \acs{FIFO}\_50 mit 1126.42 $\pm$ 23.26\,s, \acs{FIFO}\_500 mit 1112.04 $\pm$ 29.19\,s, \acs{SSTF} mit 1123.66 $\pm$ 24.39\,s und Work-Stealing mit 1144.78 $\pm$ 34.65\,s. Auf Linux gilt dies nicht, dort überlappt nur \acs{FIFO}\_50 mit der Referenz, während \acs{FIFO}\_500, \acs{SSTF} und Work-Stealing nachweisbar langsamer als die Referenz sind.
 
 \vspace{7.56mm}
 
-\noindent Zwischen FIFO\_50, FIFO\_500, SSTF und Work-Stealing lässt sich bei der Laufzeit auf Windows kein nachweisbarer Unterschied zeigen. Gleiches gilt für die CPU-Auslastung. Bei der mittleren RAM-Auslastung überlappen die Standardabweichungsintervalle ebenfalls weitgehend, nur zwischen SSTF und Work-Stealing zeigt sich ein nachweisbarer Unterschied zugunsten von Work-Stealing, siehe Abbildung \ref{fig:schedulercmp-4t-runtime}, \ref{fig:schedulercmp-4t-cpu} und \ref{fig:schedulercmp-4t-ram}. Die internen Metriken trennen die Verfahren jedoch deutlicher: FIFO\_500 weist mit 481.52 $\pm$ 13.97\,ms eine nachweisbar höhere Queue Time als FIFO\_50, SSTF und Work-Stealing auf. Zwischen FIFO\_50 (46.89 $\pm$ 1.04\,ms) und SSTF (45.06 $\pm$ 1.34\,ms) lässt sich dagegen kein Unterschied nachweisen. Beim Anteil synchron ausgeführter Tasks liegen SSTF und Work-Stealing mit 53.51 $\pm$ 4.05\,\% bzw. 53.36 $\pm$ 4.64\,\% nachweisbar unter FIFO\_50 und FIFO\_500, unterscheiden sich untereinander aber nicht nachweisbar. Die höchste RAM-Spitze zeigt bei vier Threads auf Windows FIFO\_500 mit 10782 $\pm$ 932.2\,MB. Dieser Wert liegt nachweisbar über FIFO\_50, SSTF und Work-Stealing.
+\noindent Zwischen \acs{FIFO}\_50, \acs{FIFO}\_500, \acs{SSTF} und Work-Stealing lässt sich bei der Laufzeit auf Windows kein nachweisbarer Unterschied zeigen. Gleiches gilt für die \acs{CPU}-Auslastung. Bei der mittleren \acs{RAM}-Auslastung überlappen die Standardabweichungsintervalle ebenfalls weitgehend, nur zwischen \acs{SSTF} und Work-Stealing zeigt sich ein nachweisbarer Unterschied zugunsten von Work-Stealing, siehe Abbildung \ref{fig:schedulercmp-4t-runtime}, \ref{fig:schedulercmp-4t-cpu} und \ref{fig:schedulercmp-4t-ram}. Die internen Metriken trennen die Verfahren jedoch deutlicher: \acs{FIFO}\_500 weist mit 481.52 $\pm$ 13.97\,ms eine nachweisbar höhere Queue Time als \acs{FIFO}\_50, \acs{SSTF} und Work-Stealing auf. Zwischen \acs{FIFO}\_50 (46.89 $\pm$ 1.04\,ms) und \acs{SSTF} (45.06 $\pm$ 1.34\,ms) lässt sich dagegen kein Unterschied nachweisen. Beim Anteil synchron ausgeführter Tasks liegen \acs{SSTF} und Work-Stealing mit 53.51 $\pm$ 4.05\,\% bzw. 53.36 $\pm$ 4.64\,\% nachweisbar unter \acs{FIFO}\_50 und \acs{FIFO}\_500, unterscheiden sich untereinander aber nicht nachweisbar. Die höchste \acs{RAM}-Spitze zeigt bei vier Threads auf Windows \acs{FIFO}\_500 mit 10782 $\pm$ 932.2\,MB. Dieser Wert liegt nachweisbar über \acs{FIFO}\_50, \acs{SSTF} und Work-Stealing.
 
 \vspace{7.56mm}
 
-\noindent Nach den festgelegten Prioritäten ist bei vier Threads SSTF am besten gestützt: Gegenüber FIFO\_500 und Work-Stealing zeigt SSTF keinen nachweisbaren Laufzeitnachteil, aber eine nachweisbar geringere Queue Time. Gegenüber FIFO\_50 ist die Laufzeit ebenfalls nicht unterscheidbar, während der Anteil synchron ausgeführter Tasks mit 53.51 $\pm$ 4.05\,\% gegenüber 63.84 $\pm$ 5.46\,\% nachweisbar geringer ist. Work-Stealing weist zwar eine nachweisbar geringere mittlere RAM-Auslastung als SSTF auf, erkauft dies aber mit einer deutlich höheren Queue Time.
+\noindent Nach den festgelegten Prioritäten ist \acs{SSTF} damit auch bei zehn Threads die am besten begründete Gesamtwahl: Gegenüber \acs{FIFO}\_500 und Work-Stealing zeigt \acs{SSTF} keinen nachweisbaren Laufzeitnachteil, aber eine nachweisbar geringere Queue Time. Gegenüber \acs{FIFO}\_50 ist die Laufzeit ebenfalls nicht unterscheidbar, während der Anteil synchron ausgeführter Tasks mit 53.51 $\pm$ 4.05\,\% gegenüber 63.84 $\pm$ 5.46\,\% nachweisbar geringer ist. Work-Stealing weist zwar eine nachweisbar geringere mittlere \acs{RAM}-Auslastung als \acs{SSTF} auf, erkauft dies aber mit einer deutlich höheren Queue Time.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{Messungen/Scheduler_Comparison/scheduler_4T_runtime.pdf}
-\caption{Vergleich der Laufzeiten von Referenz, FIFO\_50, FIFO\_500, SSTF und Work-Stealing auf Linux und Windows bei vier Threads, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
+\caption{Vergleich der Laufzeiten von Referenz, \acs{FIFO}\_50, \acs{FIFO}\_500, \acs{SSTF} und Work-Stealing auf Linux und Windows bei vier Threads, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
 \label{fig:schedulercmp-4t-runtime}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{Messungen/Scheduler_Comparison/scheduler_4T_cpu.pdf}
-\caption{Vergleich der CPU-Auslastung von Referenz, FIFO\_50, FIFO\_500, SSTF und Work-Stealing auf Linux und Windows bei vier Threads, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
+\caption{Vergleich der \acs{CPU}-Auslastung von Referenz, \acs{FIFO}\_50, \acs{FIFO}\_500, \acs{SSTF} und Work-Stealing auf Linux und Windows bei vier Threads, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
 \label{fig:schedulercmp-4t-cpu}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{Messungen/Scheduler_Comparison/scheduler_4T_ram.pdf}
-\caption{Vergleich der RAM-Auslastung von Referenz, FIFO\_50, FIFO\_500, SSTF und Work-Stealing auf Linux und Windows bei vier Threads, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
+\caption{Vergleich der \acs{RAM}-Auslastung von Referenz, \acs{FIFO}\_50, \acs{FIFO}\_500, \acs{SSTF} und Work-Stealing auf Linux und Windows bei vier Threads, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
 \label{fig:schedulercmp-4t-ram}
 \end{figure}
 
-\noindent Bei zehn Threads werden die Unterschiede zwischen den Scheduling-Algorithmen weiter sichtbar, siehe Abbildung \ref{fig:schedulercmp-10t-runtime}, \ref{fig:schedulercmp-10t-cpu} und \ref{fig:schedulercmp-10t-ram}. Auf Windows zeigen alle neuen Scheduler weiterhin einen nachweisbaren Laufzeitvorteil gegenüber der Referenz (825.78 $\pm$ 20.53\,s): FIFO\_50 mit 750.65 $\pm$ 25.36\,s, FIFO\_500 mit 740.05 $\pm$ 31.51\,s, SSTF mit 752.41 $\pm$ 25.56\,s und Work-Stealing mit 747.43 $\pm$ 34.23\,s. Auf Linux überlappen die Laufzeitintervalle aller neuen Scheduler mit der Referenz, ein nachweisbarer Vorteil lässt sich dort nicht belegen.
+\noindent Bei zehn Threads werden die Unterschiede zwischen den Scheduling-Algorithmen weiter sichtbar, siehe Abbildung \ref{fig:schedulercmp-10t-runtime}, \ref{fig:schedulercmp-10t-cpu} und \ref{fig:schedulercmp-10t-ram}. Auf Windows zeigen alle neuen Scheduler weiterhin einen nachweisbaren Laufzeitvorteil gegenüber der Referenz (825.78 $\pm$ 20.53\,s): \acs{FIFO}\_50 mit 750.65 $\pm$ 25.36\,s, \acs{FIFO}\_500 mit 740.05 $\pm$ 31.51\,s, \acs{SSTF} mit 752.41 $\pm$ 25.56\,s und Work-Stealing mit 747.43 $\pm$ 34.23\,s. Auf Linux überlappen die Laufzeitintervalle aller neuen Scheduler mit der Referenz, ein nachweisbarer Vorteil lässt sich dort nicht belegen.
 
 \vspace{7.56mm}
 
-\noindent Die internen Metriken differenzieren die Verfahren auch hier stärker als die Laufzeit. SSTF und Work-Stealing reduzieren den Anteil synchron ausgeführter Tasks gegenüber FIFO\_50 und FIFO\_500 nachweisbar, unterscheiden sich untereinander auf Windows jedoch nicht nachweisbar. Für die Laufzeit auf Windows lässt sich zwischen Work-Stealing (747.43 $\pm$ 34.23\,s), SSTF (752.41 $\pm$ 25.56\,s) und den FIFO-Varianten kein Unterschied nachweisen, da sich die Intervalle überlappen. Die Queue Time liegt bei Work-Stealing mit 97.23 $\pm$ 3.15\,ms nachweisbar über SSTF und FIFO\_50, aber nachweisbar unter FIFO\_500. Bei der RAM-Spitze ist SSTF auf Windows mit 9592 $\pm$ 641.6\,MB gegenüber Work-Stealing mit 11457 $\pm$ 884.0\,MB nachweisbar geringer. Gegenüber FIFO\_500 ist der Unterschied dagegen nicht nachweisbar.
+\noindent Die internen Metriken differenzieren die Verfahren auch hier stärker als die Laufzeit. \acs{SSTF} und Work-Stealing reduzieren den Anteil synchron ausgeführter Tasks gegenüber \acs{FIFO}\_50 und \acs{FIFO}\_500 nachweisbar, unterscheiden sich untereinander auf Windows jedoch nicht nachweisbar. Für die Laufzeit auf Windows lässt sich zwischen Work-Stealing (747.43 $\pm$ 34.23\,s), \acs{SSTF} (752.41 $\pm$ 25.56\,s) und den \acs{FIFO}-Varianten kein Unterschied nachweisen, da sich die Intervalle überlappen. Die Queue Time liegt bei Work-Stealing mit 97.23 $\pm$ 3.15\,ms nachweisbar über \acs{SSTF} und \acs{FIFO}\_50, aber nachweisbar unter \acs{FIFO}\_500. Bei der \acs{RAM}-Spitze ist \acs{SSTF} auf Windows mit 9592 $\pm$ 641.6\,MB gegenüber Work-Stealing mit 11457 $\pm$ 884.0\,MB nachweisbar geringer. Gegenüber \acs{FIFO}\_500 ist der Unterschied dagegen nicht nachweisbar.
 
 \vspace{7.56mm}
 
-\noindent Nach den festgelegten Prioritäten ist SSTF damit auch bei zehn Threads die am besten begründete Gesamtwahl: Es zeigt gegenüber FIFO\_50, FIFO\_500 und Work-Stealing keinen nachweisbaren Laufzeitnachteil, reduziert aber den Anteil synchron ausgeführter Tasks gegenüber beiden FIFO-Varianten nachweisbar und weist gegenüber Work-Stealing eine nachweisbar geringere Queue Time auf. Zusätzlich liegt der RAM-Maximalwert gegenüber FIFO\_50 und Work-Stealing nachweisbar niedriger, gegenüber FIFO\_500 jedoch nicht nachweisbar.
+\noindent Nach den festgelegten Prioritäten ist \acs{SSTF} damit auch bei zehn Threads die am besten begründete Gesamtwahl: Es zeigt gegenüber \acs{FIFO}\_50, \acs{FIFO}\_500 und Work-Stealing keinen nachweisbaren Laufzeitnachteil, reduziert aber den Anteil synchron ausgeführter Tasks gegenüber beiden \acs{FIFO}-Varianten nachweisbar und weist gegenüber Work-Stealing eine nachweisbar geringere Queue Time auf. Zusätzlich liegt der \acs{RAM}-Maximalwert gegenüber \acs{FIFO}\_50 und Work-Stealing nachweisbar niedriger, gegenüber \acs{FIFO}\_500 jedoch nicht nachweisbar.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{Messungen/Scheduler_Comparison/scheduler_10T_runtime.pdf}
-\caption{Vergleich der Laufzeiten von Referenz, FIFO\_50, FIFO\_500, SSTF und Work-Stealing auf Linux und Windows bei zehn Threads, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
+\caption{Vergleich der Laufzeiten von Referenz, \acs{FIFO}\_50, \acs{FIFO}\_500, \acs{SSTF} und Work-Stealing auf Linux und Windows bei zehn Threads, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
 \label{fig:schedulercmp-10t-runtime}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{Messungen/Scheduler_Comparison/scheduler_10T_cpu.pdf}
-\caption{Vergleich der CPU-Auslastung von Referenz, FIFO\_50, FIFO\_500, SSTF und Work-Stealing auf Linux und Windows bei zehn Threads, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
+\caption{Vergleich der \acs{CPU}-Auslastung von Referenz, \acs{FIFO}\_50, \acs{FIFO}\_500, \acs{SSTF} und Work-Stealing auf Linux und Windows bei zehn Threads, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
 \label{fig:schedulercmp-10t-cpu}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{Messungen/Scheduler_Comparison/scheduler_10T_ram.pdf}
-\caption{Vergleich der RAM-Auslastung von Referenz, FIFO\_50, FIFO\_500, SSTF und Work-Stealing auf Linux und Windows bei zehn Threads, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
+\caption{Vergleich der \acs{RAM}-Auslastung von Referenz, \acs{FIFO}\_50, \acs{FIFO}\_500, \acs{SSTF} und Work-Stealing auf Linux und Windows bei zehn Threads, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
 \label{fig:schedulercmp-10t-ram}
 \end{figure}
 
-\noindent Nach unserer Definition von Performance und im Hinblick auf die festgelegten Prioritäten lässt sich SSTF als die am besten begründete Scheduler-Strategie identifizieren. 
-Unter Last ab vier Threads zeigt sich gegenüber den FIFO-Varianten kein nachweisbarer Laufzeitnachteil, während der Anteil synchron ausgeführter Tasks bei vier und zehn Threads nachweisbar geringer ist. Gegenüber Work-Stealing besteht ebenfalls kein nachweisbarer Laufzeitnachteil, bei zugleich nachweisbar geringerer Queue Time. Zudem ist der RAM-Maximalwert bei zehn Threads auf Windows gegenüber FIFO\_50 und Work-Stealing nachweisbar geringer, während gegenüber FIFO\_500 kein Unterschied nachweisbar ist.
+\noindent Nach unserer Definition von Performance und im Hinblick auf die festgelegten Prioritäten lässt sich \acs{SSTF} als die am besten begründete Scheduler-Strategie identifizieren. 
+Unter Last ab vier Threads zeigt sich gegenüber den \acs{FIFO}-Varianten kein nachweisbarer Laufzeitnachteil, während der Anteil synchron ausgeführter Tasks bei vier und zehn Threads nachweisbar geringer ist. Gegenüber Work-Stealing besteht ebenfalls kein nachweisbarer Laufzeitnachteil, bei zugleich nachweisbar geringerer Queue Time. Zudem ist der \acs{RAM}-Maximalwert bei zehn Threads auf Windows gegenüber \acs{FIFO}\_50 und Work-Stealing nachweisbar geringer, während gegenüber \acs{FIFO}\_500 kein Unterschied nachweisbar ist.
 
 \noindent Weitere Tests mit optimierten Implementierungen und auf verschiedenen Systemen sind jedoch empfehlenswert.
 

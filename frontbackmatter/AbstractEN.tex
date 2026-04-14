@@ -8,15 +8,19 @@
 	\chapter*{Abstract}
 
 	\begin{sloppypar}
-	\noindent This thesis investigates performance optimization of an APT scanner by replacing object-based, recursively synchronous scheduling with a centralized task-based scheduling model.
+	\noindent \acs{APT} scanners must be able to analyze compromised or suspicious systems as quickly as possible. In day-to-day use outside incident-response scenarios, they should combine short scan times with low resource utilization.
 
 	\vspace{7.56mm}
 
-	\noindent Three scheduling algorithms were implemented and evaluated: First-In, First-Out (FIFO), Shortest-Subtree-Time-First (SSTF), and Work Stealing with SSTF prioritization. The evaluation was conducted experimentally in a controlled test environment on Debian~13 and Windows~11 with 1, 4, and 10 threads and 20 repetitions per configuration. The measured metrics were runtime, CPU and RAM utilization, waiting time, burst time, and the share of synchronously executed tasks.
+	\noindent This thesis investigates performance optimization of an \acs{APT} scanner by replacing object-based, recursively synchronous scheduling with a centralized task-based scheduling model.
 
 	\vspace{7.56mm}
 
-	\noindent On Windows, the new schedulers show clear runtime improvements at 4 and 10 threads compared with the reference implementation. On Linux, runtime differences are small. SSTF provides the most stable overall balance of runtime, waiting time, and memory behavior. Work Stealing does not show a consistent improvement over SSTF.
+	\noindent Three scheduling algorithms were implemented and evaluated: First-In, First-Out (\acs{FIFO}), Shortest-Subtree-Time-First (\acs{SSTF}), and Work-Stealing with \acs{SSTF} prioritization. The evaluation was conducted experimentally in a controlled test environment on Debian~13 and Windows~11 with one, four, and ten threads and 20 repetitions per configuration. The measured metrics were runtime, \acs{CPU} and \acs{RAM} utilization, waiting time, burst time, and the share of synchronously executed tasks.
+
+	\vspace{7.56mm}
+
+	\noindent On Windows, the new schedulers show clear runtime improvements compared with the reference at four and ten threads, ranging from about 5.69\,\% to 8.39\,\% at four threads and from about 8.89\,\% to 10.38\,\% at ten threads, depending on the method. Under Linux, no consistent runtime advantage can be demonstrated. \acs{SSTF} provides the most stable overall balance of runtime, waiting time, and memory behavior.
 
 	\vspace{7.56mm}
 

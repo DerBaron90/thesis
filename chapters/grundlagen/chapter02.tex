@@ -15,24 +15,24 @@ sondern auch die forensisch verwertbare Erkennung und Einordnung von Auffälligk
 
 \vspace{7.56mm}
 
-\noindent Ein zentraler Anwendungsfall solcher Systeme ist die Erkennung von Advanced Persistent Threats (APTs).
-Der Begriff APT bezeichnet eine Form des Cyberangriffs,
+\noindent Ein zentraler Anwendungsfall solcher Systeme ist die Erkennung von Advanced Persistent Threats (\acs{APT}s).
+Der Begriff \acs{APT} bezeichnet eine Form des Cyberangriffs,
 bei der sich ein Angreifer unbefugten Zugang zu einem Computersystem verschafft
 und potenziell über einen langen Zeitraum unentdeckt darin verbleibt.
 Im Gegensatz zu herkömmlichen Angriffen
-handelt es sich bei APTs um menschliche Akteure
+handelt es sich bei \acsp{APT} um menschliche Akteure
 mit hoher Motivation und hohen Ressourcen,
 nicht um einfachen, automatisierten Schadcode \cite[S.~1--2, 7]{Buchta:2024}.
 
 
 \vspace{7.56mm}
 
-\noindent Ein Advanced-Persistent-Threat-Scanner (APT-Scanner), oder präziser ein APT-Angriffserkennungssystem,
+\noindent Ein Advanced-Persistent-Threat-Scanner (\acs{APT}-Scanner), oder präziser ein \acs{APT}-Angriffserkennungssystem,
 ist eine spezialisierte Sicherheitssoftware,
 die auf die Identifikation der Aktivitäten fortgeschrittener und andauernder Bedrohungen ausgelegt ist \cite[S.~1--2]{Buchta:2024}.
 
 \noindent Während herkömmliche Virenscanner oft auf bekannten Signaturen basieren,
-müssen APT-Scanner deutlich komplexere Methoden anwenden,
+müssen \acs{APT}-Scanner deutlich komplexere Methoden anwenden,
 um die typischerweise subtilen
 und über lange Zeiträume gestreckten Angriffe zu finden.
 
@@ -42,10 +42,10 @@ und über lange Zeiträume gestreckten Angriffe zu finden.
 % Anomalieerkennung
 %
 \begin{sloppypar}
-\noindent Da APT-Akteure häufig neue Schwachstellen (Zero-Day-Exploits) nutzen
+\noindent Da \acs{APT}-Akteure häufig unbekannte Schwachstellen (Zero-Day-Exploits) nutzen
 oder legitime Systemwerkzeuge missbrauchen (Living-off-the-Land),
 helfen signaturbasierte Detektionsmechanismen oft nicht weiter \cite[S.~6--7]{Buchta:2024}.
-Moderne APT-Angriffs\-erkennungs\-systeme nutzen daher Anomalieerkennung \cite[S.~8--9]{Buchta:2024}.
+Moderne \acs{APT}-Angriffs\-erkennungs\-systeme nutzen daher Anomalieerkennung \cite[S.~8--9]{Buchta:2024}.
 Die Anomalieerkennung identifiziert ungewöhnliche Muster
 oder Instanzen in Daten,
 die nicht dem erwarteten Verhalten entsprechen \cite[S.~8--9, 24]{Buchta:2024}.
@@ -53,15 +53,15 @@ Sie unterscheidet im Gegensatz zu herkömmlichen Virenscannern
 nicht zwischen bekannten und unbekannten Angriffen.
 Da die Anomalieerkennung auf dem Systemverhalten basiert,
 um Abweichungen zu erkennen,
-sind APT-Angriffs\-erkennungs\-systeme
+sind \acs{APT}-Angriffs\-erkennungs\-systeme
 mit einem hohen Wartungsaufwand verbunden.
-Das APT-Angriffs\-erkennungs\-system lernt zunächst
+Das \acs{APT}-Angriffs\-erkennungs\-system lernt zunächst
 das „normale" Verhalten des Rechners.
 Jede signifikante Abweichung wird als potenzieller Angriff gemeldet.
 Analysten bewerten die potenziellen Angriffe
 und erkennen False Positives,
 welche ab diesem Zeitpunkt automatisch
-von dem APT-Angriffs\-erkennungs\-system als solche eingeordnet werden.
+von dem \acs{APT}-Angriffs\-erkennungs\-system als solche eingeordnet werden.
 \end{sloppypar}
 
 \vspace{7.56mm}
@@ -70,14 +70,14 @@ von dem APT-Angriffs\-erkennungs\-system als solche eingeordnet werden.
 % Performance-Relevanz und Ziel der Arbeit
 %
 \begin{sloppypar}
-\noindent Incident-Response-Scanner und APT-Angriffs\-erkennungs\-systeme werden auf einer hohen Anzahl
+\noindent Incident-Response-Scanner und \acs{APT}-Angriffs\-erkennungs\-systeme werden auf einer hohen Anzahl
 von produktiven Systemen,
 h\"aufig auf kritischen Servern
 oder in ressourcen\-beschr\"ankten Umgebungen, eingesetzt.
 Hierbei werden regelmäßig Scans ausgeführt.
 Auch bei Incident-Response-Szenarien
-kommen APT-Angriffs\-erkennungs\-systeme zum Einsatz.
-Die Performance des APT-Angriffs\-erkennungs\-systems
+kommen \acs{APT}-Angriffs\-erkennungs\-systeme zum Einsatz.
+Die Performance des \acs{APT}-Angriffs\-erkennungs\-systems
 ist von entscheidender Bedeutung.
 Lange Scan-Zeiten und hohe Ressourcenauslastung
 stellen ein relevantes Problem dar.
@@ -94,14 +94,14 @@ von hoher Relevanz.
 \vspace{7.56mm}
 
 \noindent In dieser Arbeit wird der Versuch vorgenommen,
-die Performance des APT-Scanners Thor
+die Performance des \acs{APT}-Scanners Thor
 der Firma Nextron Systems GmbH,
 im Folgenden als Scanner bezeichnet, zu optimieren,
 indem ein taskbasierter Scheduler implementiert wird.
 
 \vspace{7.56mm}
 
-\noindent Daraus ergibt sich die Forschungsfrage, ob ein zentraler taskbasierter Scheduler die Laufzeit des Scanners gegenüber dem bisherigen objektbasierten, rekursiv-synchronen Scheduling verbessern kann, ohne CPU- und RAM-Auslastung sowie Wartezeiten unvertretbar zu verschlechtern. Die durchgeführten Untersuchungen zeigen, dass unter Windows bei paralleler Ausführung ab vier Threads reproduzierbare Laufzeitvorteile erreichbar sind, während unter Linux kein konsistenter Laufzeitvorteil nachweisbar ist. Unter den betrachteten Verfahren zeigt SSTF insbesondere in den Mehrthread-Konfigurationen die ausgewogenste Kombination aus Laufzeit, Wartezeit und Speichereigenschaften.
+\noindent Daraus ergibt sich die Forschungsfrage, ob ein zentraler taskbasierter Scheduler die Laufzeit des Scanners gegenüber dem bisherigen objektbasierten, rekursiv-synchronen Scheduling verbessern kann, ohne \acs{CPU}- und \acs{RAM}-Auslastung sowie Wartezeiten unvertretbar zu verschlechtern. Die durchgeführten Untersuchungen zeigen, dass unter Windows bei paralleler Ausführung ab vier Threads reproduzierbare Laufzeitvorteile erreichbar sind, während unter Linux kein konsistenter Laufzeitvorteil nachweisbar ist. Unter den betrachteten Verfahren zeigt Shortest-Subtree-Time-First (\acs{SSTF}) insbesondere in den Mehrthread-Konfigurationen die ausgewogenste Kombination aus Laufzeit, Wartezeit und Speichereigenschaften.
 
 \vspace{7.56mm}
 
@@ -115,30 +115,35 @@ Um ein besseres Verständnis für die Arbeitsweise des Scanners zu schaffen, wir
 
 \vspace{7.56mm}
 
-\noindent Es wird auf den aktuellen Stand der Forschung im Bezug auf Scheduling Algorithmen eingegangen.
-Zuletzt wird ein kurzer Überblick über den Aufbau der Arbeit gegeben.
+\noindent Dieses Kapitel ist in folgende Themen unterteilt:
+\begin{itemize}
+    \item Die für diese Arbeit relevanten Performance-Metriken und ihre Bedeutung für den Scanner.
+    \item Die Arbeitsweise des Scanners und das bisherige objektbasierte Scheduling-Modell.
+    \item Der Stand der Technik zu den für diese Arbeit relevanten Scheduling-Verfahren und Lastverteilungsstrategien.
+    \item Die Motivation und das Forschungsziel der Arbeit als Grundlage für die Methodik in Kapitel~\ref{ch:chapter03}.
+\end{itemize}
 
 \section{Performance}
-Wichtige Metriken für die Bewertung von CPU-Scheduling-Algorithmen sind \cite[S.~204--205]{Silberschatz:2018}, \cite[S.~154]{Tanenbaum:2015}:
+Wichtige Metriken für die Bewertung von Scheduling-Algorithmen sind \cite[S.~204--205]{Silberschatz:2018}, \cite[S.~154]{Tanenbaum:2015}:
 
 \paragraph{CPU-Utilization}
-Die Auslastung der CPU, gemessen als Prozentsatz der Zeit, in der die CPU aktiv arbeitet.
+Die Auslastung der \acs{CPU}, gemessen als Prozentsatz der Zeit, in der die \acs{CPU} aktiv arbeitet.
 Bei mehreren Kernen wird die durchschnittliche Auslastung über alle Kerne betrachtet.
 Das Ziel ist es, den Prozessor so beschäftigt wie möglich zu halten.
 In realen Systemen sollte die Auslastung zwischen 40\,\% (leicht belastet) und 90\,\% (stark belastet) liegen.
 
 \paragraph{Throughput}
-Dies ist die Anzahl der Tasks, die pro Zeiteinheit abgeschlossen werden.
+Die Anzahl der Tasks, die pro Zeiteinheit abgeschlossen werden.
 
 \paragraph{Turnaround Time}
-Dies beschreibt die Zeitspanne zwischen dem Einreihen eines Tasks in die Warteschlange und seinem Abschluss.
+Die Zeitspanne zwischen dem Einreihen eines Tasks in die Warteschlange und seinem Abschluss.
 
 \paragraph{Waiting Time}
 Die Zeitspanne, die ein Task in der Warteschlange verbringt.
 
 \vspace{7.56mm}
 
-\noindent Wenn man den gesamten Prozess betrachtet, treten andere Metriken in den Vordergrund:
+\noindent Wenn man den gesamten Prozess betrachtet, treten weitere Metriken in den Vordergrund:
 
 \paragraph{RAM-Utilization}
 Die Auslastung des Hauptspeichers in Prozent.
@@ -150,20 +155,8 @@ Die gesamte Ausführungszeit des Prozesses.
 Hennessy und Patterson \cite[S.~39--40]{Hennessy:2019} führen aus,
 dass die Ausführungszeit als das einzig konsistente und zuverlässige Maß für die Leistung gilt.
 
-\vspace{7.56mm}
-
-\noindent Um die Reproduzierbarkeit der Messergebnisse zu bewerten, wird der Variationskoeffizient (engl. \textit{Coefficient of Variation}, CV) der Laufzeit als relatives Maß für die Streuung herangezogen. Im Gegensatz zur Standardabweichung erlaubt der CV den Vergleich der Variabilität von Datensätzen mit unterschiedlichen Mittelwerten, indem er die Streuung normiert. Er ist definiert als das Verhältnis der Standardabweichung $\sigma$ zum arithmetischen Mittelwert $\mu$:
-
-\begin{equation}
-    CV = \frac{\sigma}{\mu} \cdot 100\%
-\end{equation}
-
-\noindent Ein niedriger CV-Wert signalisiert eine hohe Präzision des Testaufbaus, während ein steigender Wert auf eine zunehmende Instabilität oder eine stärkere gegenseitige Beeinflussung der Threads hindeutet. 
-
 
 \vspace{7.56mm}
-
-\noindent In dieser Arbeit wird die Performance des Scanners nach dessen Leistung in den aufgezählten Metriken bewertet. 
 
 \section{Arbeitsweise des Scanners}
 Der Scanner basiert auf zwei zentralen Komponententypen, deren Zusammenwirken den Arbeitsablauf definiert. 
@@ -182,7 +175,7 @@ Bei dessen Analyse wird das \enquote{Archive Scan}-Feature aktiv,
 welches den Inhalt entpackt und für jede enthaltene Datei ein neues Objekt instanziiert.
 Dieser Prozess setzt sich rekursiv fort \cite{thor:features}.
 
-\noindent Der Scanner nutzt ein objektbasiertes, synchrones Multithreading-Scheduling. Jedes Modul kapselt hierfür einen eigenen primitiven Scheduler, bestehend aus einer Warteschlange und einem Threadpool. Während der Systemuntersuchung generiert das Modul initiale Objekte und reiht diese in die Warteschlange ein. Die Worker des Threadpools entnehmen die Objekte und führen die für den jeweiligen Objekttyp registrierten Features aus.
+\noindent Der Scanner nutzt ein objektbasiertes, synchrones Multithreading-Scheduling. Jedes Modul kapselt hierfür einen eigenen primitiven Scheduler, bestehend aus einer Warteschlange und einem Threadpool. Während der Systemuntersuchung generiert das Modul initiale Objekte und reiht diese in die Warteschlange ein. Die Worker, also die ausführenden Threads des Threadpools, entnehmen die Objekte und führen die für den jeweiligen Objekttyp registrierten Features aus.
 
 \vspace{7.56mm}
 
@@ -294,8 +287,8 @@ sowie grundlegenden Informationen zu einem Paradigma der Lastverteilung.
 
 Die effiziente Planung dynamisch wachsender paralleler Berechnungen auf modernen Multiprozessorsystemen erfordert ein Gleichgewicht zwischen einer hohen Prozessor-Auslastung sowie einem geringen Speicherbedarf und Kommunikations-Overhead.
 In der Literatur zum dynamischen Task-Scheduling haben sich hierfür zwei grundlegende Lastverteilungsstrategien etabliert: 
-\textit{Work Sharing}, bei dem Arbeit aktiv auf Worker verteilt wird, und \textit{Work Stealing}, bei dem inaktive Worker Aufgaben von anderen Workern übernehmen.
-\marginpar{Work Sharing lässt sich mit dem Push-Prinzip und Work Stealing mit dem Pull-Prinzip vergleichen, bekannt aus Logistik, Supply-Chain-Management und agilen Vorgehensmodellen.}
+\textit{Work-Sharing}, bei dem Arbeit aktiv auf Worker verteilt wird, und \textit{Work-Stealing}, bei dem inaktive Worker Aufgaben von anderen Workern übernehmen.
+\marginpar{Work-Sharing lässt sich mit dem Push-Prinzip und Work-Stealing mit dem Pull-Prinzip vergleichen, bekannt aus Logistik, Supply-Chain-Management und agilen Vorgehensmodellen.}
 \vspace{7.56mm}
 
 \noindent Die folgenden Erläuterungen basieren auf der Arbeit \textit{Scheduling Multithreaded Computations by Work Stealing} von Blumofe und Leiserson \cite[S.~721--746]{Blumofe.1999}. 
@@ -303,8 +296,8 @@ Diese untersucht das Scheduling von Threads in parallelen Programmen und ist auf
 
 \vspace{7.56mm}
 
-\noindent Beim Work Sharing versucht der Scheduler aktiv, neu erzeugte Tasks auf andere, potenziell unterausgelastete Worker zu verteilen. 
-Im Gegensatz dazu geht beim Work Stealing die Initiative von den leerlaufenden Workern aus: 
+\noindent Beim Work-Sharing versucht der Scheduler aktiv, neu erzeugte Tasks auf andere, potenziell unterausgelastete Worker zu verteilen. 
+Im Gegensatz dazu geht beim Work-Stealing die Initiative von den leerlaufenden Workern aus: 
 Ein Worker, der keine Arbeit mehr besitzt, versucht Aufgaben aus der Warteschlange eines anderen Workers zu übernehmen.
 Dieser Ansatz gilt als kommunikationseffizienter, da Migrationen von Tasks nur auftreten, wenn ein Worker tatsächlich untätig ist.
 
@@ -331,9 +324,9 @@ Dadurch werden Konflikte beim Zugriff auf die Datenstruktur reduziert und gleich
 \noindent Für die Klasse der sogenannten \textit{fully strict computations}, also Berechnungsstrukturen, 
 bei denen alle Abhängigkeiten eines Threads ausschließlich zu seinem direkten Elternthread führen, 
 konnten starke Effizienzgarantien gezeigt werden. 
-Die erwartete Ausführungszeit auf $P$ Workern beträgt
+Für die Ausführungszeit $T_P$ auf $P$ Workern gilt
 \begin{equation}
-T_1 / P + O(T_\infty),
+T_P = T_1 / P + O(T_\infty),
 \end{equation}
 \noindent wobei $T_1$ die gesamte serielle Ausführungszeit (Work) und $T_\infty$ die kritische Pfadlänge der Berechnung (Critical Path Length) beschreibt.
 
@@ -354,19 +347,19 @@ wie bei naiven Scheduling-Strategien oder Work-Sharing-Ansätzen möglich, unkon
 
 \vspace{7.56mm}
 
-\noindent Der \textit{First-In, First-Out} (FIFO)-Scheduling-Algorithmus, auch als \textit{First-Come, First-Served} (FCFS) bezeichnet, stellt einen elementaren nicht-präemptiven Scheduling-Ansatz dar.
+\noindent Der \textit{First-In, First-Out} (\acs{FIFO})-Scheduling-Algorithmus, auch als \textit{First-Come, First-Served} (\acs{FCFS}) bezeichnet, stellt einen elementaren nicht-präemptiven Scheduling-Ansatz dar.
 Sein grundlegendes Prinzip besteht in der strikt sequenziellen Abarbeitung von Tasks entsprechend ihrer Ankunftsreihenfolge.
 Ein Task wird genau dann zur Ausführung ausgewählt, wenn alle zuvor eingetroffenen Tasks vollständig abgearbeitet wurden.
 
 \vspace{7.56mm}
 
-\noindent Die Implementierung erfolgt typischerweise über eine FIFO-Warteschlange, in welche neu eintreffende Tasks am Ende eingefügt werden.
+\noindent Die Implementierung erfolgt typischerweise über eine \acs{FIFO}-Warteschlange, in welche neu eintreffende Tasks am Ende eingefügt werden.
 Der Scheduler selektiert deterministisch stets das am Kopf der Warteschlange befindliche Element.
 Aufgrund des nicht-präemptiven Charakters wird ein Task nach seiner Disposition ohne Unterbrechung ausgeführt, bis entweder seine Ausführung abgeschlossen ist oder eine externe Terminierung erfolgt.
 
 \vspace{7.56mm}
 
-\noindent Das Verhalten des FIFO-Schedulers lässt sich im Rahmen der Warteschlangentheorie analysieren.
+\noindent Das Verhalten des \acs{FIFO}-Schedulers lässt sich im Rahmen der Warteschlangentheorie analysieren.
 Für die mittlere Wartezeit $W$ ergibt sich dabei folgender Zusammenhang:
 \begin{equation}
 W = \frac{W_0}{1 - \rho}
@@ -391,9 +384,9 @@ Auch hier zeigt sich, dass für hohe Auslastungen ein starkes Anwachsen der Wart
 
 \vspace{7.56mm}
 
-\noindent Trotz seiner konzeptionellen Einfachheit und deterministischen Ausführungsreihenfolge weist FIFO signifikante Nachteile hinsichtlich der Performanz der Wartezeiten auf.
+\noindent Trotz seiner konzeptionellen Einfachheit und deterministischen Ausführungsreihenfolge weist \acs{FIFO} signifikante Nachteile hinsichtlich der Wartezeiten auf.
 Insbesondere kann es zum sogenannten \textit{Convoy-Effekt} kommen, bei dem lange laufende Tasks nachfolgende kurze Tasks blockieren, was zu erhöhten mittleren Wartezeiten und hoher Varianz führt.
-Im Vergleich zu optimalen Scheduling-Strategien wie \textit{Shortest Job First} ist FIFO daher hinsichtlich der Minimierung der durchschnittlichen Wartezeit suboptimal.
+Im Vergleich zu optimalen Scheduling-Strategien wie \textit{Shortest Job First} ist \acs{FIFO} daher hinsichtlich der Minimierung der durchschnittlichen Wartezeit suboptimal.
 
 \vspace{7.56mm}
 
@@ -404,16 +397,16 @@ Diese Fairness geht jedoch nicht mit einer optimalen Ressourcenausnutzung einher
 
 \subsection{Shortest-Job-First}
 \noindent In diesem Abschnitt wird auf die Erläuterungen von Abraham Silberschatz et al. in \textit{Operating System Concepts} \cite{Silberschatz:2018} Bezug genommen.
-
-\noindent Der Shortest-Job-First (SJF) Scheduler ist ein Scheduling-Algorithmus, 
-der Tasks basierend auf der Länge ihrer Burst Time priorisiert.
+\vspace{7.56mm}
+\noindent Der Shortest-Job-First (\acs{SJF}) Scheduler ist ein Scheduling-Algorithmus, 
+der Tasks basierend auf der Länge ihrer Burst Time, also ihrer erwarteten Rechenzeit, priorisiert.
 Jedem Task wird die Länge seiner Burst Time zugeordnet. 
 Sobald ein Worker frei ist, weist der Scheduler ihm den Task zu, welcher die kürzeste Burst-Time benötigt.
-Falls zwei Tasks identische Burst Time haben, wird in der Regel das First-Come, First-Served Verfahren als Entscheidungshilfe genutzt.
+Falls zwei Tasks identische Burst Time haben, wird in der Regel das First-Come, First-Served (\acs{FCFS}) Verfahren als Entscheidungshilfe genutzt.
 
 \vspace{7.56mm}
 
-\noindent SJF ist unter der Annahme bekannter Burst-Zeiten beweisbar optimal, da es für eine gegebene Menge von Tasks die minimale durchschnittliche Wartezeit liefert \cite{Silberschatz:2018}.
+\noindent \acs{SJF} ist unter der Annahme bekannter Burst-Zeiten beweisbar optimal, da es für eine gegebene Menge von Tasks die minimale durchschnittliche Wartezeit liefert \cite{Silberschatz:2018}.
 Indem kurze Tasks vor langen ausgeführt werden, verringert sich die Wartezeit der kurzen Tasks stärker, als sich die der langen Aufgaben erhöht.
 
 \vspace{7.56mm}
@@ -429,7 +422,7 @@ Indem kurze Tasks vor langen ausgeführt werden, verringert sich die Wartezeit d
 
 \noindent Hierzu können je nach verfügbaren Daten verschiedene Ansätze gewählt werden.
 Da die exakte Dauer der nächsten Burst Time im Voraus nicht bekannt ist, 
-wird SJF in der Praxis oft durch Vorhersagen approximiert. Hierzu wird ein exponentieller Durchschnitt der vergangenen Bursts verwendet,
+wird \acs{SJF} in der Praxis oft durch Vorhersagen approximiert. Hierzu wird ein exponentieller Durchschnitt der vergangenen Bursts verwendet,
 um den nächsten Wert zu schätzen.
 Häufig erfolgt die Berechnung nach der Formel:
 \begin{equation}
@@ -457,7 +450,7 @@ Die wissenschaftliche Zielsetzung ist es, belastbar zu bestimmen, welche Schedul
 \noindent Daraus leiten sich folgende Forschungsfragen ab:
 \begin{enumerate}
     \item In welchem Ausmaß lässt sich die Laufzeit des Scanners durch alternative Scheduling-Strategien verbessern?
-    \item Wie wirken sich die verschiedenen Strategien auf CPU- und RAM-Utilization sowie auf die Waiting Time aus?
+    \item Wie wirken sich die verschiedenen Strategien auf \acs{CPU}- und \acs{RAM}-Utilization sowie auf die Waiting Time aus?
 \end{enumerate}
 
 \vspace{7.56mm}

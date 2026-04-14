@@ -6,15 +6,15 @@
 Um die Performance der verschiedenen Scheduling-Algorithmen objektiv bewerten und vergleichen zu können, 
 folgt diese Arbeit einem quantitativ-experimentellen Design, 
 das auf kontrolliertem Benchmarking basiert. 
-Ziel ist es, durch eine hochgradig homogenisierte Testumgebung 
+Ziel ist es, durch eine möglichst deterministische Testumgebung
 die kausalen Auswirkungen der Algorithmen auf die Systemleistung zu isolieren und statistisch abzusichern.
 
 \section{Überblick über den Untersuchungsablauf}
 Der methodische Prozess gliederte sich in vier zentrale Phasen:
 \begin{enumerate}
     \item \textbf{Softwareseitige Vorbereitung:} Der Scanner wurde für die nebenläufige Verarbeitung optimiert, um als konsistente Testbasis zu dienen.
-    \item \textbf{Konfiguration der Testumgebung:} Um eine maximale interne Validität zu erreichen, 
-    wurde ein dediziertes Testsystem unter Laborbedingungen konfiguriert.
+    \item \textbf{Konfiguration der Testumgebung:} Um eine hohe Validität zu erreichen, 
+    wurde ein dediziertes Testsystem unter kontrollierten und weitgehend von externen Störeinflüssen bereinigten Bedingungen konfiguriert.
     \item \textbf{Implementierung der Testvarianten:} Es wurden verschiedene Iterationen des Scanners entwickelt, 
     die sich primär in der Logik der eingesetzten Scheduling-Algorithmen unterscheiden.
     \item \textbf{Datenerhebung und Metriken:} Jede Scanner-Variante durchlief eine Messreihe von $n=20$ Testläufen, 
@@ -33,18 +33,19 @@ Der methodische Prozess gliederte sich in vier zentrale Phasen:
 Es ist zu beachten, dass die Vorgehensweise spezifisch auf das zu optimierende System anzupassen ist.
 
 \section{Metriken und Messungen}
-Die primären Bewertungskriterien sind die tatsächlich vergangene Zeit in Verbindung mit der CPU-Utilization,
+Die primären Bewertungskriterien sind die tatsächlich vergangene Zeit in Verbindung mit der \acs{CPU}-Utilization,
 da sie die Gesamtperformance des Scanners am unmittelbarsten abbilden.
 Der Throughput dient dabei als Kontrollwert.
 
 \vspace{7.56mm}
 
-\noindent Die Waiting Time und die RAM-Utilization haben sekundäre Priorität.
+\noindent Die Waiting Time und die \acs{RAM}-Utilization haben sekundäre Priorität.
 Die Waiting Time zeigt direkt, wie effizient der Scheduler die Tasks priorisiert und abarbeitet,
-während die RAM-Utilization Aufschluss über die Speichereffizienz gibt.
-Insbesondere sollen RAM-Spitzenlasten vermieden werden.
+während die \acs{RAM}-Utilization Aufschluss über die Speichereffizienz gibt.
+Insbesondere sollen \acs{RAM}-Spitzenlasten vermieden werden, 
+da dass Auslagern von Speicher auf die Festplatte die Performance drastisch verschlechtern kann.
 Darüber hinaus sind die Auswirkungen von Anpassungen der Thread-Anzahl und der Warteschlangen-Größe
-auf die durchschnittliche RAM-Utilization von Interesse,
+auf die durchschnittliche \acs{RAM}-Utilization von Interesse,
 da sich hieraus möglicherweise weitere Optimierungen ableiten lassen.
 
 \vspace{7.56mm}
@@ -53,7 +54,7 @@ da sich hieraus möglicherweise weitere Optimierungen ableiten lassen.
 
 \subsection{Scanner-interne Metriken}
 Die folgenden Metriken werden automatisiert innerhalb des Scanner-Codes ermittelt
-und nach jedem Scan-Vorgang persistent gespeichert.
+und nach jedem Scan-Vorgang persitiert.
 Hierbei werden jeweils die kumulierten Gesamtwerte sowie die spezifischen Zeitspannen pro Feature erhoben.
 
 \paragraph{Throughput (Durchsatz)}
@@ -91,61 +92,61 @@ Sie repräsentiert die tatsächlich verstrichene Zeit vom Start bis zum Ende des
 Da diese Kennzahl unmittelbar die Systemperformance aus Sicht des Endanwenders widerspiegelt,
 stellt sie ein entscheidendes Qualitätsmerkmal für die Praxistauglichkeit des Scanners dar.
 
-\subsection{CPU-Utilization}
-Die CPU-Utilization wird extern mit einer Abtastrate von 1\,Hz erfasst.
+\subsection{\acs{CPU}-Utilization}
+Die \acs{CPU}-Utilization wird extern mit einer Abtastrate von 1\,Hz erfasst.
 Die Erhebung dieser Metrik dient dazu, die Effektivität des Schedulers bei der Minimierung von Leerlaufzeiten zu bewerten.
 Ziel ist die Quantifizierung der Ressourceneffizienz, um nachzuweisen,
 inwieweit die verfügbare Hardwarekapazität durch die gewählte Scheduling-Strategie optimal ausgelastet wird.
 
-\subsection{RAM-Utilization}
-Die RAM-Utilization wird extern mit einer Abtastrate von 1\,Hz erfasst.
+\subsection{\acs{RAM}-Utilization}
+Die \acs{RAM}-Utilization wird extern mit einer Abtastrate von 1\,Hz erfasst.
 Anpassungen der Größe der Queue-Datenstruktur, welche die Tasks für die Worker vorhält,
-haben direkte Auswirkungen auf die RAM-Utilization.
+haben direkte Auswirkungen auf die \acs{RAM}-Utilization.
 Eine passende Größe für die Queue-Datenstruktur zu wählen,
-bei welcher die Laufzeit nicht verschlechtert wird, die RAM-Utilization aber möglichst minimal ist,
+bei welcher die Laufzeit nicht verschlechtert wird, die \acs{RAM}-Utilization aber möglichst minimal ist,
 hat eine hohe Priorität, um die Speichereffizienz des Systems zu gewährleisten.
-Des Weiteren ermöglicht diese Metrik die Identifikation von RAM-Spitzenlasten (Peaks).
+Des Weiteren ermöglicht diese Metrik die Identifikation von \acs{RAM}-Spitzenlasten (Peaks).
 Deren Vermeidung ist essentiell, da diese im günstigsten Fall die System-Performance beeinträchtigen
-und im schlechtesten Fall, bei deaktiviertem Swap, den Out-of-Memory-Killer (OOM) auslösen können,
+und im schlechtesten Fall, bei deaktiviertem Swap, den Out-of-Memory-Killer (\acs{OOM}) auslösen können,
 was zum Abbruch des Scans oder anderer kritischer Systemprozesse führt.
 
 \vspace{7.56mm}
 
 \noindent Da der Memory-Ballooning-Treiber zur Stabilisierung der Messumgebung deaktiviert wurde (vgl.\ Abschnitt~\ref{subsec:speicher-opt}),
-steht dem Hypervisor keine direkte Einsicht in die Speichernutzung der Virtuellen Maschine (VM) zur Verfügung.
+steht dem Hypervisor keine direkte Einsicht in die Speichernutzung der Virtuellen Maschine (\acs{VM}) zur Verfügung.
 Die Datenerhebung erfolgt daher über das Kommando \texttt{virsh qemu-agent-command},
-welches Befehle innerhalb des isolierten Gast-Betriebssystems ausführt, ohne die VM-Topologie zu beeinflussen.
+welches Befehle innerhalb des isolierten Gast-Betriebssystems ausführt, ohne die \acs{VM}-Topologie zu beeinflussen.
 
 \vspace{7.56mm}
 
-\noindent Auf der Debian-VM wird per SSH ein Messprozess gestartet, der im Sekundentakt
+\noindent Auf der Debian-\acs{VM} wird per \acs{SSH} ein Messprozess gestartet, der im Sekundentakt
 die Kernel-Schnittstellen \texttt{/proc/\$pid/status} und \texttt{/proc/meminfo} ausliest
-und die Ergebnisse lokal in eine CSV-Datei schreibt.
+und die Ergebnisse lokal in eine \acs{CSV}-Datei schreibt.
 Erst nach Abschluss des Benchmarks wird diese Datei einmalig per \texttt{scp} zum Host übertragen.
 
 \vspace{7.56mm}
 
-\noindent Auf der Windows-VM wird analog eine PowerShell-Schleife via SSH gestartet,
+\noindent Auf der Windows-\acs{VM} wird analog eine PowerShell-Schleife via \acs{SSH} gestartet,
 die prozessspezifische Metriken über die .NET-Klasse \texttt{System.Diagnostics.Process} erhebt.
 Tabelle~\ref{tab:ram-metriken} stellt die erhobenen Metriken und ihre jeweiligen Datenquellen gegenüber.
 
 \begin{table}[H]
-    \caption{Erhobene RAM-Metriken und ihre Datenquellen pro Betriebssystem}
+    \caption{Erhobene \acs{RAM}-Metriken und ihre Datenquellen pro Betriebssystem}
     \label{tab:ram-metriken}
     \centering
     \begin{tabularx}{\textwidth}{@{}llX@{}}
         \toprule
         \textbf{Metrik} & \textbf{Datenquelle} & \textbf{Beschreibung} \\
         \midrule
-        \multicolumn{3}{@{}l}{\textbf{Debian~13 (Linux-VM)}} \\
+        \multicolumn{3}{@{}l}{\textbf{Debian~13 (Linux-\acs{VM})}} \\
         \midrule
-        Working Set          & VmRSS            & Aktuell im physischen RAM gehaltener Anteil des Scanner-Prozesses \\
+        Working Set          & VmRSS            & Aktuell im physischen \acs{RAM} gehaltener Anteil des Scanner-Prozesses \\
         Private Bytes        & VmRSS + VmSwap   & Gesamte dem Prozess zugeordnete Speichermenge, inklusive ausgelagerter Seiten \\
         Freier Systemspeicher & MemAvailable     & Vom Betriebssystem als verfügbar gemeldeter Arbeitsspeicher \\
         \midrule
-        \multicolumn{3}{@{}l}{\textbf{Windows~11 (Windows-VM)}} \\
+        \multicolumn{3}{@{}l}{\textbf{Windows~11 (Windows-\acs{VM})}} \\
         \midrule
-        Working Set          & WorkingSet64             & Aktuell im physischen RAM gehaltener Anteil des Scanner-Prozesses \\
+        Working Set          & WorkingSet64             & Aktuell im physischen \acs{RAM} gehaltener Anteil des Scanner-Prozesses \\
         Private Bytes        & PrivateMemorySize64      & Gesamte dem Prozess zugeordnete Speichermenge, inklusive ausgelagerter Seiten \\
         Freier Systemspeicher & FreePhysicalMemory      & Vom Betriebssystem als verfügbar gemeldeter Arbeitsspeicher \\
         \bottomrule
@@ -164,13 +165,13 @@ Die Messreihen sind so konzipiert, dass sowohl das Skalierungsverhalten als auch
 der Algorithmen unter unterschiedlichen Lastbedingungen beurteilt werden können.
 
 \paragraph{Thread-Anzahl}
-Pro Algorithmus wird mit drei unterschiedlichen Thread-Konfigurationen gemessen: 1, 4 und 10~Threads.
+Pro Algorithmus wird mit drei unterschiedlichen Thread-Konfigurationen gemessen: einen, vier und zehn~Threads.
 Den VMs stehen jeweils sieben Kerne zur Verfügung, sodass die drei Stufen gezielt verschiedene Lastniveaus abbilden:
 \begin{itemize}
-    \item \textbf{1~Thread:} Sequenzielle Baseline ohne Parallelisierung.
-    \item \textbf{4~Threads:} Moderate Parallelisierung unterhalb der verfügbaren Kernanzahl.
+    \item \textbf{Ein~Thread:} Sequenzielle Baseline ohne Parallelisierung.
+    \item \textbf{Vier~Threads:} Moderate Parallelisierung unterhalb der verfügbaren Kernanzahl.
     Zeigt das Skalierungsverhalten bei mittlerer Auslastung.
-    \item \textbf{10~Threads:} Übersubskription der verfügbaren sieben Kerne.
+    \item \textbf{Zehn~Threads:} Übersubskription der verfügbaren sieben Kerne.
     Zeigt wie der Algorithmus unter Ressourcenknappheit agiert.
 \end{itemize}
 
@@ -184,7 +185,7 @@ Dies ermöglicht eine plattformübergreifende Bewertung der Algorithmen und deck
 betriebssystemspezifische Unterschiede in der Thread- und Speicherverwaltung auf.
 
 \paragraph{Wiederholungen und Stichprobenumfang}
-Jede Einzelkonfiguration wird $n = 20$~Mal wiederholt, um eine ausreichende statistische Grundlage zu schaffen.
+Jede Einzelkonfiguration wird 20~Mal wiederholt.
 Durch die Wiederholungen können Ausreißer identifiziert und die Varianz der Messwerte quantifiziert werden.
 
 \section{Die Testumgebung}
@@ -219,20 +220,20 @@ die von der durchschnittlichen Performance im Realbetrieb abweichen können.
         \midrule
         Modell          & Beelink SER5 MAX \\
         Prozessor       & AMD Ryzen 7 6800U (8 Kerne, 16 Threads, bis zu 4,7\,GHz) \\
-        Arbeitsspeicher & 24\,GB LPDDR5 RAM \\
-        Speichermedium  & 500\,GB M.2 2280 NVMe SSD \\
+        Arbeitsspeicher & 24\,GB \acs{LPDDR5} \acs{RAM} \\
+        Speichermedium  & 500\,GB M.2 2280 \acs{NVMe} \acs{SSD} \\
         Grafikeinheit   & AMD Radeon Graphics (12 Cores, 2200\,MHz) \\
         \midrule
         \multicolumn{2}{@{}l}{\textbf{Virtualisierungs-Stack}} \\
         \midrule
-        QEMU/KVM        & Emulator und Kernel-basierte virtuelle Maschine als Hypervisor-Backend \\
-        libvirtd         & Management-Daemon zur Steuerung der QEMU-Prozesse und Snapshots \\
+        \acs{QEMU}/\acs{KVM}        & Emulator und Kernel-basierte virtuelle Maschine als Hypervisor-Backend \\
+        libvirtd         & Management-Daemon zur Steuerung der \acs{QEMU}-Prozesse und Snapshots \\
         virsh            & Kommandozeilenschnittstelle zur Verwaltung der virtuellen Infrastruktur \\
         \midrule
         \multicolumn{2}{@{}l}{\textbf{Betriebssysteme}} \\
         \midrule
         Host-System      & Debian 13.2.0 \\
-        Gast-Systeme (VM) & Windows 11 Professional (Build 25H2) sowie Debian 13.2.0 \\
+        Gast-Systeme (\acs{VM}) & Windows 11 Professional (Build 25H2) sowie Debian 13.2.0 \\
         \bottomrule
     \end{tabularx}
 \end{table}
@@ -246,20 +247,20 @@ die von der durchschnittlichen Performance im Realbetrieb abweichen können.
 
 \paragraph{Deaktivierung des Memory-Ballooning}
 Die dynamische Speicheranpassung wurde deaktiviert, um zu verhindern,
-dass der Host-Kernel zur Laufzeit RAM-Seiten der VM zurückfordert oder neu zuweist.
+dass der Host-Kernel zur Laufzeit \acs{RAM}-Seiten der \acs{VM} zurückfordert oder neu zuweist.
 Dies unterbindet unvorhersehbare Latenzen, die durch Pagefaults oder Reclaim-Operationen entstehen können.
 Des Weiteren gibt es Informationen dazu, dass es Probleme mit Windows-VMs und den Ballooning-Treibern geben kann,
 welche somit umgangen werden. \cite{2:qemu, 6.ProxmoxPerf, 7:ProxmoxHyperThreading}
 
 \paragraph{Speicherallokation}
-Durch Angleichung von \texttt{currentMemory} und \texttt{memory} in der VM-Konfiguration
-wird der gesamte Arbeitsspeicher bereits beim Startvorgang der VM reserviert.
+Durch Angleichung von \texttt{currentMemory} und \texttt{memory} in der \acs{VM}-Konfiguration
+wird der gesamte Arbeitsspeicher bereits beim Startvorgang der \acs{VM} reserviert.
 Dies ist aufgrund der Deaktivierung des Memory-Balloonings theoretisch nicht nötig,
 die Einstellung wurde aber zur Sicherheit trotzdem vorgenommen. \cite{4:redhat}
 
 \paragraph{Hugepages}
 In Kombination mit Hugepages (2\,MB) auf dem Host (\texttt{/proc/sys/vm/nr\_hugepages})
-wird die Effizienz des Translation Lookaside Buffers (TLB) gesteigert
+wird die Effizienz des Translation Lookaside Buffers (\acs{TLB}) gesteigert
 und der Overhead der Adressübersetzung reduziert. \cite{3:debian, 10:Ban}
 
 \paragraph{Transparent Huge Pages}
@@ -272,23 +273,23 @@ sodass er ausreichend freien Spielraum hat. \cite{1:Scalability, 10:Ban}
 
 \paragraph{Swappiness}
 Durch das Setzen des Parameters \texttt{swappiness} auf \texttt{0} wird verhindert,
-dass der Kernel frühzeitig ungenutzte Speicherseiten aus dem RAM auf die Festplatte auslagert.
+dass der Kernel frühzeitig ungenutzte Speicherseiten aus dem \acs{RAM} auf die Festplatte auslagert.
 Der Wert~0 weist den Kernel an, das Auslagern so lange wie absolut möglich zu vermeiden.
-Dies sorgt dafür, dass die Benchmarks nicht durch langsame Festplatten-I/O ausgebremst werden. \cite{1:Scalability}
+Dies sorgt dafür, dass die Benchmarks nicht durch langsame Festplatten-\acs{IO} ausgebremst werden. \cite{1:Scalability}
 
-\paragraph{Zone-Reclaim-Mode}
-Das Setzen von \texttt{zone\_reclaim\_mode} auf \texttt{0} wird häufig für Systeme mit mehreren CPUs empfohlen.
-Der Kernel versucht bei vollem Speicher, Speicher innerhalb desselben NUMA-Knotens zu befreien.
-Durch den Wert~0 wird dem Kernel erlaubt, Speicher von anderen Knoten zu nutzen.
-Dies ist zwar langsamer als lokaler RAM, aber konsistenter als der Reclaim-Prozess des Kernels.
-Das Setzen auf~0 bei nur einer physischen CPU wird empfohlen,
-da moderne Prozessoren intern in mehrere NUMA-Knoten unterteilt sein können.
-Die Einstellung schadet in keinem Fall, da sie dem Standardverhalten einfacher Desktop-Systeme entspricht. \cite{1:Scalability, 8:InformedMix, 10:Ban}
+% \paragraph{Zone-Reclaim-Mode}
+% Das Setzen von \texttt{zone\_reclaim\_mode} auf \texttt{0} wird häufig für Systeme mit mehreren CPUs empfohlen.
+% Der Kernel versucht bei vollem Speicher, Speicher innerhalb desselben \acs{NUMA}-Knotens zu befreien.
+% Durch den Wert~0 wird dem Kernel erlaubt, Speicher von anderen Knoten zu nutzen.
+% Dies ist zwar langsamer als lokaler \acs{RAM}, aber konsistenter als der Reclaim-Prozess des Kernels.
+% Das Setzen auf~0 bei nur einer physischen \acs{CPU} wird empfohlen,
+% da moderne Prozessoren intern in mehrere \acs{NUMA}-Knoten unterteilt sein können.
+% Die Einstellung entspricht dem Standardverhalten einfacher Desktop-Systeme. \cite{1:Scalability, 8:InformedMix, 10:Ban}
 
 % ──────────────────────────────────────────────
-%   Storage- und I/O-Optimierungen
+%   Storage- und \acs{IO}-Optimierungen
 % ──────────────────────────────────────────────
-\subsection{Storage- und I/O-Optimierungen}
+\subsection{Storage- und \acs{IO}-Optimierungen}
 
 \paragraph{Speicher-Cache}
 Für die virtuellen Datenträger wurde der Modus \texttt{cache='none'} gewählt.
@@ -298,7 +299,7 @@ ohne durch Caching-Effekte des Hosts verfälscht zu werden. \cite{9:SUSE, 10:Ban
 
 \paragraph{I/O-Schnittstelle}
 Die Nutzung von \texttt{io='io\_uring'} ermöglicht eine hocheffiziente, asynchrone Verarbeitung
-von I/O-Anfragen mit minimalem Systemcall-Overhead,
+von \acs{IO}-Anfragen mit minimalem Systemcall-Overhead,
 was besonders bei hohen Lasten die Varianz der Antwortzeiten senkt. \cite{10:Ban}
 
 \paragraph{Discard-Modus}
@@ -307,27 +308,27 @@ dass TRIM-Befehle (\texttt{unmap}) während der Benchmarks
 rechenintensive Metadaten-Updates im Host-Dateisystem auslösen. \cite{12:qemu.readthedocs}
 
 % ──────────────────────────────────────────────
-%   CPU-Optimierungen
+%   \acs{CPU}-Optimierungen
 % ──────────────────────────────────────────────
-\subsection{CPU-Optimierungen}
+\subsection{\acs{CPU}-Optimierungen}
 
 \paragraph{CPU-Pinning und Isolierung}
 Um Kontextwechsel und Cache-Interferenzen durch den Host-Scheduler zu vermeiden,
-wurden die vCPUs der Gast-Systeme fest an physikalische Kerne gebunden (Pinning).
+wurden die \acs{vCPU}s der Gast-Systeme fest an physikalische Kerne gebunden (Pinning).
 Zusätzlich wurde ein \texttt{emulatorpin} konfiguriert,
-um QEMU-Hintergrundprozesse auf dedizierte Service-Kerne auszulagern,
+um \acs{QEMU}-Hintergrundprozesse auf dedizierte Service-Kerne auszulagern,
 sodass die für den Benchmark genutzten Kerne exklusiv dem Gast zur Verfügung stehen \cite{13:Dohost}
 
 \paragraph{Host CPU Governor}
 Der Linux-Scaling-Governor wurde auf \texttt{performance} gesetzt.
 Dies fixiert die Taktfrequenz auf dem Maximum und verhindert Latenzspitzen,
-die durch das Hochfahren der CPU-Frequenz aus Energiesparzuständen (P-States) entstehen würden. \cite{cpufreq}
+die durch das Hochfahren der \acs{CPU}-Frequenz aus Energiesparzuständen (P-States) entstehen würden. \cite{cpufreq}
 
 \paragraph{Deaktivierung von Hyper-Threading}
-Hyper-Threading wurde deaktiviert, sodass die VM exklusiven Zugriff auf die Ressourcen des gepinnten Kerns hat.
-Hyper-Threading durch Lastverteilungsprobleme zu Jitter führen, da die CPU-Pipeline je nach Auslastung des zweiten logischen Threads
+Hyper-Threading wurde deaktiviert, sodass die \acs{VM} exklusiven Zugriff auf die Ressourcen des gepinnten Kerns hat.
+Hyper-Threading kann durch Lastverteilungsprobleme zu Jitter führen, da die \acs{CPU}-Pipeline je nach Auslastung des zweiten logischen Threads
 unterschiedlich schnell arbeitet.
-Dies ist ein weiterer Schritt, das Verhalten der CPU deterministischer zu machen. \cite{ibm}
+Dies ist ein weiterer Schritt, das Verhalten der \acs{CPU} deterministischer zu machen. \cite{ibm}
 
 % ──────────────────────────────────────────────
 %   System-Optimierungen
@@ -335,17 +336,17 @@ Dies ist ein weiterer Schritt, das Verhalten der CPU deterministischer zu machen
 \subsection{System-Optimierungen}
 
 \paragraph{Deaktivierung von ASLR}
-Address Space Layout Randomization (ASLM) wurde im Gast-System deaktiviert (\texttt{kernel.randomize\_va\_space=0}).
-Da ASLR Speicheradressen bei jedem Programmlauf zufällig anordnet,
+Address Space Layout Randomization (\acs{ASLR}) wurde im Gast-System deaktiviert (\texttt{kernel.randomize\_va\_space=0}).
+Da \acs{ASLR} Speicheradressen bei jedem Programmlauf zufällig anordnet,
 können minimale Unterschiede in den Cache-Trefferraten und der Branch-Prediction entstehen.
 Die Deaktivierung sorgt für eine deterministische Speicherausführung. \cite{LWN.net}
 
 \paragraph{Hintergrundprozesse}
 Nicht kritische Systemdienste und geplante Aufgaben wurden deaktiviert,
-um kurzzeitige CPU-Lastspitzen während der Messreihen auszuschließen.
-Auf dem Host und der Debian-VM sind \texttt{cron} und \texttt{anacron} gestoppt.
+um kurzzeitige \acs{CPU}-Lastspitzen während der Messreihen auszuschließen.
+Auf dem Host und der Debian-\acs{VM} sind \texttt{cron} und \texttt{anacron} gestoppt.
 Nicht essentielle Dienste wie beispielsweise der Bildschirmschoner sind ebenfalls deaktiviert.
-Auf der Windows-VM wurden zusätzlich folgende Dienste deaktiviert:
+Auf der Windows-\acs{VM} wurden zusätzlich folgende Dienste deaktiviert:
 \begin{itemize}
     \item \textbf{Windows Search:} Die ständige Indizierung von Dateien im Hintergrund wurde beendet.
     \item \textbf{Aufgabenplanung:} Über \texttt{taskschd.msc} wurden geplante Wartungsaufgaben
@@ -356,18 +357,18 @@ Auf der Windows-VM wurden zusätzlich folgende Dienste deaktiviert:
 
 \paragraph{Windows Updates und Defender}
 Automatische Updates sowie der Echtzeitschutz von Windows Defender wurden deaktiviert.
-Beide Dienste erzeugen im Hintergrund Festplatten- und CPU-Last durch das Herunterladen von Updates,
+Beide Dienste erzeugen im Hintergrund Festplatten- und \acs{CPU}-Last durch das Herunterladen von Updates,
 das Scannen von Dateien sowie das Aktualisieren von Signaturdatenbanken.
-Dies hätte die Messungen durch unvorhersehbare I/O- und CPU-Spitzen verfälschen können.
+Dies hätte die Messungen durch unvorhersehbare \acs{IO}- und \acs{CPU}-Spitzen verfälschen können.
 
 \paragraph{Visuelle Effekte}
-Auf der Windows-VM wurden sämtliche Animationseffekte und Transparenzeffekte deaktiviert.
+Auf der Windows-\acs{VM} wurden sämtliche Animationseffekte und Transparenzeffekte deaktiviert.
 Über die erweiterten Systemeinstellungen wurde die Option
 \texttt{Für optimale Leistung anpassen} gewählt.
-Dies entlastet GPU und CPU und eliminiert eine weitere Quelle nicht-deterministischer Hintergrundaktivität.
+Dies entlastet GPU und \acs{CPU} und eliminiert eine weitere Quelle nicht-deterministischer Hintergrundaktivität.
 
 \paragraph{Deaktivierung des Internetzugriffs}
-Durch Updates oder andere Internetzugriffe der Betriebssysteme können unerwünschte Aktivitäten auf der VM stattfinden.
+Durch Updates oder andere Internetzugriffe der Betriebssysteme können unerwünschte Aktivitäten auf der \acs{VM} stattfinden.
 Der Internetzugriff wurde auf dem Host-System deaktiviert.
 
 
@@ -478,10 +479,10 @@ Die Fertigstellung eines einzelnen Tasks impliziert somit nicht mehr die Fertigs
 Um dennoch feststellen zu können, ob ein Task und alle seine Nachkommen vollständig verarbeitet wurden,
 ist eine zusätzliche Datenstruktur erforderlich: ein Progress-Tracker.
 Dieser verwaltet für jeden Task einen Zähler über die Anzahl offener Kindtasks.
-Erst wenn ein Task selbst abgeschlossen ist und alle seine direkten sowie transitiven Nachkommen ebenfalls terminiert haben,
+Erst wenn ein Task selbst abgeschlossen ist und alle seine direkten sowie transitiven Nachkommen ebenfalls terminiert sind,
 gilt der Teilbaum als vollständig verarbeitet.
-Wartende Threads können über Barrier Synchronization mittels einer Condition Variable
-benachrichtigt werden, sobald dieser Zustand eintritt.
+Wartende Threads können mittels einer Condition Variable benachrichtigt werden, sobald dieser Zustand eintritt.
+Funktional entspricht dies einer Barrier Synchronization, also dem gemeinsamen Warten bis zu einem definierten Synchronisationspunkt.
 
 \paragraph{Anpassungen im bestehenden Code}
 Der Scheduler stellt hierfür eine dedizierte \texttt{Wait()}-Funktion bereit.
@@ -508,18 +509,18 @@ Weitere Empfehlungen für vielversprechende Scheduling-Algorithmen,
 welche aufgrund der begrenzten Ressourcen dieser Arbeit nicht getestet werden konnten, 
 sind im Kapitel 6 Ausblick zu finden.
 
-\noindent Es wird in dieser Arbeit kein Anspruch auf Vollständigkeit in Anspruch genommen.
+\noindent Diese Arbeit erhebt keinen Anspruch auf Vollständigkeit.
 
 \vspace{7.56mm}
 Die Auswahl ist auf folgende Scheduling-Algorithmen gefallen:
 
  \begin{enumerate}
-    \item First-In, First-Out (FIFO)
-    \item Shortest-Subtree-Time-First (SSTF)
-    \item Work-Stealing kombiniert mit Shortest-Subtree-Time-First (WS+SSTF)
+     \item First-In, First-Out (\acs{FIFO})
+     \item Shortest-Subtree-Time-First (\acs{SSTF})
+     \item Work-Stealing kombiniert mit Shortest-Subtree-Time-First (\acs{WS}+\acs{SSTF})
  \end{enumerate}
-Es wurde des weiteren ein adaptiver Multi-Level-Feedback-Warteschlangen-Scheduler
-und ein FIFO Scheduler mit adaptiven Backpressure gestestet.
+Es wurde des Weiteren ein adaptiver Multi-Level-Feedback-Warteschlangen-Scheduler
+und ein \acs{FIFO} Scheduler mit adaptiven Backpressure gestestet.
 Diese zwei Scheduling-Algorithmen wurden aufgrund von schlechten Ergebnissen bei ersten Benchmarks verworfen und es wurden keine Testreihen angelegt.
 
 
@@ -533,7 +534,7 @@ W &:= \max(1,\text{konfigurierter Threadcount}) \\
 N(t) &:= \text{Anzahl akzeptierter, noch nicht abgeschlossener Tasks zum Zeitpunkt } t
 \end{align*}
 
-\noindent Für jede Scheduler-Variante $x \in \{\mathrm{FIFO},\mathrm{SSTF},\mathrm{WS}\}$ wird die Queue-Kapazität separat als $C_x$ angegeben, da sie implementierungsabhängig ist.
+\noindent Für jede Scheduler-Variante $x \in \{\text{\acs{FIFO}},\text{\acs{SSTF}},\text{\acs{WS}}\}$ wird die Queue-Kapazität separat als $C_x$ angegeben, da sie implementierungsabhängig ist.
 
 \noindent Für jeden Task $\tau$ werden folgende Zeitpunkte betrachtet:
 \[
@@ -565,27 +566,28 @@ Ein Task erhöht beim erfolgreichen Akzeptieren den Zähler $N$ um $1$ und dekre
 Ein Scan ist genau dann abgeschlossen, wenn $N=0$ erreicht wird; die Wartesynchronisation erfolgt über eine Condition Variable.
 
 \paragraph{Backpressure}
-Bei Enqueue-Fehlschlag erfolgt synchroner Fallback (Inline-Ausführung im Caller-Kontext).
+Bei Enqueue-Fehlschlag erfolgt ein synchroner Fallback (Inline-Ausführung im Caller-Kontext).
 Ein Enqueue-Fehlschlag kann je nach Implementierung durch volle oder geschlossene Queue entstehen.
-Dies begrenzt Queue-Wachstum, verändert aber globale Ausführungsordnung und Fairnesseigenschaften.
+Dies begrenzt Queue-Wachstum, verändert aber globale Ausführungsordnung und Fairnesseigenschaften, 
+da die Nachkommen dieses Tasks direkt synchron abgearbeitet werden.
 
 % ============================================================
-\subsection{FIFO-Scheduler}
+\subsection{\acs{FIFO}-Scheduler}
 
 \paragraph{Zielsetzung}
-Der FIFO-Scheduler dient als Baseline mit minimaler struktureller Komplexität.
+Der \acs{FIFO}-Scheduler dient als Baseline mit minimaler struktureller Komplexität.
 
 \paragraph{Charakteristische Eigenschaften}
 \begin{itemize}
 \item Einfache Baseline mit klarer Queue-Semantik
-\item FIFO-Ordnung im Queue-Pfad
+\item \acs{FIFO}-Ordnung im Queue-Pfad
 \item Potenziell erhöhte Wartezeiten bei stark heterogenen Taskkosten
-\item Keine globale strikte FIFO-Abschlussreihenfolge
+\item Keine globale strikte \acs{FIFO}-Abschlussreihenfolge
 \end{itemize}
 
 \paragraph{Datenstrukturen}
-Es wird eine zentrale thread-sichere FIFO-Warteschlange verwendet.
-Für den FIFO-Scheduler wurden zwei Implementierungsvarianten getestet, 
+Es wird eine zentrale thread-sichere \acs{FIFO}-Warteschlange verwendet.
+Für den \acs{FIFO}-Scheduler wurden zwei Implementierungsvarianten getestet, 
 die in ihrer Logik identisch sind und sich ausschließlich in der Kapazität der zentralen Warteschlange unterscheiden:
 \[
 C_{\mathrm{FIFO50}}=50\cdot W
@@ -596,10 +598,10 @@ C_{\mathrm{FIFO500}}=500\cdot W
 \]
 
 \paragraph{Ordnungs- und Determinismuseigenschaft}
-FIFO gilt für den asynchronen Dequeue-Pfad der zentralen Warteschlange.
-Eine globale strikte FIFO-Ordnung über alle Tasks gilt nicht, da
+Die zentrale Warteschlange arbeitet nach dem \acs{FIFO}-Prinzip.
+Eine globale strikte \acs{FIFO}-Ordnung über alle Tasks gilt nicht, da
 mehrere Worker parallel arbeiten und
-bei Enqueue-Fehlschlag synchroner Fallback aktiv wird.
+bei Enqueue-Fehlschlag der synchroner Fallback aktiv wird.
 
 \paragraph{Einreichungspfad}
 \begin{enumerate}
@@ -617,10 +619,10 @@ Bei Erfolg: Queue-Zeit messen, Kontext anreichern, Task ausführen, exklusive La
 
 
 % ============================================================
-\subsection{Shortest-Subtree-Time-First (SSTF)}
+\subsection{Shortest-Subtree-Time-First (\acs{SSTF})}
 
 \paragraph{Zielsetzung}
-SSTF priorisiert Tasks über eine vordefinierte Laufzeitheuristik, um die mittlere Wartezeit zu reduzieren.
+\acs{SSTF} priorisiert Tasks über eine vordefinierte Laufzeitheuristik, um die mittlere Wartezeit zu reduzieren.
 Die Priorität eines Tasks entspricht der Summe aus seiner eigenen Ausführungszeit 
 und der kumulierten Ausführungszeit aller Nachkommen-Tasks.
 Eine dynamische Anpassung der Prioritätstabelle während der Laufzeit wäre prinzipiell realisierbar, 
@@ -633,7 +635,7 @@ um die Turnaround Time zu verkürzen und zugleich den Anteil synchron verarbeite
 \item Geringere mittlere Wartezeit bei gut passender Prioritätsheuristik
 \item Bevorzugung kurzer Subtrees gemäß Prioritätstabelle
 \item Starvation-Risiko für lange Tasks
-\item Empfindlich gegenüber Fehlklassifikation in $P$
+\item Empfindlich gegenüber Fehlklassifikation in Prioritätenliste $P$
 \end{itemize}
 
 \paragraph{Prioritätsmodell}
@@ -649,7 +651,7 @@ P(type(\tau)), & \text{falls bekannt}\\
 P_{\mathrm{default}}, & \text{sonst}.
 \end{cases}
 \]
-Die Prioritäten stammen aus einer statischen Priority-Map, die aus mehreren Scans abgeleitet und über diese gemittelt wurde.
+Die Prioritäten stammen aus einer statischen Priority-Map, die aus mehreren Scans des \acs{FIFO}-Schedulers abgeleitet und über diese gemittelt wurde.
 
 \paragraph{Datenstruktur}
 Zentrale, thread-sichere Prioritätswarteschlange auf Basis eines Min-Heaps mit Kapazität
@@ -663,12 +665,12 @@ Einreichungslogik entspricht dem gemeinsamen Rahmen (Kontextprüfung, $N$-Tracki
 Ausführung entnimmt stets einen Task mit höchster Priorität.
 
 % ============================================================
-\subsection{Work-Stealing mit SSTF-Priorisierung}
+\subsection{Work-Stealing mit \acs{SSTF}-Priorisierung}
 
 \paragraph{Zielsetzung}
 Kombination aus lokaler Queue-Verarbeitung und Stealing 
-zur Verbesserung von Skalierbarkeit und Lastverteilung bei Beibehaltung der SSTF-Priorisierung.
-Neben den Vorteilen, welche bereits durch den SSTF-Scheduler entstehen, 
+zur Verbesserung von Skalierbarkeit und Lastverteilung bei Beibehaltung der \acs{SSTF}-Priorisierung.
+Neben den Vorteilen, welche bereits durch den \acs{SSTF}-Scheduler entstehen, 
 soll hier der Overhead durch Locks auf eine zentrale Warteschlange verhindert werden.
 
 \paragraph{Charakteristische Eigenschaften}
@@ -680,7 +682,7 @@ soll hier der Overhead durch Locks auf eine zentrale Warteschlange verhindert we
 
 \paragraph{Datenstrukturen}
 Jeder Worker $w_i$ besitzt eine eigene thread-sichere Min-Heap-Queue $Q_i$.
-Die Prioritätsordnung folgt SSTF.
+Die Prioritätsordnung folgt \acs{SSTF}.
 Die Kapazität pro Worker-Queue beträgt
 \[
 C_{\mathrm{WS,pro\;Worker}}=100,
@@ -716,7 +718,7 @@ Fairness kann durch lokale Heuristiken und Stealing-Reihenfolgen sinken.
 
 % ============================================================
 \subsection{Validitätsaspekte und Reproduzierbarkeit}
-Es können folgende Konfigurationsparameter angepasst, je nach Scheduling-Algorithmus angepasst werden:
+Es können folgende Konfigurationsparameter, je nach Scheduling-Algorithmus, angepasst werden:
 
 \paragraph{Konfigurationsparameter}
 \begin{itemize}
@@ -731,7 +733,19 @@ Vergleiche zwischen Schedulern sind daher nur bei identischer Workload, identisc
 
 \paragraph{Externe Validität}
 Ergebnisse sind auf vergleichbare Task-Granularität, Subtree-Struktur und Systemlast übertragbar. 
-Bei stark abweichenden Lastprofilen ist die eventuell die Verwendung einer adaptiven Implementierung oder eine erneute Kalibrierung von $P$ sinnvoll.
+Bei stark abweichenden Lastprofilen ist gegebenenfalls die Verwendung einer adaptiven 
+Implementierung oder eine erneute Kalibrierung von $P$ sinnvoll.
+
+
+\paragraph{Reproduzierbarkeit}
+Um die Reproduzierbarkeit der Messergebnisse zu bewerten, wird der Variationskoeffizient (engl. \textit{Coefficient of Variation}, \acs{CV}) der Laufzeit als relatives Maß für die Streuung herangezogen. Im Gegensatz zur Standardabweichung erlaubt der \acs{CV} den Vergleich der Variabilität von Datensätzen mit unterschiedlichen Mittelwerten, indem er die Streuung normiert. Er ist definiert als das Verhältnis der Standardabweichung $\sigma$ zum arithmetischen Mittelwert $\mu$:
+
+\begin{equation}
+    \text{\acs{CV}} = \frac{\sigma}{\mu} \cdot 100\%
+\end{equation}
+
+\noindent Ein niedriger \acs{CV}-Wert signalisiert eine hohe Präzision des Testaufbaus, während ein steigender Wert auf eine zunehmende Instabilität oder eine stärkere gegenseitige Beeinflussung der Threads hindeutet. 
+
 
 
 \end{sloppypar}

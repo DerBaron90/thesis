@@ -5,25 +5,30 @@
 	\pdfbookmark[0]{Zusammenfassung}{Zusammenfassung}
 	\chapter*{Zusammenfassung}
 	\begin{sloppypar}
+	\noindent \acs{APT}-Scanner müssen kompromittierte oder 
+	verdächtige Systeme möglichst schnell analysieren können. 
+	Im täglichen Einsatz ohne incident-response-Szenarien 
+	sollen sie neben einer kurzen Scanzeit auch 
+	eine geringe Ressourcenauslastung gewährleisten. 
+	\vspace{7.56mm}
 
-	\noindent Diese Arbeit untersucht die Performance-Optimierung eines APT-Scanners durch die Umstellung von einem objektbasierten, rekursiv-synchronen Scheduling auf ein zentrales taskbasiertes Scheduling. 
+	\noindent Diese Arbeit untersucht die Performance-Optimierung eines \acs{APT}-Scanners durch die Umstellung von einem objektbasierten, rekursiv-synchronen Scheduling auf ein zentrales taskbasiertes Scheduling. 
 
 	\vspace{7.56mm}
 
-	\noindent Implementiert und evaluiert wurden drei Scheduling-Algorithmen: First-In, First-Out (FIFO), Shortest-Subtree-Time-First (SSTF) und Work-Stealing mit SSTF-Priorisierung. 
-	Die Bewertung erfolgte experimentell in einer kontrollierten Testumgebung auf Debian~13 und Windows~11 mit 1, 4 und 10 Threads sowie 20 Wiederholungen je Konfiguration. 
-	Gemessen wurden Laufzeit, CPU- und RAM-Utilization, Waiting Time, Burst Time und der Anteil synchron ausgeführter Tasks. 
+	\noindent Implementiert und evaluiert wurden drei Scheduling-Algorithmen: First-In, First-Out (\acs{FIFO}), Shortest-Subtree-Time-First (\acs{SSTF}) und Work-Stealing mit \acs{SSTF}-Priorisierung. 
+	Die Bewertung erfolgte experimentell in einer kontrollierten Testumgebung auf Debian~13 und Windows~11 mit einem, vier und zehn Threads sowie 20 Wiederholungen je Konfiguration. 
+	Gemessen wurden Laufzeit, \acs{CPU}- und \acs{RAM}-Utilization, Waiting Time, Burst Time und der Anteil synchron ausgeführter Tasks. 
 
 	\vspace{7.56mm}
 
-	\noindent Unter Windows zeigen die neuen Scheduler bei 4 und 10 Threads klare Laufzeitgewinne gegenüber der Referenz. 
-	Unter Linux sind die Laufzeitunterschiede gering. 
-	SSTF liefert die stabilste Gesamtbalance aus Laufzeit, Waiting Time und Speichereigenschaften. 
-	Work-Stealing erreicht gegenüber SSTF keine durchgängige Verbesserung. 
+	\noindent Unter Windows zeigen die neuen Scheduler bei vier und zehn Threads klare Laufzeitgewinne gegenüber der Referenz, die je nach Verfahren bei vier Threads etwa 5,69\,\% bis 8,39\,\% und bei zehn Threads etwa 8,89\,\% bis 10,38\,\% betragen. 
+	Unter Linux lässt sich dagegen kein konsistenter Laufzeitvorteil nachweisen. 
+	\acs{SSTF} liefert die stabilste Gesamtbalance aus Laufzeit, Waiting Time und Speichereigenschaften. 
 
 	\vspace{7.56mm}
 
-	\noindent Die Ergebnisse belegen, dass der Architekturwechsel möglich ist und reproduzierbare Leistungsgewinne, besonders unter hohen Lastprofilen, ermöglicht.
+	\noindent Die Ergebnisse belegen, dass der Wechsel zu einem zentralen taskbasierten Scheduling möglich ist und reproduzierbare Leistungsgewinne, besonders unter hohen Lastprofilen, ermöglicht.
 	\end{sloppypar}
 
 \end{otherlanguage}

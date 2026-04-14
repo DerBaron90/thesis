@@ -10,10 +10,9 @@
 \chapter*{Abk\"{u}rzungsverzeichnis}
 
 % Insert your acronyms here
-\begin{acronym}[UML]
-  \acro{DRY}{Don't Repeat Yourself}
-  \acro{API}{Application Programming Interface}
-  \acro{UML}{Unified Modeling Language}
+\begin{acronym}[LPDDR5]
+  \renewcommand{\thesisacro}[3]{\acro{#1}[#2]{#3}}
+  \input{frontbackmatter/AcronymEntries}
 \end{acronym}
 
 \cleardoublepage
