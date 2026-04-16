@@ -54,7 +54,7 @@ da sich hieraus möglicherweise weitere Optimierungen ableiten lassen.
 
 \subsection{Scanner-interne Metriken}
 Die folgenden Metriken werden automatisiert innerhalb des Scanner-Codes ermittelt
-und nach jedem Scan-Vorgang persitiert.
+und nach jedem Scan-Vorgang persistiert.
 Hierbei werden jeweils die kumulierten Gesamtwerte sowie die spezifischen Zeitspannen pro Feature erhoben.
 
 \paragraph{Throughput (Durchsatz)}
@@ -377,7 +377,7 @@ Der Internetzugriff wurde auf dem Host-System deaktiviert.
 Durch die Implementierung eines Schedulers gibt es einen entscheidenden Architekturwechsel,
 weg von der engen Kopplung, in welcher jedes Modul seinen eigenen Scheduler steuert, hin zu einem zentralen Service-Modell
 mit dem Scheduler als eigenständige Komponente. 
-Es gibt eine strickte Trennung. Die restliche Programmlogik weiß nicht, wie der Scheduler arbeitet, sie übergibt lediglich Tasks.
+Es gibt eine strikte Trennung. Die restliche Programmlogik weiß nicht, wie der Scheduler arbeitet, sie übergibt lediglich Tasks.
 Wenn ein Feature Kindobjekte erstellt, werden diese nicht mehr direkt verarbeitet, statt dessen werden sie als neue Tasks in die Warteschlange gegeben.
 Für den Scheduler ist es egal, ob ein Task von einem Modul oder einem Feature kommt, alles landet in derselben Warteschlange.
 Der restliche Scanner muss entsprechend angepasst werden, was je nach Komplexität und Kopplung eine Überarbeitung von sehr viel Code bedeuten kann.
@@ -507,7 +507,7 @@ Die Last-Verteilungsstrategie ist frei wählbar.
 \noindent Die Anzahl an Scheduling-Algorithmen, welche diese Anforderungen erfüllen, ist extrem hoch.
 Weitere Empfehlungen für vielversprechende Scheduling-Algorithmen, 
 welche aufgrund der begrenzten Ressourcen dieser Arbeit nicht getestet werden konnten, 
-sind im Kapitel 6 Ausblick zu finden.
+sind in Kapitel~\ref{ch:chapter06} (\nameref{ch:chapter06}) zu finden.
 
 \noindent Diese Arbeit erhebt keinen Anspruch auf Vollständigkeit.
 
@@ -562,11 +562,11 @@ Es werden langlebige Worker-Goroutines betrieben. Die effektive Zahl gleichzeiti
 Damit sind Einreihungs- und Entnahmeordnung von Abschlussordnung zu unterscheiden: Abschlussreihenfolgen bleiben bei Parallelität grundsätzlich nichtdeterministisch.
 
 \paragraph{Abschlussbedingung}
-Ein Task erhöht beim erfolgreichen Akzeptieren den Zähler $N$ um $1$ und dekrementiert $N$ genau einmal beim Abschluss (normal, abgebrochen oder Fallback beendet).
+Ein Task erhöht beim erfolgreichen Akzeptieren den Zähler $N$ um $1$ und dekrementiert $N$ genau einmal beim Abschluss (normal, abgebrochen oder Fallback (Inline-Ausführung im Caller-Kontext) beendet).
 Ein Scan ist genau dann abgeschlossen, wenn $N=0$ erreicht wird; die Wartesynchronisation erfolgt über eine Condition Variable.
 
 \paragraph{Backpressure}
-Bei Enqueue-Fehlschlag erfolgt ein synchroner Fallback (Inline-Ausführung im Caller-Kontext).
+Bei Enqueue-Fehlschlag erfolgt ein synchroner Fallback.
 Ein Enqueue-Fehlschlag kann je nach Implementierung durch volle oder geschlossene Queue entstehen.
 Dies begrenzt Queue-Wachstum, verändert aber globale Ausführungsordnung und Fairnesseigenschaften, 
 da die Nachkommen dieses Tasks direkt synchron abgearbeitet werden.

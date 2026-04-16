@@ -52,7 +52,7 @@ Threads & \acs{OS} & Runtime [s] & \acs{CPU} [\%] & \acs{RAM} Mittel [MB] & \acs
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{Messungen/OLD_1T/cpu_bars_combined.pdf}
-\caption{\acs{CPU}-Auslastung des Referenz-Schedulers auf Linux und Windows bei einem Thread, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
+\caption[Referenz \acs{CPU}, 1 Thread]{\acs{CPU}-Auslastung des Referenz-Schedulers auf Linux und Windows bei einem Thread, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
 \label{fig:4ref-1t-cpu}
 \end{figure}
 
@@ -61,7 +61,7 @@ Threads & \acs{OS} & Runtime [s] & \acs{CPU} [\%] & \acs{RAM} Mittel [MB] & \acs
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{Messungen/OLD_10T/cpu_bars_combined.pdf}
-\caption{\acs{CPU}-Auslastung des Referenz-Schedulers auf Linux und Windows bei zehn Threads, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
+\caption[Referenz \acs{CPU}, 10 Threads]{\acs{CPU}-Auslastung des Referenz-Schedulers auf Linux und Windows bei zehn Threads, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
 \label{fig:4ref-10t-cpu}
 \end{figure}
 
@@ -414,21 +414,21 @@ bei verschiedenen Thread-Anzahlen auf Windows und Linux. Die Standardabweichunge
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{Messungen/Scheduler_Comparison/scheduler_1T_runtime.pdf}
-\caption{Vergleich der Laufzeiten von Referenz, \acs{FIFO}\_50, \acs{FIFO}\_500, \acs{SSTF} und Work-Stealing auf Linux und Windows bei einem Thread, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
+\caption[Scheduler-Vergleich Laufzeit, 1 Thread]{Vergleich der Laufzeiten von Referenz, \acs{FIFO}\_50, \acs{FIFO}\_500, \acs{SSTF} und Work-Stealing auf Linux und Windows bei einem Thread, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
 \label{fig:schedulercmp-1t-runtime}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{Messungen/Scheduler_Comparison/scheduler_1T_cpu.pdf}
-\caption{Vergleich der \acs{CPU}-Auslastung von Referenz, \acs{FIFO}\_50, \acs{FIFO}\_500, \acs{SSTF} und Work-Stealing auf Linux und Windows bei einem Thread, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
+\caption[Scheduler-Vergleich \acs{CPU}, 1 Thread]{Vergleich der \acs{CPU}-Auslastung von Referenz, \acs{FIFO}\_50, \acs{FIFO}\_500, \acs{SSTF} und Work-Stealing auf Linux und Windows bei einem Thread, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
 \label{fig:schedulercmp-1t-cpu}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{Messungen/Scheduler_Comparison/scheduler_1T_ram.pdf}
-\caption{Vergleich der \acs{RAM}-Auslastung von Referenz, \acs{FIFO}\_50, \acs{FIFO}\_500, \acs{SSTF} und Work-Stealing auf Linux und Windows bei einem Thread, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
+\caption[Scheduler-Vergleich \acs{RAM}, 1 Thread]{Vergleich der \acs{RAM}-Auslastung von Referenz, \acs{FIFO}\_50, \acs{FIFO}\_500, \acs{SSTF} und Work-Stealing auf Linux und Windows bei einem Thread, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
 \label{fig:schedulercmp-1t-ram}
 \end{figure}
 
@@ -445,21 +445,21 @@ bei verschiedenen Thread-Anzahlen auf Windows und Linux. Die Standardabweichunge
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{Messungen/Scheduler_Comparison/scheduler_4T_runtime.pdf}
-\caption{Vergleich der Laufzeiten von Referenz, \acs{FIFO}\_50, \acs{FIFO}\_500, \acs{SSTF} und Work-Stealing auf Linux und Windows bei vier Threads, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
+\caption[Scheduler-Vergleich Laufzeit, 4 Threads]{Vergleich der Laufzeiten von Referenz, \acs{FIFO}\_50, \acs{FIFO}\_500, \acs{SSTF} und Work-Stealing auf Linux und Windows bei vier Threads, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
 \label{fig:schedulercmp-4t-runtime}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{Messungen/Scheduler_Comparison/scheduler_4T_cpu.pdf}
-\caption{Vergleich der \acs{CPU}-Auslastung von Referenz, \acs{FIFO}\_50, \acs{FIFO}\_500, \acs{SSTF} und Work-Stealing auf Linux und Windows bei vier Threads, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
+\caption[Scheduler-Vergleich \acs{CPU}, 4 Threads]{Vergleich der \acs{CPU}-Auslastung von Referenz, \acs{FIFO}\_50, \acs{FIFO}\_500, \acs{SSTF} und Work-Stealing auf Linux und Windows bei vier Threads, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
 \label{fig:schedulercmp-4t-cpu}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{Messungen/Scheduler_Comparison/scheduler_4T_ram.pdf}
-\caption{Vergleich der \acs{RAM}-Auslastung von Referenz, \acs{FIFO}\_50, \acs{FIFO}\_500, \acs{SSTF} und Work-Stealing auf Linux und Windows bei vier Threads, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
+\caption[Scheduler-Vergleich \acs{RAM}, 4 Threads]{Vergleich der \acs{RAM}-Auslastung von Referenz, \acs{FIFO}\_50, \acs{FIFO}\_500, \acs{SSTF} und Work-Stealing auf Linux und Windows bei vier Threads, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
 \label{fig:schedulercmp-4t-ram}
 \end{figure}
 
@@ -476,21 +476,21 @@ bei verschiedenen Thread-Anzahlen auf Windows und Linux. Die Standardabweichunge
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{Messungen/Scheduler_Comparison/scheduler_10T_runtime.pdf}
-\caption{Vergleich der Laufzeiten von Referenz, \acs{FIFO}\_50, \acs{FIFO}\_500, \acs{SSTF} und Work-Stealing auf Linux und Windows bei zehn Threads, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
+\caption[Scheduler-Vergleich Laufzeit, 10 Threads]{Vergleich der Laufzeiten von Referenz, \acs{FIFO}\_50, \acs{FIFO}\_500, \acs{SSTF} und Work-Stealing auf Linux und Windows bei zehn Threads, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
 \label{fig:schedulercmp-10t-runtime}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{Messungen/Scheduler_Comparison/scheduler_10T_cpu.pdf}
-\caption{Vergleich der \acs{CPU}-Auslastung von Referenz, \acs{FIFO}\_50, \acs{FIFO}\_500, \acs{SSTF} und Work-Stealing auf Linux und Windows bei zehn Threads, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
+\caption[Scheduler-Vergleich \acs{CPU}, 10 Threads]{Vergleich der \acs{CPU}-Auslastung von Referenz, \acs{FIFO}\_50, \acs{FIFO}\_500, \acs{SSTF} und Work-Stealing auf Linux und Windows bei zehn Threads, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
 \label{fig:schedulercmp-10t-cpu}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{Messungen/Scheduler_Comparison/scheduler_10T_ram.pdf}
-\caption{Vergleich der \acs{RAM}-Auslastung von Referenz, \acs{FIFO}\_50, \acs{FIFO}\_500, \acs{SSTF} und Work-Stealing auf Linux und Windows bei zehn Threads, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
+\caption[Scheduler-Vergleich \acs{RAM}, 10 Threads]{Vergleich der \acs{RAM}-Auslastung von Referenz, \acs{FIFO}\_50, \acs{FIFO}\_500, \acs{SSTF} und Work-Stealing auf Linux und Windows bei zehn Threads, dargestellt als Balkendiagramm mit Mittelwerten und Standardabweichungen aus 20 Messläufen}
 \label{fig:schedulercmp-10t-ram}
 \end{figure}
 
