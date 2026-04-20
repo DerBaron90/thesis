@@ -43,7 +43,7 @@ Der Throughput dient dabei als Kontrollwert.
 Die Waiting Time zeigt direkt, wie effizient der Scheduler die Tasks priorisiert und abarbeitet,
 während die \acs{RAM}-Utilization Aufschluss über die Speichereffizienz gibt.
 Insbesondere sollen \acs{RAM}-Spitzenlasten vermieden werden, 
-da dass Auslagern von Speicher auf die Festplatte die Performance drastisch verschlechtern kann.
+da das Auslagern von Speicher auf die Festplatte die Performance drastisch verschlechtern kann.
 Darüber hinaus sind die Auswirkungen von Anpassungen der Thread-Anzahl und der Warteschlangen-Größe
 auf die durchschnittliche \acs{RAM}-Utilization von Interesse,
 da sich hieraus möglicherweise weitere Optimierungen ableiten lassen.
@@ -64,7 +64,6 @@ Die Erhebung des Durchsatzes ist als relative Vergleichsgröße essentiell,
 da die absolute Anzahl der zu scannenden Objekte trotz aller Maßnahmen zur Varianzminimierung schwanken kann.
 Bei einer hohen Abweichung der Anzahl gescannter Objekte pro Feature in verschiedenen Scans
 müssen Maßnahmen ergriffen werden, um die Varianz zu minimieren.
-Für die Bewertung wird der Durchschnitt des Scans verwendet.
 
 \paragraph{Turnaround Time (Gesamtdurchlaufzeit pro Task)}
 Es werden die durchschnittliche, minimale und maximale Turnaround Time erhoben.
@@ -200,7 +199,7 @@ und somit eine vergleichbare Bewertung über unterschiedliche Laufzeitniveaus hi
 
 \vspace{7.56mm}
 
-\noindent Da im Rahmen dieser Arbeit jedoch begrenzte Ressourcen zur Verfügung stehen, 
+\noindent Da im Rahmen dieser Arbeit nur begrenzte Ressourcen zur Verfügung stehen, 
 wurde stattdessen eine weitgehende Homogenisierung der Testumgebung angestrebt. 
 Hierbei wird ein bewusster Laboreffekt in Kauf genommen. 
 Die Resultate folgen dem Ansatz des Best-Case-Benchmarkings und sind daher als Idealwerte zu interpretieren, 
@@ -365,7 +364,7 @@ Dies hätte die Messungen durch unvorhersehbare \acs{IO}- und \acs{CPU}-Spitzen 
 Auf der Windows-\acs{VM} wurden sämtliche Animationseffekte und Transparenzeffekte deaktiviert.
 Über die erweiterten Systemeinstellungen wurde die Option
 \texttt{Für optimale Leistung anpassen} gewählt.
-Dies entlastet GPU und \acs{CPU} und eliminiert eine weitere Quelle nicht-deterministischer Hintergrundaktivität.
+Dies entlastet \acs{GPU} und \acs{CPU} und eliminiert eine weitere Quelle nicht-deterministischer Hintergrundaktivität.
 
 \paragraph{Deaktivierung des Internetzugriffs}
 Durch Updates oder andere Internetzugriffe der Betriebssysteme können unerwünschte Aktivitäten auf der \acs{VM} stattfinden.
@@ -509,8 +508,6 @@ Weitere Empfehlungen für vielversprechende Scheduling-Algorithmen,
 welche aufgrund der begrenzten Ressourcen dieser Arbeit nicht getestet werden konnten, 
 sind in Kapitel~\ref{ch:chapter06} (\nameref{ch:chapter06}) zu finden.
 
-\noindent Diese Arbeit erhebt keinen Anspruch auf Vollständigkeit.
-
 \vspace{7.56mm}
 Die Auswahl ist auf folgende Scheduling-Algorithmen gefallen:
 
@@ -559,7 +556,8 @@ wobei $t_{\mathrm{sync\text{-}child}}(\tau)$ die kumulierte Laufzeit synchron au
 
 \paragraph{Worker- und Parallelitätsmodell}
 Es werden langlebige Worker-Goroutines betrieben. Die effektive Zahl gleichzeitig laufender Task-Ausführungen wird durch eine Semaphore auf höchstens $W$ begrenzt.
-Damit sind Einreihungs- und Entnahmeordnung von Abschlussordnung zu unterscheiden: Abschlussreihenfolgen bleiben bei Parallelität grundsätzlich nichtdeterministisch.
+Damit sind Einreihungs- und Entnahmeordnung von Abschlussordnung zu unterscheiden: Abschlussreihenfolgen können bei Parallelität grundsätzlich nicht
+deterministisch bestimmt werden.
 
 \paragraph{Abschlussbedingung}
 Ein Task erhöht beim erfolgreichen Akzeptieren den Zähler $N$ um $1$ und dekrementiert $N$ genau einmal beim Abschluss (normal, abgebrochen oder Fallback (Inline-Ausführung im Caller-Kontext) beendet).
@@ -601,7 +599,7 @@ C_{\mathrm{FIFO500}}=500\cdot W
 Die zentrale Warteschlange arbeitet nach dem \acs{FIFO}-Prinzip.
 Eine globale strikte \acs{FIFO}-Ordnung über alle Tasks gilt nicht, da
 mehrere Worker parallel arbeiten und
-bei Enqueue-Fehlschlag der synchroner Fallback aktiv wird.
+bei Enqueue-Fehlschlag der synchrone Fallback aktiv wird.
 
 \paragraph{Einreichungspfad}
 \begin{enumerate}
@@ -614,7 +612,7 @@ bei Enqueue-Fehlschlag der synchroner Fallback aktiv wird.
 
 \paragraph{Ausführungspfad}
 Worker warten blockierend auf Queue-Elemente. Nach Entnahme wird ein Semaphore-Token angefordert. 
-Bei Fehlschlag, also zum Beispiel bei abgebrochenenen Kontext, wird der Task abgeschlossen.
+Bei Fehlschlag, also zum Beispiel bei abgebrochenem Kontext, wird der Task abgeschlossen.
 Bei Erfolg: Queue-Zeit messen, Kontext anreichern, Task ausführen, exklusive Laufzeit berechnen, Statistik schreiben, Handle schließen, Semaphore freigeben, $N \gets N-1$.
 
 

@@ -12,7 +12,7 @@ Auf dieser Basis wurden drei Scheduling-Strategien systematisch untersucht: \acs
 \vspace{7.56mm}
 
 \noindent Im Vergleich zum alten Scheduler zeigt sich ein differenziertes Bild. 
-Die neuen Scheduler liefern auf Windows bei paralleler Ausführung nachweisbare Laufzeitverbesserungen. 
+Die neuen Scheduler liefern auf Windows bei paralleler Ausführung messbare Laufzeitverbesserungen. 
 Bei vier Threads wurde die Runtime gegenüber der Referenz je nach Verfahren um etwa 5,69\,\% bis 8,39\,\% reduziert, 
 bei zehn Threads um etwa 8,89\,\% bis 10,38\,\%. 
 Die Ergebnisse zeigen zugleich, dass die \acs{CPU}-Auslastung in den Multithread-Konfigurationen gesteigert werden konnte, 
@@ -29,7 +29,7 @@ Unter Linux lässt sich dagegen kein belastbarer Laufzeitvorteil ableiten.
 Bezüglich der Auswirkungen auf \acs{CPU}- und \acs{RAM}-Auslastung sowie Waiting Time ergibt sich ein differenziertes Bild: 
 Die \acs{CPU}-Auslastung steigt mit der Threadzahl in allen Varianten. 
 Große Warteschlangen erhöhen die Queue Time konsistent und führen in einzelnen Konfigurationen auch zu höheren \acs{RAM}-Spitzen, 
-zeigen aber keinen nachweisbaren Vorteil bei Laufzeit, \acs{CPU}-Auslastung oder mittlerer \acs{RAM}-Auslastung. 
+zeigen aber keinen belastbaren Vorteil bei Laufzeit, \acs{CPU}-Auslastung oder mittlerer \acs{RAM}-Auslastung. 
 \acs{SSTF} reduziert die Queue Time gegenüber \acs{FIFO}\_500 in allen Konfigurationen und senkt bei vier und zehn Threads den Anteil synchron ausgeführter Tasks gegenüber beiden \acs{FIFO}-Varianten nachweisbar. 
 Work-Stealing mit \acs{SSTF} zeigt in der vorliegenden Implementierung keinen konsistenten Vorteil gegenüber \acs{SSTF}, 
 da die Queue Time in allen Konfigurationen höher ist und bei zehn Threads auf Windows auch ein höherer \acs{RAM}-Maximalwert auftritt.
@@ -38,7 +38,7 @@ da die Queue Time in allen Konfigurationen höher ist und bei zehn Threads auf W
 
 \noindent Unter den gewählten Prioritäten (Laufzeit vor Ressourcenverbrauch, dahinter erst die Responsivität) 
 ergibt sich \acs{SSTF} als beste Gesamtlösung. 
-Unter Last ab vier Threads zeigt \acs{SSTF} keinen nachweisbaren Laufzeitnachteil gegenüber \acs{FIFO}\_50, \acs{FIFO}\_500 und Work-Stealing, 
+Unter Last ab vier Threads zeigt \acs{SSTF} keinen belegbaren Laufzeitnachteil gegenüber \acs{FIFO}\_50, \acs{FIFO}\_500 und Work-Stealing, 
 reduziert gegenüber \acs{FIFO}\_500 konsistent die Queue Time 
 und senkt bei vier und zehn Threads den Anteil synchron ausgeführter Tasks gegenüber beiden \acs{FIFO}-Varianten nachweisbar. 
 
@@ -46,7 +46,7 @@ und senkt bei vier und zehn Threads den Anteil synchron ausgeführter Tasks gege
 
 \noindent Bei der Interpretation der Ergebnisse sind folgende Punkte zu beachten:
 
-\noindent Erstens sind die Laufzeitgewinne plattformabhängig und unter Linux nicht konsistent nachweisbar. 
+\noindent Erstens sind die Laufzeitgewinne plattformabhängig und unter Linux nicht konsistent feststellbar. 
 
 \noindent Zweitens hängt die Wirksamkeit von \acs{SSTF} von der Qualität der Prioritätsheuristik ab. 
 Für das Testsystem, welches mithilfe von Snapshots vor jedem Scan zurückgesetzt wurde, 

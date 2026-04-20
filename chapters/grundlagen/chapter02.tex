@@ -57,9 +57,9 @@ sind \acs{APT}-Angriffs\-erkennungs\-systeme
 mit einem hohen Wartungsaufwand verbunden.
 Das \acs{APT}-Angriffs\-erkennungs\-system lernt zunächst
 das „normale" Verhalten des Rechners.
-Jede signifikante Abweichung wird als potenzieller Angriff gemeldet.
+Jede erhebliche Abweichung wird als potenzieller Angriff gemeldet.
 Analysten bewerten die potenziellen Angriffe
-und erkennen False Positives,
+und nehmen die finale Unterscheidung zwischen True- und False-Positive vor,
 welche ab diesem Zeitpunkt automatisch
 von dem \acs{APT}-Angriffs\-erkennungs\-system als solche eingeordnet werden.
 \end{sloppypar}
@@ -160,7 +160,6 @@ dass die Ausführungszeit als das einzig konsistente und zuverlässige Maß für
 
 \section{Arbeitsweise des Scanners}
 Der Scanner basiert auf zwei zentralen Komponententypen, deren Zusammenwirken den Arbeitsablauf definiert. 
-\marginpar{Diese Darstellung ist eine Abstraktion der relevanten Arbeitsweise, die sich auf die für das Verständnis wesentlichen Kernaspekte fokussiert.}
 
 \paragraph{Modul}
 Module sind autonome Funktionseinheiten, die sequenziell abgearbeitet werden.
@@ -288,7 +287,6 @@ sowie grundlegenden Informationen zu einem Paradigma der Lastverteilung.
 Die effiziente Planung dynamisch wachsender paralleler Berechnungen auf modernen Multiprozessorsystemen erfordert ein Gleichgewicht zwischen einer hohen Prozessor-Auslastung sowie einem geringen Speicherbedarf und Kommunikations-Overhead.
 In der Literatur zum dynamischen Task-Scheduling haben sich hierfür zwei grundlegende Lastverteilungsstrategien etabliert: 
 \textit{Work-Sharing}, bei dem Arbeit aktiv auf Worker verteilt wird, und \textit{Work-Stealing}, bei dem inaktive Worker Aufgaben von anderen Workern übernehmen.
-\marginpar{Work-Sharing lässt sich mit dem Push-Prinzip und Work-Stealing mit dem Pull-Prinzip vergleichen, bekannt aus Logistik, Supply-Chain-Management und agilen Vorgehensmodellen.}
 \vspace{7.56mm}
 
 \noindent Die folgenden Erläuterungen basieren auf der Arbeit \textit{Scheduling Multithreaded Computations by Work Stealing} von Blumofe und Leiserson \cite[S.~721--746]{Blumofe.1999}. 
@@ -334,7 +332,7 @@ T_P = T_1 / P + O(T_\infty),
 
 \noindent Darüber hinaus weist der Algorithmus beweisbar effiziente Eigenschaften bezüglich des Speicherbedarfs auf. 
 Der benötigte Speicherbedarf ist durch $S_1 \cdot P$ nach oben beschränkt, wobei $S_1$ den minimalen seriellen Speicherbedarf bezeichnet. 
-Diese Schranke ist existentiell optimal (bis auf einen konstanten Faktor) und garantiert eine lediglich lineare Expansion des Speichers 
+Diese Schranke ist theoretisch optimal (bis auf einen konstanten Faktor) und garantiert eine lediglich lineare Expansion des Speichers 
 im Verhältnis zur Anzahl der eingesetzten Worker $P$. Dies verhindert ein unkontrolliertes Wachstum der Speicherressourcen und stellt sicher, 
 dass der Bedarf nicht, 
 wie bei naiven Scheduling-Strategien oder Work-Sharing-Ansätzen möglich, unkontrolliert ansteigt.
@@ -429,7 +427,7 @@ Häufig erfolgt die Berechnung nach der Formel:
     \tau_{n+1} = \alpha t_n + (1 - \alpha)\tau_n
 \end{equation}
 \noindent Dabei stellt $t_n$ die Länge des jüngsten Bursts dar, während $\tau_{n+1}$ den vorhergesagten Wert für den nächsten Burst repräsentiert. 
-Der Parameter $\alpha$ (typischerweise $1/2$) steuert das relative Gewicht der jüngsten Vergangenheit gegenüber der historischen Schätzung.
+Der Parameter $\alpha$ (typischerweise $\frac{1}{2}$) steuert das relative Gewicht der jüngsten Vergangenheit gegenüber der historischen Schätzung.
 
 
 
