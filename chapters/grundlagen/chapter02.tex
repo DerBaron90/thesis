@@ -56,7 +56,7 @@ um Abweichungen zu erkennen,
 sind \acs{APT}-Angriffs\-erkennungs\-systeme
 mit einem hohen Wartungsaufwand verbunden.
 Das \acs{APT}-Angriffs\-erkennungs\-system lernt zunächst
-das „normale" Verhalten des Rechners.
+das \enquote{normale} Verhalten des Rechners.
 Jede erhebliche Abweichung wird als potenzieller Angriff gemeldet.
 Analysten bewerten die potenziellen Angriffe
 und nehmen die finale Unterscheidung zwischen True- und False-Positive vor,
@@ -70,7 +70,7 @@ von dem \acs{APT}-Angriffs\-erkennungs\-system als solche eingeordnet werden.
 % Performance-Relevanz und Ziel der Arbeit
 %
 \begin{sloppypar}
-\noindent Incident-Response-Scanner und \acs{APT}-Angriffs\-erkennungs\-systeme werden auf einer hohen Anzahl
+\noindent \acs{APT}-Angriffs\-erkennungs\-systeme werden auf einer hohen Anzahl
 von produktiven Systemen,
 h\"aufig auf kritischen Servern
 oder in ressourcen\-beschr\"ankten Umgebungen, eingesetzt.
@@ -101,7 +101,11 @@ indem ein taskbasierter Scheduler implementiert wird.
 
 \vspace{7.56mm}
 
-\noindent Daraus ergibt sich die Forschungsfrage, ob ein zentraler taskbasierter Scheduler die Laufzeit des Scanners gegenüber dem bisherigen objektbasierten, rekursiv-synchronen Scheduling verbessern kann, ohne \acs{CPU}- und \acs{RAM}-Auslastung sowie Wartezeiten unvertretbar zu verschlechtern. Die durchgeführten Untersuchungen zeigen, dass unter Windows bei paralleler Ausführung ab vier Threads reproduzierbare Laufzeitvorteile erreichbar sind, während unter Linux kein konsistenter Laufzeitvorteil nachweisbar ist. Unter den betrachteten Verfahren zeigt Shortest-Subtree-Time-First (\acs{SSTF}) insbesondere in den Mehrthread-Konfigurationen die ausgewogenste Kombination aus Laufzeit, Wartezeit und Speichereigenschaften.
+\noindent Daraus ergibt sich die Forschungsfrage, ob ein zentraler, taskbasierter Scheduler die Laufzeit des Scanners gegenüber dem bisherigen objektbasierten, rekursiv-synchronen Scheduling verbessern kann, ohne \acs{CPU}- und \acs{RAM}-Auslastung sowie Wartezeiten unvertretbar zu verschlechtern. 
+Die durchgeführten Untersuchungen zeigen, dass unter Windows bei paralleler Ausführung ab vier Threads reproduzierbare Laufzeitvorteile erreichbar sind. 
+Im Gegensatz dazu ist unter Linux kein konsistenter Laufzeitvorteil nachweisbar.
+Unter den betrachteten Verfahren zeigt Shortest-Subtree-Time-First (\acs{SSTF}), 
+insbesondere in den Mehrthread-Konfigurationen, die ausgewogenste Kombination aus Laufzeit, Wartezeit und Speichereigenschaften.
 
 \vspace{7.56mm}
 
@@ -126,32 +130,28 @@ Um ein besseres Verständnis für die Arbeitsweise des Scanners zu schaffen, wir
 \section{Performance}
 Wichtige Metriken für die Bewertung von Scheduling-Algorithmen sind \cite[S.~204--205]{Silberschatz:2018}, \cite[S.~154]{Tanenbaum:2015}:
 
-\paragraph{CPU-Utilization}
-Die Auslastung der \acs{CPU}, gemessen als Prozentsatz der Zeit, in der die \acs{CPU} aktiv arbeitet.
+\paragraph{CPU-Utilization:}
+Die CPU-Utilization beschreibt die Auslastung der \acs{CPU}, gemessen als Prozentsatz der Zeit, in der die \acs{CPU} aktiv arbeitet.
 Bei mehreren Kernen wird die durchschnittliche Auslastung über alle Kerne betrachtet.
 Das Ziel ist es, den Prozessor so beschäftigt wie möglich zu halten.
 In realen Systemen sollte die Auslastung zwischen 40\,\% (leicht belastet) und 90\,\% (stark belastet) liegen.
 
-\paragraph{Throughput}
-Die Anzahl der Tasks, die pro Zeiteinheit abgeschlossen werden.
+\paragraph{Throughput:}
+Der Throughput beschreibt die Anzahl der Tasks, die pro Zeiteinheit abgeschlossen werden.
 
-\paragraph{Turnaround Time}
-Die Zeitspanne zwischen dem Einreihen eines Tasks in die Warteschlange und seinem Abschluss.
+\paragraph{Turnaround Time:}
+Die Turnaround Time beschreibt die Zeitspanne zwischen dem Einreihen eines Tasks in die Warteschlange und seinem Abschluss.
 
-\paragraph{Waiting Time}
-Die Zeitspanne, die ein Task in der Warteschlange verbringt.
+\paragraph{Waiting Time:}
+Die Waiting Time beschreibt die Zeitspanne, die ein Task in der Warteschlange verbringt.
 
-\vspace{7.56mm}
-
-\noindent Wenn man den gesamten Prozess betrachtet, treten weitere Metriken in den Vordergrund:
-
-\paragraph{RAM-Utilization}
-Die Auslastung des Hauptspeichers in Prozent.
+\paragraph{RAM-Utilization:}
+Die RAM-Utilization beschreibt die Auslastung des Hauptspeichers in Prozent.
 Für Ressourcen, die Speicher bereitstellen, bezieht sich die Auslastung auf die verbrauchte Kapazität.
  \cite[S.~22]{Gregg:2020}.
 
-\paragraph{Runtime}
-Die gesamte Ausführungszeit des Prozesses.
+\paragraph{Runtime:}
+Die Runtime beschreibt die gesamte Ausführungszeit des Prozesses.
 Hennessy und Patterson \cite[S.~39--40]{Hennessy:2019} führen aus,
 dass die Ausführungszeit als das einzig konsistente und zuverlässige Maß für die Leistung gilt.
 
@@ -161,12 +161,12 @@ dass die Ausführungszeit als das einzig konsistente und zuverlässige Maß für
 \section{Arbeitsweise des Scanners}
 Der Scanner basiert auf zwei zentralen Komponententypen, deren Zusammenwirken den Arbeitsablauf definiert. 
 
-\paragraph{Modul}
+\paragraph{Modul:}
 Module sind autonome Funktionseinheiten, die sequenziell abgearbeitet werden.
 Ein Modul (z.\,B. \enquote{User Account Check}) identifiziert spezifische Systemressourcen,
 instanziiert diese als Objekte und initiiert deren Untersuchung \cite{thor:modules}.
 
-\paragraph{Feature}
+\paragraph{Feature:}
 Features werden kontextabhängig aktiviert, sobald ein Objekt eines bestimmten Typs untersucht wird.
 Sie können ihrerseits neue Objekte generieren.
 Ein \enquote{File System Scan}-Modul kann beispielsweise ein Objekt für eine Archivdatei (.zip) erzeugen.
@@ -174,11 +174,16 @@ Bei dessen Analyse wird das \enquote{Archive Scan}-Feature aktiv,
 welches den Inhalt entpackt und für jede enthaltene Datei ein neues Objekt instanziiert.
 Dieser Prozess setzt sich rekursiv fort \cite{thor:features}.
 
+\vspace{7.56mm}
+
 \noindent Der Scanner nutzt ein objektbasiertes, synchrones Multithreading-Scheduling. Jedes Modul kapselt hierfür einen eigenen primitiven Scheduler, bestehend aus einer Warteschlange und einem Threadpool. Während der Systemuntersuchung generiert das Modul initiale Objekte und reiht diese in die Warteschlange ein. Die Worker, also die ausführenden Threads des Threadpools, entnehmen die Objekte und führen die für den jeweiligen Objekttyp registrierten Features aus.
 
 \vspace{7.56mm}
 
-\noindent Die Ausführung eines Features kann weitere Objekte (nachfolgend Kindobjekte genannt) hervorbringen. Auch auf diesen Kindobjekten werden typspezifisch Features ausgeführt, was zu einer tief verschachtelten Objekthierarchie führen kann. Da ein Worker sowohl das Ursprungsobjekt als auch alle daraus resultierenden Nachkommen vollständig synchron abarbeitet, entstehen Szenarien, in denen einzelne Threads über lange Zeiträume blockiert sind und eine erhebliche Menge an Hauptspeicher beanspruchen.
+\noindent Die Ausführung eines Features kann weitere Objekte (nachfolgend Kindobjekte genannt) hervorbringen. Auch auf diesen Kindobjekten werden typspezifisch Features ausgeführt, was zu einer tief verschachtelten Objekthierarchie führen kann. 
+Ein Worker arbeitet sowohl das Ursprungsobjekt als auch alle
+daraus resultierenden Nachkommen vollständig synchron ab.
+Dadurch entstehen Szenarien, in denen einzelne Threads über lange Zeiträume blockiert sind und eine erhebliche Menge an Hauptspeicher beanspruchen.
 
 
 \noindent Abbildung \ref{fig:scanner-workflow} zeigt den beschriebenen Arbeitsablauf des Scanners.
@@ -271,7 +276,7 @@ Dieser Prozess setzt sich rekursiv fort \cite{thor:features}.
 \section{Stand der Technik: Scheduling-Verfahren}
 
 Scheduling-Algorithmen für Multithreading in Prozessen sind seit mehreren Jahrzehnten Gegenstand intensiver Forschung. 
-Bereits das Standardwerk \textit{Theory of Scheduling} aus dem Jahr 1967 \cite{Conway:1967} legte zentrale mathematische Grundlagen für das Scheduling in modernen Betriebssystemen. 
+Bereits das Standardwerk Theory of Scheduling aus dem Jahr 1967 \cite{Conway:1967} legte zentrale mathematische Grundlagen für das Scheduling in modernen Betriebssystemen. 
 Darin analysieren Conway et al. grundlegende Konzepte wie Prioritätsregeln, Präemption (Unterbrechbarkeit) von Tasks sowie warteschlangentheoretische Modelle im Kontext von Mehrprozessor-Systemen. 
 Auf dieser Basis wurden die Eigenschaften klassischer Scheduling-Strategien wie Round Robin oder Shortest Job First formal beschrieben und hinsichtlich ihrer Leistungsmerkmale analysiert. 
 Die Funktionsweise deterministischer Verfahren sowie grundlegender Priorisierungsschemata gelten daher heute als umfassend untersucht und theoretisch fundiert.
@@ -284,12 +289,12 @@ sowie grundlegenden Informationen zu einem Paradigma der Lastverteilung.
 
 \subsection{Work-Sharing und Work-Stealing}
 
-Die effiziente Planung dynamisch wachsender paralleler Berechnungen auf modernen Multiprozessorsystemen erfordert ein Gleichgewicht zwischen einer hohen Prozessor-Auslastung sowie einem geringen Speicherbedarf und Kommunikations-Overhead.
+Die effiziente Planung dynamisch wachsender, paralleler Berechnungen auf modernen Multiprozessorsystemen erfordert ein Gleichgewicht zwischen einer hohen Prozessor-Auslastung sowie einem geringen Speicherbedarf und Kommunikations-Overhead.
 In der Literatur zum dynamischen Task-Scheduling haben sich hierfür zwei grundlegende Lastverteilungsstrategien etabliert: 
-\textit{Work-Sharing}, bei dem Arbeit aktiv auf Worker verteilt wird, und \textit{Work-Stealing}, bei dem inaktive Worker Aufgaben von anderen Workern übernehmen.
+Work-Sharing, bei dem Arbeit aktiv auf Worker verteilt wird, und Work-Stealing, bei dem inaktive Worker Aufgaben von anderen Workern übernehmen.
 \vspace{7.56mm}
 
-\noindent Die folgenden Erläuterungen basieren auf der Arbeit \textit{Scheduling Multithreaded Computations by Work Stealing} von Blumofe und Leiserson \cite[S.~721--746]{Blumofe.1999}. 
+\noindent Die Erläuterungen in diesem Abschnitt basieren auf der Arbeit Scheduling Multithreaded Computations by Work Stealing von Blumofe und Leiserson \cite[S.~721--746]{Blumofe.1999}. 
 Diese untersucht das Scheduling von Threads in parallelen Programmen und ist auf den Kontext des in dieser Arbeit betrachteten Scanners übertragbar.
 
 \vspace{7.56mm}
@@ -301,13 +306,13 @@ Dieser Ansatz gilt als kommunikationseffizienter, da Migrationen von Tasks nur a
 
 \vspace{7.56mm}
 
-Der Work-Stealing-Ansatz wurde in den 1980er Jahren als Scheduling-Modell eingeführt. 
+\noindent Der Work-Stealing-Ansatz wurde in den 1980er Jahren als Scheduling-Modell eingeführt. 
 1999 erfolgte durch Blumofe und Leiserson eine formale Analyse mit beweisbar optimalen Schranken für Ausführungszeit,
 Speicherbedarf und Kommunikationsaufwand.
 Der beschriebene Algorithmus basiert auf einer dezentralen Datenstruktur, 
-der \textit{Ready Deque}.
+der Ready Deque.
 Hierbei verwaltet jeder Worker seine Tasks in einer Double-Ended Queue (Deque), 
-auf die über zwei Enden, \textit{top} und \textit{bottom}, zugegriffen wird.
+auf die über zwei Enden, top und bottom, zugegriffen wird.
 \vspace{7.56mm}
 
 \noindent Der jeweilige Worker arbeitet sein Deque nach einem Stack-Prinzip ab: 
@@ -319,9 +324,9 @@ Dadurch werden Konflikte beim Zugriff auf die Datenstruktur reduziert und gleich
 
 \vspace{7.56mm}
 
-\noindent Für die Klasse der sogenannten \textit{fully strict computations}, also Berechnungsstrukturen, 
-bei denen alle Abhängigkeiten eines Threads ausschließlich zu seinem direkten Elternthread führen, 
-konnten starke Effizienzgarantien gezeigt werden. 
+\noindent Die Klasse der sogenannten fully strict computations beschreibt Berechnungsstrukturen, 
+bei denen alle Abhängigkeiten eines Threads ausschließlich zu seinem direkten Elternthread führen. 
+An diesen konnten starke Effizienzgarantien gezeigt werden. 
 Für die Ausführungszeit $T_P$ auf $P$ Workern gilt
 \begin{equation}
 T_P = T_1 / P + O(T_\infty),
@@ -333,19 +338,19 @@ T_P = T_1 / P + O(T_\infty),
 \noindent Darüber hinaus weist der Algorithmus beweisbar effiziente Eigenschaften bezüglich des Speicherbedarfs auf. 
 Der benötigte Speicherbedarf ist durch $S_1 \cdot P$ nach oben beschränkt, wobei $S_1$ den minimalen seriellen Speicherbedarf bezeichnet. 
 Diese Schranke ist theoretisch optimal (bis auf einen konstanten Faktor) und garantiert eine lediglich lineare Expansion des Speichers 
-im Verhältnis zur Anzahl der eingesetzten Worker $P$. Dies verhindert ein unkontrolliertes Wachstum der Speicherressourcen und stellt sicher, 
-dass der Bedarf nicht, 
+im Verhältnis zur Anzahl der eingesetzten Worker $P$. Dies verhindert ein unkontrolliertes Wachstum der Speicherressourcen. 
+Dadurch wird sichergestellt, dass der Bedarf nicht, 
 wie bei naiven Scheduling-Strategien oder Work-Sharing-Ansätzen möglich, unkontrolliert ansteigt.
 
 
 
 \subsection{First-In, First-Out}
 
-\noindent In diesem Abschnitt wird auf die Erläuterungen von Hansen in \textit{Operating System Principles} von 1973 \cite{Hansen} Bezug genommen.
+\noindent In diesem Abschnitt wird auf die Erläuterungen von Hansen in Operating System Principles von 1973 \cite{Hansen} Bezug genommen.
 
 \vspace{7.56mm}
 
-\noindent Der \textit{First-In, First-Out} (\acs{FIFO})-Scheduling-Algorithmus, auch als \textit{First-Come, First-Served} (\acs{FCFS}) bezeichnet, stellt einen elementaren nicht-präemptiven Scheduling-Ansatz dar.
+\noindent Der First-In, First-Out (\acs{FIFO})-Scheduling-Algorithmus, auch als First-Come, First-Served (\acs{FCFS}) bezeichnet, stellt einen nicht-präemptiven Scheduling-Ansatz dar.
 Sein grundlegendes Prinzip besteht in der strikt sequenziellen Abarbeitung von Tasks entsprechend ihrer Ankunftsreihenfolge.
 Ein Task wird genau dann zur Ausführung ausgewählt, wenn alle zuvor eingetroffenen Tasks vollständig abgearbeitet wurden.
 
@@ -383,8 +388,10 @@ Auch hier zeigt sich, dass für hohe Auslastungen ein starkes Anwachsen der Wart
 \vspace{7.56mm}
 
 \noindent Trotz seiner konzeptionellen Einfachheit und deterministischen Ausführungsreihenfolge weist \acs{FIFO} signifikante Nachteile hinsichtlich der Wartezeiten auf.
-Insbesondere kann es zum sogenannten \textit{Convoy-Effekt} kommen, bei dem lange laufende Tasks nachfolgende kurze Tasks blockieren, was zu erhöhten mittleren Wartezeiten und hoher Varianz führt.
-Im Vergleich zu optimalen Scheduling-Strategien wie \textit{Shortest Job First} ist \acs{FIFO} daher hinsichtlich der Minimierung der durchschnittlichen Wartezeit suboptimal.
+Insbesondere kann es zum sogenannten Convoy-Effekt kommen, 
+bei dem lange laufende Tasks nachfolgende kurze Tasks blockieren.
+Dieser Effekt führt zu erhöhten mittleren Wartezeiten und hoher Varianz.
+Im Vergleich zu optimalen Scheduling-Strategien wie Shortest Job First ist \acs{FIFO} daher hinsichtlich der Minimierung der durchschnittlichen Wartezeit suboptimal.
 
 \vspace{7.56mm}
 
@@ -394,12 +401,11 @@ Diese Fairness geht jedoch nicht mit einer optimalen Ressourcenausnutzung einher
 
 
 \subsection{Shortest-Job-First}
-\noindent In diesem Abschnitt wird auf die Erläuterungen von Abraham Silberschatz et al. in \textit{Operating System Concepts} \cite{Silberschatz:2018} Bezug genommen.
+\noindent In diesem Abschnitt wird auf die Erläuterungen von Abraham Silberschatz et al. in Operating System Concepts \cite{Silberschatz:2018} Bezug genommen.
+
 \vspace{7.56mm}
-\noindent Der Shortest-Job-First (\acs{SJF}) Scheduler ist ein Scheduling-Algorithmus, 
-der Tasks basierend auf der Länge ihrer Burst Time, also ihrer erwarteten Rechenzeit, priorisiert.
-Jedem Task wird die Länge seiner Burst Time zugeordnet. 
-Sobald ein Worker frei ist, weist der Scheduler ihm den Task zu, welcher die kürzeste Burst-Time benötigt.
+
+\noindent Der Shortest-Job-First (\acs{SJF})-Scheduler ist ein Scheduling-Algorithmus, der Tasks basierend auf der Länge ihrer Burst Time, also ihrer erwarteten Rechenzeit, priorisiert. Jedem Task wird die Länge seiner Burst Time zugeordnet. Sobald ein Worker frei ist, weist der Scheduler ihm den Task zu, welcher die kürzeste Burst-Time benötigt.
 Falls zwei Tasks identische Burst Time haben, wird in der Regel das First-Come, First-Served (\acs{FCFS}) Verfahren als Entscheidungshilfe genutzt.
 
 \vspace{7.56mm}

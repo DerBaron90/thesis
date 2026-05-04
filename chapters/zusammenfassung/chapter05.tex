@@ -1,4 +1,4 @@
-\chapter{Zusammenfassung}
+\chapter{Fazit}
 \label{ch:chapter05}
 
 \begin{sloppypar}
@@ -13,8 +13,8 @@ Auf dieser Basis wurden drei Scheduling-Strategien systematisch untersucht: \acs
 
 \noindent Im Vergleich zum alten Scheduler zeigt sich ein differenziertes Bild. 
 Die neuen Scheduler liefern auf Windows bei paralleler Ausführung messbare Laufzeitverbesserungen. 
-Bei vier Threads wurde die Runtime gegenüber der Referenz je nach Verfahren um etwa 5,69\,\% bis 8,39\,\% reduziert, 
-bei zehn Threads um etwa 8,89\,\% bis 10,38\,\%. 
+Bei vier Threads wurde die Runtime gegenüber der Referenz je nach Verfahren um 5,69\,\% bis 8,39\,\% reduziert, 
+bei zehn Threads um 8,89\,\% bis 10,38\,\%. 
 Die Ergebnisse zeigen zugleich, dass die \acs{CPU}-Auslastung in den Multithread-Konfigurationen gesteigert werden konnte, 
 ohne dass die Streuung der Messungen grundsätzlich ihre Aussagekraft beeinträchtigt. 
 Unter Linux zeigt sich dagegen kein konsistenter Laufzeitvorteil: Bei einem Thread sind alle neuen Scheduler langsamer als die Referenz, 
@@ -23,7 +23,7 @@ und bei zehn Threads lässt sich kein nachweisbarer Unterschied zeigen.
 
 \vspace{7.56mm}
 
-\noindent Die formulierten Forschungsfragen können auf Basis der Messergebnisse präzise beantwortet werden. 
+\noindent Die Arbeit untersuchte erstens, in welchem Ausmaß alternative Scheduling-Strategien die Laufzeit des Scanners verbessern können, und zweitens, wie sich diese Strategien auf \acs{CPU}- und \acs{RAM}-Auslastung sowie die Waiting Time auswirken. Auf Basis der Messergebnisse lassen sich beide Fragen präzise beantworten. 
 Hinsichtlich der Laufzeitverbesserung zeigen die getesteten Scheduling-Algorithmen einen deutlichen Vorteil unter Windows bei paralleler Ausführung in den Konfigurationen mit vier und zehn Threads. 
 Unter Linux lässt sich dagegen kein belastbarer Laufzeitvorteil ableiten. 
 Bezüglich der Auswirkungen auf \acs{CPU}- und \acs{RAM}-Auslastung sowie Waiting Time ergibt sich ein differenziertes Bild: 

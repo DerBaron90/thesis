@@ -57,7 +57,7 @@ Die folgenden Metriken werden automatisiert innerhalb des Scanner-Codes ermittel
 und nach jedem Scan-Vorgang persistiert.
 Hierbei werden jeweils die kumulierten Gesamtwerte sowie die spezifischen Zeitspannen pro Feature erhoben.
 
-\paragraph{Throughput (Durchsatz)}
+\paragraph{Throughput (Durchsatz):}
 Der Throughput quantifiziert die Anzahl der erfolgreich verarbeiteten Tasks pro Zeiteinheit
 und dient als Maßstab für die Leistungsfähigkeit der jeweiligen Implementierung.
 Die Erhebung des Durchsatzes ist als relative Vergleichsgröße essentiell,
@@ -65,27 +65,27 @@ da die absolute Anzahl der zu scannenden Objekte trotz aller Maßnahmen zur Vari
 Bei einer hohen Abweichung der Anzahl gescannter Objekte pro Feature in verschiedenen Scans
 müssen Maßnahmen ergriffen werden, um die Varianz zu minimieren.
 
-\paragraph{Turnaround Time (Gesamtdurchlaufzeit pro Task)}
+\paragraph{Turnaround Time (Gesamtdurchlaufzeit pro Task):}
 Es werden die durchschnittliche, minimale und maximale Turnaround Time erhoben.
 Diese Metrik ist von großer Bedeutung, da sie die Effizienz des Gesamtsystems abbildet.
 Eine Reduktion der Turnaround Time führt zu einer schnelleren Bereitstellung
 der Ergebnisse und optimiert somit die Antwortzeit gegenüber dem Endnutzer.
 
-\paragraph{Burst Time (Ausführungszeit pro Task)}
+\paragraph{Burst Time (Ausführungszeit pro Task):}
 Es werden die durchschnittliche, minimale und maximale Burst Time erhoben.
 Diese Metrik ist essentiell, um den tatsächlichen Rechenaufwand der implementierten Algorithmen
 unabhängig von Scheduling-Einflüssen zu bewerten.
 Darüber hinaus kann sie für die Implementierung von Scheduling-Algorithmen,
 beispielsweise des Shortest-Job-First-Schedulers, herangezogen werden.
 
-\paragraph{Waiting Time (Wartezeit pro Task)}
+\paragraph{Waiting Time (Wartezeit pro Task):}
 Es werden die durchschnittliche, minimale und maximale Waiting Time erhoben.
 Die Erhebung der Wartezeit ist notwendig, um die Effizienz des Schedulers bei der Task-Priorisierung
 sowie mögliche Engpässe in der Task-Queue zu identifizieren.
 Sie ist der primäre Ansatzpunkt für den Scheduler,
 um die Turnaround Time zu reduzieren und eine schnelle Bereitstellung von Ergebnissen zu ermöglichen.
 
-\paragraph{Real Time (Gesamtdurchlaufzeit pro Scan)}
+\paragraph{Real Time (Gesamtdurchlaufzeit pro Scan):}
 Die Real Time wird bei jedem Scan-Vorgang als kumulative Metrik erfasst.
 Sie repräsentiert die tatsächlich verstrichene Zeit vom Start bis zum Ende des gesamten Scans.
 Da diese Kennzahl unmittelbar die Systemperformance aus Sicht des Endanwenders widerspiegelt,
@@ -162,8 +162,9 @@ konnte in Vorab-Testläufen nicht festgestellt werden.
 Jede Implementierung eines Scheduling-Algorithmus wird systematisch unter Variation mehrerer Parameter evaluiert.
 Die Messreihen sind so konzipiert, dass sowohl das Skalierungsverhalten als auch die Robustheit
 der Algorithmen unter unterschiedlichen Lastbedingungen beurteilt werden können.
+Im Folgenden werden die wichtigsten Parameter aufgeführt.
 
-\paragraph{Thread-Anzahl}
+\paragraph{Thread-Anzahl:}
 Pro Algorithmus wird mit drei unterschiedlichen Thread-Konfigurationen gemessen: einen, vier und zehn~Threads.
 Den VMs stehen jeweils sieben Kerne zur Verfügung, sodass die drei Stufen gezielt verschiedene Lastniveaus abbilden:
 \begin{itemize}
@@ -174,16 +175,16 @@ Den VMs stehen jeweils sieben Kerne zur Verfügung, sodass die drei Stufen gezie
     Zeigt wie der Algorithmus unter Ressourcenknappheit agiert.
 \end{itemize}
 
-\paragraph{Warteschlangen-Größe}
+\paragraph{Warteschlangen-Größe:}
 Zusätzlich wird jede Thread-Konfiguration mit zwei unterschiedlichen Größen der Warteschlangen-Datenstruktur getestet.
 Die Größe der Warteschlange beeinflusst unmittelbar, wie viele Tasks vorab geladen und im Speicher gehalten werden.
 
-\paragraph{Betriebssysteme}
+\paragraph{Betriebssysteme:}
 Sämtliche Konfigurationen werden auf beiden Gast-Systemen, Debian~13 und Windows~11, durchgeführt.
 Dies ermöglicht eine plattformübergreifende Bewertung der Algorithmen und deckt potenzielle
 betriebssystemspezifische Unterschiede in der Thread- und Speicherverwaltung auf.
 
-\paragraph{Wiederholungen und Stichprobenumfang}
+\paragraph{Wiederholungen und Stichprobenumfang:}
 Jede Einzelkonfiguration wird 20~Mal wiederholt.
 Durch die Wiederholungen können Ausreißer identifiziert und die Varianz der Messwerte quantifiziert werden.
 
@@ -244,25 +245,25 @@ die von der durchschnittlichen Performance im Realbetrieb abweichen können.
 \subsection{Speicher-Optimierungen}
 \label{subsec:speicher-opt}
 
-\paragraph{Deaktivierung des Memory-Ballooning}
+\paragraph{Deaktivierung des Memory-Ballooning:}
 Die dynamische Speicheranpassung wurde deaktiviert, um zu verhindern,
 dass der Host-Kernel zur Laufzeit \acs{RAM}-Seiten der \acs{VM} zurückfordert oder neu zuweist.
 Dies unterbindet unvorhersehbare Latenzen, die durch Pagefaults oder Reclaim-Operationen entstehen können.
 Des Weiteren gibt es Informationen dazu, dass es Probleme mit Windows-VMs und den Ballooning-Treibern geben kann,
 welche somit umgangen werden. \cite{2:qemu, 6.ProxmoxPerf, 7:ProxmoxHyperThreading}
 
-\paragraph{Speicherallokation}
+\paragraph{Speicherallokation:}
 Durch Angleichung von \texttt{currentMemory} und \texttt{memory} in der \acs{VM}-Konfiguration
 wird der gesamte Arbeitsspeicher bereits beim Startvorgang der \acs{VM} reserviert.
 Dies ist aufgrund der Deaktivierung des Memory-Balloonings theoretisch nicht nötig,
 die Einstellung wurde aber zur Sicherheit trotzdem vorgenommen. \cite{4:redhat}
 
-\paragraph{Hugepages}
+\paragraph{Hugepages:}
 In Kombination mit Hugepages (2\,MB) auf dem Host (\texttt{/proc/sys/vm/nr\_hugepages})
 wird die Effizienz des Translation Lookaside Buffers (\acs{TLB}) gesteigert
 und der Overhead der Adressübersetzung reduziert. \cite{3:debian, 10:Ban}
 
-\paragraph{Transparent Huge Pages}
+\paragraph{Transparent Huge Pages:}
 Transparent Huge Pages sind deaktiviert.
 Dieser Hintergrunddienst des Kernels setzt kurzzeitig Locks auf den Speicher,
 was zu unvorhersehbaren Latenz-Spitzen führen kann.
@@ -270,7 +271,7 @@ Um zu verhindern, dass der Kernel Speicherbereinigungen während der Messung dur
 wird ihm mit \texttt{vm.min\_free\_kbytes} 1\,GB zugewiesen,
 sodass er ausreichend freien Spielraum hat. \cite{1:Scalability, 10:Ban}
 
-\paragraph{Swappiness}
+\paragraph{Swappiness:}
 Durch das Setzen des Parameters \texttt{swappiness} auf \texttt{0} wird verhindert,
 dass der Kernel frühzeitig ungenutzte Speicherseiten aus dem \acs{RAM} auf die Festplatte auslagert.
 Der Wert~0 weist den Kernel an, das Auslagern so lange wie absolut möglich zu vermeiden.
@@ -290,18 +291,18 @@ Dies sorgt dafür, dass die Benchmarks nicht durch langsame Festplatten-\acs{IO}
 % ──────────────────────────────────────────────
 \subsection{Storage- und \acs{IO}-Optimierungen}
 
-\paragraph{Speicher-Cache}
+\paragraph{Speicher-Cache:}
 Für die virtuellen Datenträger wurde der Modus \texttt{cache='none'} gewählt.
 Dies erzwingt die Nutzung von \texttt{O\_DIRECT}, wodurch der Page-Cache des Host-Betriebssystems umgangen wird.
 Messungen spiegeln somit die tatsächliche Performance des Storage-Backends wider,
 ohne durch Caching-Effekte des Hosts verfälscht zu werden. \cite{9:SUSE, 10:Ban}
 
-\paragraph{I/O-Schnittstelle}
+\paragraph{I/O-Schnittstelle:}
 Die Nutzung von \texttt{io='io\_uring'} ermöglicht eine hocheffiziente, asynchrone Verarbeitung
 von \acs{IO}-Anfragen mit minimalem Systemcall-Overhead,
 was besonders bei hohen Lasten die Varianz der Antwortzeiten senkt. \cite{10:Ban}
 
-\paragraph{Discard-Modus}
+\paragraph{Discard-Modus:}
 Der Discard-Modus wurde auf \texttt{ignore} gesetzt, um zu verhindern,
 dass TRIM-Befehle (\texttt{unmap}) während der Benchmarks
 rechenintensive Metadaten-Updates im Host-Dateisystem auslösen. \cite{12:qemu.readthedocs}
@@ -311,19 +312,19 @@ rechenintensive Metadaten-Updates im Host-Dateisystem auslösen. \cite{12:qemu.r
 % ──────────────────────────────────────────────
 \subsection{\acs{CPU}-Optimierungen}
 
-\paragraph{CPU-Pinning und Isolierung}
+\paragraph{CPU-Pinning und Isolierung:}
 Um Kontextwechsel und Cache-Interferenzen durch den Host-Scheduler zu vermeiden,
 wurden die \acs{vCPU}s der Gast-Systeme fest an physikalische Kerne gebunden (Pinning).
 Zusätzlich wurde ein \texttt{emulatorpin} konfiguriert,
 um \acs{QEMU}-Hintergrundprozesse auf dedizierte Service-Kerne auszulagern,
 sodass die für den Benchmark genutzten Kerne exklusiv dem Gast zur Verfügung stehen \cite{13:Dohost}
 
-\paragraph{Host CPU Governor}
+\paragraph{Host CPU Governor:}
 Der Linux-Scaling-Governor wurde auf \texttt{performance} gesetzt.
 Dies fixiert die Taktfrequenz auf dem Maximum und verhindert Latenzspitzen,
 die durch das Hochfahren der \acs{CPU}-Frequenz aus Energiesparzuständen (P-States) entstehen würden. \cite{cpufreq}
 
-\paragraph{Deaktivierung von Hyper-Threading}
+\paragraph{Deaktivierung von Hyper-Threading:}
 Hyper-Threading wurde deaktiviert, sodass die \acs{VM} exklusiven Zugriff auf die Ressourcen des gepinnten Kerns hat.
 Hyper-Threading kann durch Lastverteilungsprobleme zu Jitter führen, da die \acs{CPU}-Pipeline je nach Auslastung des zweiten logischen Threads
 unterschiedlich schnell arbeitet.
@@ -334,13 +335,13 @@ Dies ist ein weiterer Schritt, das Verhalten der \acs{CPU} deterministischer zu 
 % ──────────────────────────────────────────────
 \subsection{System-Optimierungen}
 
-\paragraph{Deaktivierung von ASLR}
+\paragraph{Deaktivierung von ASLR:}
 Address Space Layout Randomization (\acs{ASLR}) wurde im Gast-System deaktiviert (\texttt{kernel.randomize\_va\_space=0}).
 Da \acs{ASLR} Speicheradressen bei jedem Programmlauf zufällig anordnet,
 können minimale Unterschiede in den Cache-Trefferraten und der Branch-Prediction entstehen.
 Die Deaktivierung sorgt für eine deterministische Speicherausführung. \cite{LWN.net}
 
-\paragraph{Hintergrundprozesse}
+\paragraph{Hintergrundprozesse:}
 Nicht kritische Systemdienste und geplante Aufgaben wurden deaktiviert,
 um kurzzeitige \acs{CPU}-Lastspitzen während der Messreihen auszuschließen.
 Auf dem Host und der Debian-\acs{VM} sind \texttt{cron} und \texttt{anacron} gestoppt.
@@ -354,19 +355,19 @@ Auf der Windows-\acs{VM} wurden zusätzlich folgende Dienste deaktiviert:
     um periodische Unterbrechungen durch das Betriebssystem zu unterbinden.
 \end{itemize}
 
-\paragraph{Windows Updates und Defender}
+\paragraph{Windows Updates und Defender:}
 Automatische Updates sowie der Echtzeitschutz von Windows Defender wurden deaktiviert.
 Beide Dienste erzeugen im Hintergrund Festplatten- und \acs{CPU}-Last durch das Herunterladen von Updates,
 das Scannen von Dateien sowie das Aktualisieren von Signaturdatenbanken.
 Dies hätte die Messungen durch unvorhersehbare \acs{IO}- und \acs{CPU}-Spitzen verfälschen können.
 
-\paragraph{Visuelle Effekte}
+\paragraph{Visuelle Effekte:}
 Auf der Windows-\acs{VM} wurden sämtliche Animationseffekte und Transparenzeffekte deaktiviert.
 Über die erweiterten Systemeinstellungen wurde die Option
-\texttt{Für optimale Leistung anpassen} gewählt.
+"Für optimale Leistung anpassen" gewählt.
 Dies entlastet \acs{GPU} und \acs{CPU} und eliminiert eine weitere Quelle nicht-deterministischer Hintergrundaktivität.
 
-\paragraph{Deaktivierung des Internetzugriffs}
+\paragraph{Deaktivierung des Internetzugriffs:}
 Durch Updates oder andere Internetzugriffe der Betriebssysteme können unerwünschte Aktivitäten auf der \acs{VM} stattfinden.
 Der Internetzugriff wurde auf dem Host-System deaktiviert.
 
@@ -377,7 +378,7 @@ Durch die Implementierung eines Schedulers gibt es einen entscheidenden Architek
 weg von der engen Kopplung, in welcher jedes Modul seinen eigenen Scheduler steuert, hin zu einem zentralen Service-Modell
 mit dem Scheduler als eigenständige Komponente. 
 Es gibt eine strikte Trennung. Die restliche Programmlogik weiß nicht, wie der Scheduler arbeitet, sie übergibt lediglich Tasks.
-Wenn ein Feature Kindobjekte erstellt, werden diese nicht mehr direkt verarbeitet, statt dessen werden sie als neue Tasks in die Warteschlange gegeben.
+Wenn ein Feature Kindobjekte erstellt, werden diese nicht mehr direkt verarbeitet, stattdessen werden sie als neue Tasks in die Warteschlange gegeben.
 Für den Scheduler ist es egal, ob ein Task von einem Modul oder einem Feature kommt, alles landet in derselben Warteschlange.
 Der restliche Scanner muss entsprechend angepasst werden, was je nach Komplexität und Kopplung eine Überarbeitung von sehr viel Code bedeuten kann.
 
@@ -460,21 +461,21 @@ Der restliche Scanner muss entsprechend angepasst werden, was je nach Komplexit�
 
 \subsection{Das Fertigstellungsproblem}
 
-\paragraph{Synchrone Fertigstellung im bisherigen Modell}
+\paragraph{Synchrone Fertigstellung im bisherigen Modell:}
 Im bisherigen objektbasierten Scheduling-Modell verarbeitet ein Worker ein Objekt
 sowie sämtliche daraus rekursiv entstehenden Kindobjekte synchron innerhalb desselben Threads.
 Sobald der Worker terminiert ist, ist garantiert, dass das Objekt und sein gesamter Nachkommenbaum vollständig abgearbeitet sind.
 Code, der auf die Fertigstellung eines Objekts angewiesen ist,
 kann daher unmittelbar auf den Rückgabewert des Workers zugreifen, eine explizite Synchronisation ist nicht erforderlich.
 
-\paragraph{Verlust der impliziten Fertigstellungsgarantie}
+\paragraph{Verlust der impliziten Fertigstellungsgarantie:}
 Mit der Umstellung auf den taskbasierten Scheduler entfällt diese implizite Garantie.
 Ein Task wird abgearbeitet, reiht dabei seine Kindobjekte als eigenständige Tasks in die Warteschlange ein
 und meldet sich anschließend als abgeschlossen, obwohl die Kinder zu diesem Zeitpunkt vielleicht
 noch nicht einmal mit der Verarbeitung begonnen haben.
 Die Fertigstellung eines einzelnen Tasks impliziert somit nicht mehr die Fertigstellung des gesamten Teilbaums.
 
-\paragraph{Progress-Tracking}
+\paragraph{Progress-Tracking:}
 Um dennoch feststellen zu können, ob ein Task und alle seine Nachkommen vollständig verarbeitet wurden,
 ist eine zusätzliche Datenstruktur erforderlich: ein Progress-Tracker.
 Dieser verwaltet für jeden Task einen Zähler über die Anzahl offener Kindtasks.
@@ -483,7 +484,7 @@ gilt der Teilbaum als vollständig verarbeitet.
 Wartende Threads können mittels einer Condition Variable benachrichtigt werden, sobald dieser Zustand eintritt.
 Funktional entspricht dies einer Barrier Synchronization, also dem gemeinsamen Warten bis zu einem definierten Synchronisationspunkt.
 
-\paragraph{Anpassungen im bestehenden Code}
+\paragraph{Anpassungen im bestehenden Code:}
 Der Scheduler stellt hierfür eine dedizierte \texttt{Wait()}-Funktion bereit.
 Sämtliche Stellen im Scanner, die bisher implizit davon ausgingen,
 dass nach Rückkehr eines Workers das gesamte Objekt inklusive aller Nachkommen verarbeitet ist,
@@ -498,7 +499,9 @@ Die Auswahl der Scheduling-Algorithmen basiert
 auf einer zielgerichteten Optimierung bestimmter Metriken in einem gegebenen System.
 Es liegt mit dem Scanner ein System vor, in welchem die Tasks asynchron und kontinuierlich dem Scheduler übergeben werden.
 Die Ausführung dieser Tasks soll wenn möglich schnell geschehen, es werden allerdings keine Deadline-Garantien benötigt.
-Präemption wäre theoretisch möglich, benötigt aber Overhead ohne echten Nutzen.
+Präemption wäre theoretisch möglich, allerdings mit einem erheblichen Implementierungsaufwand verbunden.
+Da keine Deadline-Anforderungen bestehen und durch die Nutzung von präemptiven Scheduling-Algorithmen ein Kontextwechsel- und Synchronisations-Overhead entsteht, 
+wurde darauf verzichtet.
 Die Last-Verteilungsstrategie ist frei wählbar.
 
 \vspace{7.56mm}
@@ -506,7 +509,7 @@ Die Last-Verteilungsstrategie ist frei wählbar.
 \noindent Die Anzahl an Scheduling-Algorithmen, welche diese Anforderungen erfüllen, ist extrem hoch.
 Weitere Empfehlungen für vielversprechende Scheduling-Algorithmen, 
 welche aufgrund der begrenzten Ressourcen dieser Arbeit nicht getestet werden konnten, 
-sind in Kapitel~\ref{ch:chapter06} (\nameref{ch:chapter06}) zu finden.
+sind in Kapitel~\ref{ch:chapter06} zu finden.
 
 \vspace{7.56mm}
 Die Auswahl ist auf folgende Scheduling-Algorithmen gefallen:
@@ -517,7 +520,7 @@ Die Auswahl ist auf folgende Scheduling-Algorithmen gefallen:
      \item Work-Stealing kombiniert mit Shortest-Subtree-Time-First (\acs{WS}+\acs{SSTF})
  \end{enumerate}
 Es wurde des Weiteren ein adaptiver Multi-Level-Feedback-Warteschlangen-Scheduler
-und ein \acs{FIFO} Scheduler mit adaptiven Backpressure gestestet.
+und ein \acs{FIFO}-Scheduler mit adaptivem Backpressure getestet.
 Diese zwei Scheduling-Algorithmen wurden aufgrund von schlechten Ergebnissen bei ersten Benchmarks verworfen und es wurden keine Testreihen angelegt.
 
 
@@ -525,7 +528,7 @@ Diese zwei Scheduling-Algorithmen wurden aufgrund von schlechten Ergebnissen bei
 
 Zur Sicherstellung der Vergleichbarkeit verwenden alle Scheduler-Varianten denselben formalen Rahmen.
 
-\paragraph{Notation}
+\paragraph{Notation:}
 \begin{align*}
 W &:= \max(1,\text{konfigurierter Threadcount}) \\
 N(t) &:= \text{Anzahl akzeptierter, noch nicht abgeschlossener Tasks zum Zeitpunkt } t
@@ -554,16 +557,16 @@ t_{\mathrm{exec}}^{\mathrm{exkl}}(\tau)=
 \]
 wobei $t_{\mathrm{sync\text{-}child}}(\tau)$ die kumulierte Laufzeit synchron ausgeführter Kind-Tasks derselben Ausführungskette bezeichnet.
 
-\paragraph{Worker- und Parallelitätsmodell}
+\paragraph{Worker- und Parallelitätsmodell:}
 Es werden langlebige Worker-Goroutines betrieben. Die effektive Zahl gleichzeitig laufender Task-Ausführungen wird durch eine Semaphore auf höchstens $W$ begrenzt.
 Damit sind Einreihungs- und Entnahmeordnung von Abschlussordnung zu unterscheiden: Abschlussreihenfolgen können bei Parallelität grundsätzlich nicht
 deterministisch bestimmt werden.
 
-\paragraph{Abschlussbedingung}
+\paragraph{Abschlussbedingung:}
 Ein Task erhöht beim erfolgreichen Akzeptieren den Zähler $N$ um $1$ und dekrementiert $N$ genau einmal beim Abschluss (normal, abgebrochen oder Fallback (Inline-Ausführung im Caller-Kontext) beendet).
 Ein Scan ist genau dann abgeschlossen, wenn $N=0$ erreicht wird; die Wartesynchronisation erfolgt über eine Condition Variable.
 
-\paragraph{Backpressure}
+\paragraph{Backpressure:}
 Bei Enqueue-Fehlschlag erfolgt ein synchroner Fallback.
 Ein Enqueue-Fehlschlag kann je nach Implementierung durch volle oder geschlossene Queue entstehen.
 Dies begrenzt Queue-Wachstum, verändert aber globale Ausführungsordnung und Fairnesseigenschaften, 
@@ -572,10 +575,10 @@ da die Nachkommen dieses Tasks direkt synchron abgearbeitet werden.
 % ============================================================
 \subsection{\acs{FIFO}-Scheduler}
 
-\paragraph{Zielsetzung}
+\paragraph{Zielsetzung:}
 Der \acs{FIFO}-Scheduler dient als Baseline mit minimaler struktureller Komplexität.
 
-\paragraph{Charakteristische Eigenschaften}
+\paragraph{Charakteristische Eigenschaften:}
 \begin{itemize}
 \item Einfache Baseline mit klarer Queue-Semantik
 \item \acs{FIFO}-Ordnung im Queue-Pfad
@@ -583,7 +586,7 @@ Der \acs{FIFO}-Scheduler dient als Baseline mit minimaler struktureller Komplexi
 \item Keine globale strikte \acs{FIFO}-Abschlussreihenfolge
 \end{itemize}
 
-\paragraph{Datenstrukturen}
+\paragraph{Datenstrukturen:}
 Es wird eine zentrale thread-sichere \acs{FIFO}-Warteschlange verwendet.
 Für den \acs{FIFO}-Scheduler wurden zwei Implementierungsvarianten getestet, 
 die in ihrer Logik identisch sind und sich ausschließlich in der Kapazität der zentralen Warteschlange unterscheiden:
@@ -595,13 +598,13 @@ und
 C_{\mathrm{FIFO500}}=500\cdot W
 \]
 
-\paragraph{Ordnungs- und Determinismuseigenschaft}
+\paragraph{Ordnungs- und Determinismuseigenschaft:}
 Die zentrale Warteschlange arbeitet nach dem \acs{FIFO}-Prinzip.
 Eine globale strikte \acs{FIFO}-Ordnung über alle Tasks gilt nicht, da
 mehrere Worker parallel arbeiten und
 bei Enqueue-Fehlschlag der synchrone Fallback aktiv wird.
 
-\paragraph{Einreichungspfad}
+\paragraph{Einreichungspfad:}
 \begin{enumerate}
 \item Falls Kontext beendet: Rückgabe mit abgeschlossenem Handle.
 \item Sonst: $N \gets N+1$.
@@ -610,25 +613,25 @@ bei Enqueue-Fehlschlag der synchrone Fallback aktiv wird.
 \item Bei Enqueue-Fehlschlag: synchroner Fallback, $N \gets N-1$.
 \end{enumerate}
 
-\paragraph{Ausführungspfad}
+\paragraph{Ausführungspfad:}
 Worker warten blockierend auf Queue-Elemente. Nach Entnahme wird ein Semaphore-Token angefordert. 
 Bei Fehlschlag, also zum Beispiel bei abgebrochenem Kontext, wird der Task abgeschlossen.
-Bei Erfolg: Queue-Zeit messen, Kontext anreichern, Task ausführen, exklusive Laufzeit berechnen, Statistik schreiben, Handle schließen, Semaphore freigeben, $N \gets N-1$.
+Bei Erfolg: Queue-Zeit messen, Kontext anreichern, Task ausführen, exklusive Laufzeit berechnen, Statistik schreiben, Handle schließen, Semaphore freigeben und $N \gets N-1$.
 
 
 % ============================================================
 \subsection{Shortest-Subtree-Time-First (\acs{SSTF})}
 
-\paragraph{Zielsetzung}
-\acs{SSTF} priorisiert Tasks über eine vordefinierte Laufzeitheuristik, um die mittlere Wartezeit zu reduzieren.
+\paragraph{Zielsetzung:}
+\acs{SSTF} priorisiert Tasks anhand einer vordefinierten Laufzeitheuristik, sodass Tasks mit kürzerer erwarteter Gesamtausführungszeit ihres Teilbaums bevorzugt ausgeführt werden.
 Die Priorität eines Tasks entspricht der Summe aus seiner eigenen Ausführungszeit 
 und der kumulierten Ausführungszeit aller Nachkommen-Tasks.
 Eine dynamische Anpassung der Prioritätstabelle während der Laufzeit wäre prinzipiell realisierbar, 
 wurde in dieser Arbeit jedoch aufgrund begrenzter zeitlicher Ressourcen nicht berücksichtigt.
 Dieser Scheduling-Algorithmus wurde gewählt, 
-um die Turnaround Time zu verkürzen und zugleich den Anteil synchron verarbeiteter Tasks gering zu halten.
+um die mittlere Wartezeit zu reduzieren und zugleich den Anteil synchron ausgeführter Tasks gering zu halten.
 
-\paragraph{Charakteristische Eigenschaften}
+\paragraph{Charakteristische Eigenschaften:}
 \begin{itemize}
 \item Geringere mittlere Wartezeit bei gut passender Prioritätsheuristik
 \item Bevorzugung kurzer Subtrees gemäß Prioritätstabelle
@@ -636,7 +639,7 @@ um die Turnaround Time zu verkürzen und zugleich den Anteil synchron verarbeite
 \item Empfindlich gegenüber Fehlklassifikation in Prioritätenliste $P$
 \end{itemize}
 
-\paragraph{Prioritätsmodell}
+\paragraph{Prioritätsmodell:}
 Mit
 \[
 P:\mathcal{T}\rightarrow \mathbb{N}
@@ -651,34 +654,34 @@ P_{\mathrm{default}}, & \text{sonst}.
 \]
 Die Prioritäten stammen aus einer statischen Priority-Map, die aus mehreren Scans des \acs{FIFO}-Schedulers abgeleitet und über diese gemittelt wurde.
 
-\paragraph{Datenstruktur}
+\paragraph{Datenstruktur:}
 Zentrale, thread-sichere Prioritätswarteschlange auf Basis eines Min-Heaps mit Kapazität
 \[
 C_{\mathrm{SSTF}}=50\cdot W,
 \]
 die ein effizientes Einfügen und Entnehmen von Tasks in $O(\log n)$ ermöglicht.
 
-\paragraph{Einreichung und Ausführung}
+\paragraph{Einreichung und Ausführung:}
 Einreichungslogik entspricht dem gemeinsamen Rahmen (Kontextprüfung, $N$-Tracking, Sync-Bypass, Fallback).
 Ausführung entnimmt stets einen Task mit höchster Priorität.
 
 % ============================================================
 \subsection{Work-Stealing mit \acs{SSTF}-Priorisierung}
 
-\paragraph{Zielsetzung}
+\paragraph{Zielsetzung:}
 Kombination aus lokaler Queue-Verarbeitung und Stealing 
 zur Verbesserung von Skalierbarkeit und Lastverteilung bei Beibehaltung der \acs{SSTF}-Priorisierung.
 Neben den Vorteilen, welche bereits durch den \acs{SSTF}-Scheduler entstehen, 
 soll hier der Overhead durch Locks auf eine zentrale Warteschlange verhindert werden.
 
-\paragraph{Charakteristische Eigenschaften}
+\paragraph{Charakteristische Eigenschaften:}
 \begin{itemize}
 \item Reduzierte zentrale Lock-Contention
 \item Gute Lastverteilung bei ungleichmäßiger Last
 \item Höhere Systemkomplexität
 \end{itemize}
 
-\paragraph{Datenstrukturen}
+\paragraph{Datenstrukturen:}
 Jeder Worker $w_i$ besitzt eine eigene thread-sichere Min-Heap-Queue $Q_i$.
 Die Prioritätsordnung folgt \acs{SSTF}.
 Die Kapazität pro Worker-Queue beträgt
@@ -690,7 +693,7 @@ also insgesamt
 C_{\mathrm{WS,gesamt}}=100\cdot W.
 \]
 
-\paragraph{Einreichungspfad}
+\paragraph{Einreichungspfad:}
 \begin{enumerate}
 \item Kontextprüfung, danach $N \gets N+1$.
 \item Prioritätsbestimmung.
@@ -698,10 +701,11 @@ C_{\mathrm{WS,gesamt}}=100\cdot W.
 \item Falls der Aufrufer ein Worker ist und in die eigene Queue schreibt:
 zunächst nicht-blockierender TryPush, dann Spillover (andere Worker-Queues, danach Modul-Queue), erst danach synchroner Fallback.
 \item Falls der Aufrufer extern ist oder der Modul-Worker einreiht:
-blockierender Push auf die Zielqueue (Backpressure bei voller Queue). Synchroner Fallback nur bei geschlossenem Queue-Zustand.
+blockierender Push auf die Zielqueue (Backpressure bei voller Queue).
+Bei geschlossener Queue wird der synchrone Fallback verwendet.
 \end{enumerate}
 
-\paragraph{Ausführungspfad}
+\paragraph{Ausführungspfad:}
 Worker suchen in folgender Stufenreihenfolge:
 \begin{enumerate}
 \item eigene Queue,
@@ -710,7 +714,7 @@ Worker suchen in folgender Stufenreihenfolge:
 \end{enumerate}
 Bei gefundenem Task erfolgt Ausführung analog zum gemeinsamen Rahmen (Semaphore, Messung, Abschluss, $N$-Dekrement).
 
-\paragraph{Ordnungs- und Fairnesseigenschaft}
+\paragraph{Ordnungs- und Fairnesseigenschaft:}
 Lokale Prioritätsordnung ist stark, globale Prioritätsordnung nur approximativ.
 Fairness kann durch lokale Heuristiken und Stealing-Reihenfolgen sinken.
 
@@ -718,24 +722,24 @@ Fairness kann durch lokale Heuristiken und Stealing-Reihenfolgen sinken.
 \subsection{Validitätsaspekte und Reproduzierbarkeit}
 Es können folgende Konfigurationsparameter, je nach Scheduling-Algorithmus, angepasst werden:
 
-\paragraph{Konfigurationsparameter}
+\paragraph{Konfigurationsparameter:}
 \begin{itemize}
 \item $W$ (Threadcount-basiert),
 \item Warteschlange-Kapazitäten je Scheduler-Variante,
 \item Prioritätsmap $P$ und $P_{\mathrm{default}}$
 \end{itemize}
 
-\paragraph{Interne Validität}
+\paragraph{Interne Validität:}
 Messwerte werden durch Laufzeit-Scheduling, Lastmischung und Fallback-Häufigkeit beeinflusst.
 Vergleiche zwischen Schedulern sind daher nur bei identischer Workload, identischen Stopkriterien und identischer Instrumentierung valide.
 
-\paragraph{Externe Validität}
+\paragraph{Externe Validität:}
 Ergebnisse sind auf vergleichbare Task-Granularität, Subtree-Struktur und Systemlast übertragbar. 
 Bei stark abweichenden Lastprofilen ist gegebenenfalls die Verwendung einer adaptiven 
 Implementierung oder eine erneute Kalibrierung von $P$ sinnvoll.
 
 
-\paragraph{Reproduzierbarkeit}
+\paragraph{Reproduzierbarkeit:}
 Um die Reproduzierbarkeit der Messergebnisse zu bewerten, wird der Variationskoeffizient (engl. \textit{Coefficient of Variation}, \acs{CV}) der Laufzeit als relatives Maß für die Streuung herangezogen. Im Gegensatz zur Standardabweichung erlaubt der \acs{CV} den Vergleich der Variabilität von Datensätzen mit unterschiedlichen Mittelwerten, indem er die Streuung normiert. Er ist definiert als das Verhältnis der Standardabweichung $\sigma$ zum arithmetischen Mittelwert $\mu$:
 
 \begin{equation}

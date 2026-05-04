@@ -7,12 +7,12 @@
 	\begin{sloppypar}
 	\noindent \acs{APT}-Scanner müssen kompromittierte oder 
 	verdächtige Systeme möglichst schnell analysieren können. 
-	Im täglichen Einsatz ohne incident-response-Szenarien 
+	Im täglichen Einsatz außerhalb akuter Sicherheitsvorfälle 
 	sollen sie neben einer kurzen Scanzeit auch 
 	eine geringe Ressourcenauslastung gewährleisten. 
 	\vspace{7.56mm}
 
-	\noindent Diese Arbeit untersucht die Performance-Optimierung eines \acs{APT}-Scanners durch die Umstellung von einem objektbasierten, rekursiv-synchronen Scheduling auf ein zentrales taskbasiertes Scheduling. 
+	\noindent Diese Arbeit untersucht die Performance-Optimierung eines \acs{APT}-Scanners durch die Umstellung von einem objektbasierten, rekursiv-synchronen Scheduling auf ein zentrales, taskbasiertes Scheduling. 
 
 	\vspace{7.56mm}
 
@@ -22,13 +22,15 @@
 
 	\vspace{7.56mm}
 
-	\noindent Unter Windows zeigen die neuen Scheduler bei vier und zehn Threads klare Laufzeitgewinne gegenüber der Referenz, die je nach Verfahren bei vier Threads etwa 5,69\,\% bis 8,39\,\% und bei zehn Threads etwa 8,89\,\% bis 10,38\,\% betragen. 
+	\noindent Unter Windows zeigen die neuen Scheduler bei vier und zehn Threads klare Laufzeitgewinne gegenüber der Referenz. 
+	Bei vier Threads betragen diese Laufzeitgewinne je nach Verfahren 5,69\,\% bis 8,39\,\% und bei zehn Threads 8,89\,\% bis 10,38\,\%. 
 	Unter Linux lässt sich dagegen kein konsistenter Laufzeitvorteil nachweisen. 
-	\acs{SSTF} liefert die stabilste Gesamtbalance aus Laufzeit, Waiting Time und Speichereigenschaften. 
+	\acs{SSTF} liefert die stabilste Gesamtbalance aus Laufzeit, Waiting Time und Speichereigenschaften.
 
 	\vspace{7.56mm}
 
-	\noindent Die Ergebnisse belegen, dass der Wechsel zu einem zentralen taskbasierten Scheduling möglich ist und reproduzierbare Leistungsgewinne ermöglicht, insbesondere in Szenarien mit hoher Systemlast.
+	\noindent Die Ergebnisse belegen, dass der Wechsel zu einem zentralen, taskbasierten Scheduling möglich ist. 
+	Reproduzierbare Leistungsgewinne, besonders unter hohen Lastprofilen, werden ermöglicht.
 	\end{sloppypar}
 
 \end{otherlanguage}
